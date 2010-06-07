@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+#
+# Executable to start the selenium server that will automically include
+# the required extension file
+#
+
+DEFAULT_SELENIUM_SERVER_PORT = 4444
+
+port = DEFAULT_SELENIUM_SERVER_PORT
+
+ARGV.each_with_index do |arg, index|
+  port = ARGV[index + 1] if arg == '-port' and (index + 1) < ARGV.count 
+end
+
+puts "Running Selenium Server for Lebowski"
+puts "Starting server on http://localhost:#{port}"
+puts "To quit server, press Control-C"
+
+resources_dir = File.expand_path(File.join(File.dirname(__FILE__), %w[.. resources]))
+selenium_server =  File.join(resources_dir, 'selenium-server.jar')
+user_extensions =  File.join(resources_dir, 'user-extensions.js')
+
+exec 'java', '-jar', selenium_server, '-userExtensions', user_extensions, *ARGV

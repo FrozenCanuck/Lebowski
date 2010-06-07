@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+#
+# Executable used to run a script that uses the Lebowski framework. Using
+# this instead of ruby directly will automtically require and include all
+# the nessary files, gems and modules to get you running with the framework
+#
+#   E.g. lebowski my_lebowski_script.rb
+#
+
+if ARGV.length == 0
+  puts "Error: Unable to run lebowski. A ruby file is required"
+  exit
+end
+
+require 'rubygems'
+gem 'lebowski'
+require 'lebowski'
+
+include Lebowski::Foundation
+include Lebowski::Foundation::Views
+include Lebowski::Foundation::Panes
+include Lebowski::SCUI::Views
+
+load ARGV[0]
+

@@ -1,0 +1,3 @@
+Core = SC.Object.create({
+  
+});

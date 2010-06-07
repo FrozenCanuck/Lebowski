@@ -1,0 +1,94 @@
+.custom-rendered-view {
+  background-color: green;
+  border-color: black;
+  border-style: solid;
+  border-width: 5px;
+}
+
+.custom-rendered-view .main-box1 {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 10px;
+  width: 100px;
+  background-color: orange;
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.custom-rendered-view .main-box1 a.stooges {
+  position: absolute;
+  left: 10px;
+}
+
+.custom-rendered-view .main-box1 a.larry.stooges {
+  top: 10px;
+}
+
+.custom-rendered-view .main-box1 a.curly.stooges {
+  top: 30px;
+}
+
+.custom-rendered-view .main-box1 a.moe.stooges {
+  top: 50px;
+}
+
+.custom-rendered-view .main-box2 {
+  position: absolute;
+  top: 10px;
+  left: 125px;
+  right: 10px;
+  height: 100px;
+  background-color: blue;
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.custom-rendered-view .main-box2.active {
+  background-color: purple;
+}
+
+.custom-rendered-view .main-box2 p {
+  position: absolute;
+  left: 50px;
+  right: 50px;
+  top: 20px;
+  text-align: center;
+}
+
+.custom-rendered-view .main-box3 {
+  position: absolute;
+  top: 125px;
+  left: 125px;
+  right: 10px;
+  bottom: 10px;
+  background-color: red;
+  border-color: black;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.custom-rendered-view .main-box3.black {
+  background-color: black;
+}
+
+.custom-rendered-view .main-box3.white {
+  background-color: white;
+}
+
+.custom-rendered-view .main-box3 img {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  top: 10px;
+}
+
+.custom-rendered-view .main-box3 img.alert {
+  left: 20px;
+}
+
+.custom-rendered-view .main-box3 img.info {
+  right: 20px;
+}

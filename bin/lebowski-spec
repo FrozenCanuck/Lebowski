@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+#
+# Executable used to run an RSpec script that makes use of the Lebowski framework. 
+# Using this instead of spec directly will automtically require and include all
+# the nessary files, gems and modules to get you running with the framework. 
+# Special spec extension will also be included.
+#
+#   E.g. lebowski-spec my_lebowski_spec.rb
+#
+
+if ARGV.length == 0
+  puts "Error: Unable to run lebowski-spec. A ruby file is required"
+  exit
+end
+
+require 'rubygems'
+gem 'rspec', '>=1.3.0'
+require 'spec'
+require 'spec/autorun'
+gem 'lebowski'
+require 'lebowski/spec'
+
+include Lebowski::Foundation
+include Lebowski::Foundation::Views
+include Lebowski::Foundation::Panes
+include Lebowski::SCUI::Views
+
+exit ::Spec::Runner::CommandLine.run

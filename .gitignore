@@ -1,0 +1,6 @@
+pkg
+tmp
+*.bak
+*.tmp
+examples/scui/date_picker_view/app/frameworks/
+examples/scui/combo_box_view/app/frameworks/
