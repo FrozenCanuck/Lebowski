@@ -144,3 +144,9 @@ be sure to check out the `sc_controls` example app.
 > that. Quite possibly the laziest in Los Angeles County, which would place him high in the runnin' 
 > for laziest worldwide. But sometimes there's a man, sometimes, there's a man.
 
+#Contributors
+
+Special thanks to the following individuals:
+
+  * Dessy Daskalov, for contributing lots of code for the SCUI proxies
+  * Mike Ramsey, for providing a lot of solid usage, testing, and feedback of the framework
