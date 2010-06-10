@@ -21,7 +21,7 @@ TestApp.objectsController = SC.ArrayController.create({
 	},
 	
 	getFruitObjects: function() {
-		return [ { name: 'apple', val:'apple' }, { name: 'pear', val:'pear' }, { name: 'strawberry', val:'strawberry' } ]; //, { name: 'peach' }, { name: 'blueberry' }, { name: 'plum' }, { name: 'banana' }, { name: 'orange' }, { name: 'grape' }, { name: 'raspberry' }, { name: 'watermelon' } ];
+		return [ { name: 'apple', val:'apple' }, { name: 'strawberry', val:'strawberry' }, { name: 'kiwi', val: 'kiwi' } ];
 	}
 
 }) ;

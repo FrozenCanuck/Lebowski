@@ -38,9 +38,9 @@ describe "VIEW: SCUI.ComboBoxView" do
       @view.select_item 2                    
     end
         
-    it "will select 'pear', followed by 'apple', followed by 'strawberry' from the list by name, and confirm" do
-      @view.select_item 'pear'
-      @view.should have_value 'pear'
+    it "will select 'kiwi', followed by 'apple', followed by 'strawberry' from the list by name, and confirm" do
+      @view.select_item 'kiwi'
+      @view.should have_value 'kiwi'
       
       @view.select_item 'apple'
       @view.should have_value 'apple'
@@ -49,14 +49,14 @@ describe "VIEW: SCUI.ComboBoxView" do
       @view.should have_value 'strawberry'
     end
     
-    it "will select 'pear', followed by 'apple', followed by 'strawberry' from the list by name, and confirm - capitalized, regex" do
-      @view.select_item 'Pear'
-      @view.should have_value 'pear'
+    it "will select 'kiwi', followed by 'apple', followed by 'strawberry' from the list by name, and confirm - capitalized, regex" do
+      @view.select_item 'Kiwi'
+      @view.should have_value 'kiwi'
       
       @view.select_item 'APPLE'
       @view.should have_value 'apple'
       
-      @view.select_item /berry/
+      @view.select_item 'berry'
       @view.should have_value 'strawberry'
     end
     
@@ -76,8 +76,8 @@ describe "VIEW: SCUI.ComboBoxView" do
       @view.list.should have_count(1, 'apple')
     end
     
-    it "will confirm that typing 'p' leaves two items in the list" do
-      @view.list.should have_count(2, 'p')
+    it "will confirm that typing 'a' leaves two items in the list" do
+      @view.list.should have_count(2, 'a')
     end
   end
   

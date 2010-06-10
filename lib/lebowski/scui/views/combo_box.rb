@@ -26,19 +26,19 @@ module Lebowski
         
         def any?(item)
           type(item)
-          return @item_views.any?({@value_key => item})
+          return @item_views.any?({@value_key => /#{item}/i})
         end
         
         alias_method :some?, :any?
         
         def one?(item)
           type(item)
-          return @item_views.one?({@value_key => item})
+          return @item_views.one?({@value_key => /#{item}/i})
         end
         
         def none?(item)
           type(item)
-          @item_views.none?({@value_key => item})
+          @item_views.none?({@value_key => /#{item}/i})
         end
         
         def list_displayed?
@@ -50,9 +50,9 @@ module Lebowski
           if item.kind_of? Integer
             select_item_by_index(item)
           elsif item.kind_of? String
-            select_item_by_name(/^#{item}/i)
-          elsif item.kind_of? Regexp
             select_item_by_name(item)
+          else
+            raise ArgumentError.new "The argument must be either an integer or a string."
           end
           @parent.hide_list
         end
@@ -65,18 +65,13 @@ module Lebowski
           end
 
           def select_item_by_name(name)          
-            if one?(name)
-              @item_views.find_first({@value_key => name}).select 
+            if any?(name)
+              @item_views.find_first({@value_key => /#{name}/i}).select 
             end
           end
           
           def type(text)
-            field = @parent.child_views[0]
-            if text.kind_of? Regexp
-              field.type_keys(text.inspect.tr('/^', '').tr('/i', ''))
-            else
-              field.type_keys(text)
-            end
+            @parent.child_views[0].type_keys(text)
           end
       end
 
