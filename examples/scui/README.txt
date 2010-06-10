@@ -1,0 +1,1 @@
+Folder contains examples for views belonging to the SCUI framework. In order to run the applications, you will need to have the SCUI framework installed, which you can get from the following: http://github.com/etgryphon/sproutcore-ui 

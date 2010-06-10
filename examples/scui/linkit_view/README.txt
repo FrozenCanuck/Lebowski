@@ -1,0 +1,1 @@
+In order to run the spec file, you will need to download and run the SCUI linkit demo app, which you can get from http://github.com/etgryphon/linkit-demo

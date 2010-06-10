@@ -20,36 +20,59 @@ module Lebowski
           return @terminals
         end
 
-        def drag_to_coordinates(x, y)
-          coord_x = -1*(self.position.x) + self.frame.width + x
-          coord_y = -1*(self.position.y) + self.frame.height + y
+        def links
+          return Support::LinksArray.new self
+        end
+        
+        def linked_to?(item)
+          node_item_view = get_node_item_view(item)
+          comparison_node = node_item_view['content']
+          my_node = self['content']
           
-          self.drag(coord_x, coord_y)
+          links.each { |link| return true if (link.start_node == comparison_node) || (link.end_node == comparison_node) }
+          node_item_view.links.each { |link| return true if (link.start_node == my_node) || (link.end_node == my_node) }
+
+          return false
+        end
+
+        def positioned_left_of?(item)
+          verify_positioning(item, true, -1)
         end
         
-        def drag_to_node(item)
-          fixed_node = get_fixed_node(item)
-          self.drag_on_to(fixed_node)
+        def positioned_right_of?(item)
+          verify_positioning(item, true)
         end
         
-        def drag_before_node(item)
+        def positioned_above?(item)
+          verify_positioning(item, false, -1)
+        end
+        
+        def positioned_below?(item)
+          verify_positioning(item, false)
+        end
+        
+        def drag_in_canvas(x, y)
+          self.drag_to(@parent, x, y)
+        end
+        
+        def drag_left_of(item)
           drag_relative_to_node(item, true, -1)
         end
         
-        def drag_after_node(item)
+        def drag_right_of(item)
           drag_relative_to_node(item, true)
         end
         
-        def drag_above_node(item)
+        def drag_above(item)
           drag_relative_to_node(item, false, -1)
         end
         
-        def drag_below_node(item)
+        def drag_below(item)
           drag_relative_to_node(item, false)
         end
         
         private
-          def get_fixed_node(item)
+          def get_node_item_view(item)
             if item.kind_of? Integer
               fixed_node = @parent.item_views[item]
               raise ArgumentError.new "There is no node at index #{item}" if fixed_node.nil?
@@ -61,12 +84,21 @@ module Lebowski
           end
 
           def drag_relative_to_node(item, horizontal_drag, multiplier = 1)
-            fixed_node = get_fixed_node(item)
+            fixed_node = get_node_item_view(item)
         
             x = horizontal_drag ? (fixed_node.frame.width + 50) * multiplier : 0
             y = horizontal_drag ? 0 : (fixed_node.frame.height + 50) * multiplier
         
             self.drag_to(fixed_node, x, y)
+          end
+          
+          def verify_positioning(item, horizontal_drag, multiplier = 1)
+            fixed_node = get_node_item_view(item)
+            x = horizontal_drag ? (fixed_node.position.x + (50 + self.frame.width) * multiplier) : fixed_node.position.x
+            y = horizontal_drag ? fixed_node.position.y : (fixed_node.position.y + (50 + self.frame.height) * multiplier)
+        
+            return true if (self.position.x == x) && (self.position.y == y)
+            return false
           end
           
           def assert_item_has_node_item_view_support(item)
