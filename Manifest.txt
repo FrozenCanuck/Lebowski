@@ -66,6 +66,7 @@ lib/lebowski/scui/views/date_picker.rb
 lib/lebowski/scui/views/linkit.rb
 lib/lebowski/scui/mixins/node_item_view_support.rb
 lib/lebowski/scui/mixins/terminal_view_support.rb
+lib/lebowski/scui/mixins/link_support.rb
 lib/lebowski/spec.rb
 lib/lebowski/spec/core.rb
 lib/lebowski/spec/util.rb
