@@ -1,8 +1,20 @@
 require '../../../../lib/lebowski/spec'
 require '../../../../lib/lebowski/scui'
+require 'human_view'
+require 'pet_view'
+
+Spec::Matchers.define :have_node_item_view_support do |sig|
+  match do |obj|
+    obj.respond_to? :has_node_item_view_support
+  end
+end
 
 include Lebowski::Foundation
 include Lebowski::SCUI::Views
+include LinkItDemo::Views
+
+ProxyFactory.proxy HumanView
+ProxyFactory.proxy PetView
 
 App = Application.new :app_root_path => "/family_tree", :app_name => "LinkItDemo", :browser => :firefox
 
@@ -51,6 +63,13 @@ describe "VIEW: canvas" do
     it "will verify that there are 3 nodes on the canvas" do
       @canvas.should_not be_empty
       @canvas.nodes.count.should be 3
+
+      @node_0.should be_a_kind_of HumanView
+      @node_0.should have_node_item_view_support
+      @node_1.should be_a_kind_of HumanView
+      @node_1.should have_node_item_view_support
+      @node_2.should be_a_kind_of PetView
+      @node_2.should have_node_item_view_support
     end
     
     it "will click each of the nodes, one by one" do
@@ -82,7 +101,7 @@ describe "VIEW: canvas" do
       @node_2.drag_below 0
       @node_2.should be_positioned_below 0
     end
-
+    
     it "will drag the third node before the first node (by the index)" do
       @node_2.drag_left_of 0
       @node_2.should be_positioned_left_of 0
@@ -111,7 +130,8 @@ describe "VIEW: canvas" do
     it "will drag the second node after the first node (by the node)" do
       @node_1.drag_right_of @node_0
       @node_1.should be_positioned_right_of @node_0
-    end    
+    end  
+      
   end
   
   describe "TEST: linking" do
@@ -131,7 +151,7 @@ describe "VIEW: canvas" do
       @node_2.should_not be_linked_to @node_0
       @node_1.should_not be_linked_to @node_2
       @node_2.should_not be_linked_to @node_1
-
+  
       @node_0.should_not be_linked_to 1
       @node_1.should_not be_linked_to 0
       @node_0.should_not be_linked_to 2
@@ -139,11 +159,11 @@ describe "VIEW: canvas" do
       @node_1.should_not be_linked_to 2
       @node_2.should_not be_linked_to 1
     end
-
+  
     it "will link the female spouse terminal to the male spouse terminal" do      
       @node_0.terminal_by_name('sig').link_to @node_1.terminal_by_name('sig'), 6, 6
     end
-
+  
     it "will verify that only the male and female nodes are linked together" do
       @node_0.should be_linked_to @node_1
       @node_1.should be_linked_to @node_0
@@ -181,7 +201,7 @@ describe "VIEW: canvas" do
       @add_female.click
     end
   end
-
+  
   describe "TEST: linking additional nodes" do
     before(:all) do
       @canvas = App['canvas']
@@ -207,13 +227,13 @@ describe "VIEW: canvas" do
      it "will verify that the original male and female are not linked to the new nodes by the 'kids' terminal" do
        @node_0.should_not be_linked_to @node_2
        @node_0.terminal_by_name('kids').should_not be_linked_to @node_2.terminal_by_name('dad')
-
+  
        @node_0.should_not be_linked_to @node_3
        @node_0.terminal_by_name('kids').should_not be_linked_to @node_3.terminal_by_name('dad')
-
+  
        @node_1.should_not be_linked_to @node_2
        @node_1.terminal_by_name('kids').should_not be_linked_to @node_2.terminal_by_name('mom')
-
+  
        @node_1.should_not be_linked_to @node_3
        @node_1.terminal_by_name('kids').should_not be_linked_to @node_3.terminal_by_name('mom')
      end
