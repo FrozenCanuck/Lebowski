@@ -1,6 +1,6 @@
 // ==========================================================================
-// Project:   TestApp.employeesController
-// Copyright: ©2010 My Company, Inc.
+// Project:   Lebowski Framework - The SproutCore Test Automation Framework
+// License:   Licensed under MIT license (see License.txt)
 // ==========================================================================
 /*globals TestApp Core */
 

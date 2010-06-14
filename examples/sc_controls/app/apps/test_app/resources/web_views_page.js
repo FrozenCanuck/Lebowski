@@ -4,7 +4,7 @@
 // ==========================================================================
 /*globals TestApp */
 
-TestApp.labelViewsPage = SC.Page.design({
+TestApp.webViewsPage = SC.Page.design({
   
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
