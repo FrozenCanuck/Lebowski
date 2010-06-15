@@ -94,8 +94,8 @@ module Lebowski
           
           def verify_positioning(item, horizontal_drag, multiplier = 1)
             fixed_node = get_node_item_view(item)
-            x = horizontal_drag ? (fixed_node.position.x + (50 + self.frame.width) * multiplier) : fixed_node.position.x
-            y = horizontal_drag ? fixed_node.position.y : (fixed_node.position.y + (50 + self.frame.height) * multiplier)
+            x = horizontal_drag ? (fixed_node.position.x + (50 + fixed_node.frame.width) * multiplier) : fixed_node.position.x
+            y = horizontal_drag ? fixed_node.position.y : (fixed_node.position.y + (50 + fixed_node.frame.height) * multiplier)
         
             return true if (self.position.x == x) && (self.position.y == y)
             return false
