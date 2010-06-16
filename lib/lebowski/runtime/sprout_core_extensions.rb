@@ -136,6 +136,14 @@ module Lebowski
         return Coords.new(value[0], value[1])
       end
       
+      def get_sc_element_width(type, *params)
+        return get_element_width(__locator(type, *params))
+      end
+      
+      def get_sc_element_height(type, *params)
+        return get_element_height(__locator(type, *params))
+      end
+      
       def get_sc_view_child_view_count(scpath)
         full_path = "#{scpath}.childViews.length"
         return __number_command("getScPropertyValue", [full_path, ])

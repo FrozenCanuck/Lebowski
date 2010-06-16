@@ -99,6 +99,21 @@ module Lebowski
         return @driver.get_sc_core_query_element_attribute(@handle, @index, val)
       end
       
+      # @override Lebowski::Foundation::Mixins::PositionedElement#position
+      def position()
+        return @driver.get_sc_element_window_position(action_target, *action_locator_args)
+      end
+      
+      # @override Lebowski::Foundation::Mixins::PositionedElement#width
+      def width()
+        return @driver.get_sc_element_width(action_target, *action_locator_args)
+      end
+      
+      # @override Lebowski::Foundation::Mixins::PositionedElement#height
+      def height()
+        return @driver.get_sc_element_height(action_target, *action_locator_args)
+      end
+      
       #
       # If the method can not be found then assume we are trying to get the value
       # of an attribute on the element.

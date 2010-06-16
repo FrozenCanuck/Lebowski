@@ -8,6 +8,14 @@ module Lebowski
           return Coords.new(0,0)
         end
         
+        def width()
+          return 0
+        end
+        
+        def height()
+          return 0
+        end
+        
         def scroll_to_visible()
           
         end

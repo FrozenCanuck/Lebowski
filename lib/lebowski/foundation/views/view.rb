@@ -66,6 +66,16 @@ module Lebowski
           return @driver.get_sc_element_window_position(action_target, *action_locator_args)
         end
         
+        # @override Lebowski::Foundation::Mixins::PositionedElement#width
+        def width()
+          return frame.width
+        end
+        
+        # @override Lebowski::Foundation::Mixins::PositionedElement#height
+        def height()
+          return frame.height
+        end
+        
         # @override Lebowski::Foundation::Mixins::PositionedElement#scroll_to_visible
         def scroll_to_visible()
           @driver.sc_view_scroll_to_visible(abs_path)
