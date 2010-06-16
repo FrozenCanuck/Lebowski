@@ -16,6 +16,17 @@ module Lebowski
           return 0
         end
         
+        def position_relative_to(obj)
+          if not obj.kind_of? PositionedElement
+            raise ArgumentInvalidTypeError.new "obj", obj, PositionedElement
+          end
+          
+          x = position.x - obj.position.x
+          y = position.y - obj.position.y
+          
+          return Coords.new(x, y) 
+        end
+        
         def scroll_to_visible()
           
         end
