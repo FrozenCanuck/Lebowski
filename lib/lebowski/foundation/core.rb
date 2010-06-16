@@ -54,6 +54,24 @@ module Lebowski
           raise ArgumentInvalidTypeError.new name, value, Lebowski::Foundation::Views::View
         end
       end
+      
+      def self.get_root_application_object(proxy)
+        if proxy.nil?
+          raise ArgumentInvalidTypeError.new "proxy", proxy, Lebowski::Foundation::ProxyObject
+        end
+        
+        current_proxy = proxy
+        while not current_proxy.nil? do
+          return current_proxy if current_proxy.kind_of?(Lebowski::Foundation::Application)
+          current_proxy = current_proxy.parent
+        end
+        
+        return nil
+      end
+      
+      def get_root_application_object()
+        return Util.get_root_application_object(self)
+      end
 
     end
     

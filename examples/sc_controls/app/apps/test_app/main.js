@@ -39,7 +39,8 @@ TestApp.configureControlsList = function() {
     SC.Object.create({ name: 'SC.SelectFieldView', page: 'selectFieldViewsPage' }), 
     SC.Object.create({ name: 'SC.SegmentedView', page: 'segmentedViewsPage' }), 
     SC.Object.create({ name: 'SC.DisclosureView', page: 'disclosureViewsPage' }), 
-    SC.Object.create({ name: 'SC.ListView', page: 'listViewsPage' })
+    SC.Object.create({ name: 'SC.ListView', page: 'listViewsPage' }),
+    SC.Object.create({ name: 'SC.WebView', page: 'webViewsPage' })
   ];
   
   for (i = 0; i < views.length; i++) {

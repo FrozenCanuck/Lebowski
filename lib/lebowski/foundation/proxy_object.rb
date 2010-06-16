@@ -453,6 +453,8 @@ module Lebowski
         end
       end
       
+      alias_method :__eql?, :eql?
+      
       #
       # Override the == operator so that a proxy object can be compared to another
       # proxy object via their SproutCore GUIDs

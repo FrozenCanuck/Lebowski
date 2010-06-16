@@ -802,16 +802,15 @@ Selenium.prototype.doOpenScApplication = function(appRootPath, timeoutInSeconds)
   
   if (win.location.href !== loc) win.location.href = loc;
   
-  // First set up closure
-  var appName = this._sc_applicationName;
+  return this.doUpdateScApplicationContext(this._sc_applicationName, timeoutInSeconds);
+};
+
+Selenium.prototype.doUpdateScApplicationContext = function(appName, timeoutInSeconds) {
+  
+  if (typeof(appName) !== "string" || appName.length === 0) appName = this._sc_applicationName;
   
   var timeout = timeoutInSeconds ? (parseInt(timeoutInSeconds, 10) * 1000) : Selenium.DEFAULT_TIMEOUT;
   
-  // Now run the wait function which will keep checking until
-  // either the SproutCore framework and application are found or
-  // the time out is reached. The function will also set up some
-  // core global variables to make it easier to program againt
-  // the SC framework and application
   return Selenium.decorateFunctionWithTimeout(function () {
     
     var win = selenium.browserbot.getCurrentWindow();
@@ -827,6 +826,7 @@ Selenium.prototype.doOpenScApplication = function(appRootPath, timeoutInSeconds)
   
     return true;
   }, timeout, this);
+  
 };
 
 ///////////////////// Selenium Core API Extensions - Actions ////////////////////////////////////

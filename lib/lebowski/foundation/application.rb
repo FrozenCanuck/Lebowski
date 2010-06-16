@@ -16,7 +16,10 @@ module Lebowski
       include Lebowski
       include Lebowski::Foundation
       include Lebowski::Foundation::Panes
+      include Lebowski::Foundation::Mixins
       include Lebowski::Foundation::Mixins::KeyCheck
+      include Lebowski::Foundation::Mixins::WindowApplicationContextSupport
+      
     
       SAFARI = '*safari'
       FIREFOX = '*firefox'
@@ -147,6 +150,8 @@ module Lebowski
             raise TimeoutError.new err_message
           end
         end
+        
+        @current_application_context = ApplicationContext.new self, self, @app_name
       	
       end
       
@@ -161,6 +166,8 @@ module Lebowski
           err_message << "Confirm that selenium server is running on #{@selenium_server_host}:#{@selenium_server_port}"
           raise Runtime::SeleniumServerError.new err_message
         end
+        
+        @current_application_context = nil
       end
       
       def started?()
@@ -202,6 +209,44 @@ module Lebowski
       end
       
       alias_method :define_framework, :define_root_object
+      
+      def switch_application_context_to(context, app_name=nil)  
+        
+        if not context.class.ancestors.member? ApplicationContextSupport
+          raise ArgumentInvalidTypeError.new "context", context, ApplicationContextSupport
+        end     
+        
+        context.sc_guid
+        
+        case context.application_context_type
+        when :frame
+          @driver.select_frame(context.application_context_locator)
+        when :window
+          @driver.select_window(context.application_context_locator)
+        else
+          raise StandardError.new "context type is invalid: #{context.application_context_type}"
+        end
+        
+        @driver.update_sc_application_context(app_name)
+        @current_application_context = ApplicationContext.new self, context, app_name
+      end
+      
+      def reset_application_context()
+        return if (current_application_context.nil? or self.__eql?(current_application_context))
+        
+        @driver.select_window ""
+        
+        @driver.update_sc_application_context(@app_name)
+        @current_application_context = ApplicationContext.new self, self, @app_name
+      end
+      
+      def current_application_context()
+        return @current_application_context
+      end
+      
+      def application_context_locator()
+        return ""
+      end
       
     private
     
@@ -276,6 +321,11 @@ module Lebowski
         return DEFAULT_TIMEOUT_IN_SECONDS if params[:timeout_in_seconds].nil?
         return params[:timeout_in_seconds].to_i
       end
+      
+      def complete_application_context_switch(app_name, context)
+        @driver.update_sc_application_context(app_name)
+        @current_application_context = context
+      end
     
     end
     
@@ -307,6 +357,29 @@ module Lebowski
       #
       def maximize() 
         @driver.sc_window_maximize
+      end
+      
+    end
+    
+    class ApplicationContext
+      include Mixins::ApplicationContextSupport
+      
+      def initialize(application, context, app_name)
+        @application = application
+        @context = context
+        @app_name = app_name
+      end
+      
+      def acquire_application_context(app_name=nil)
+        @application.switch_application_context_to(@context, @app_name)
+      end
+      
+      def application_context_type()
+        return @context.application_context_type
+      end
+      
+      def application_context_locator()
+        return @context.application_context_locator
       end
       
     end

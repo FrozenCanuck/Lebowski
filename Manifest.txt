@@ -27,6 +27,7 @@ lib/lebowski/foundation/mixins/delegate_support.rb
 lib/lebowski/foundation/mixins/collection_item_view_support.rb
 lib/lebowski/foundation/mixins/list_item_view_support.rb
 lib/lebowski/foundation/mixins/inline_text_field_support.rb
+lib/lebowski/foundation/mixins/application_context_support.rb
 lib/lebowski/foundation/mixins/stall_support.rb
 lib/lebowski/foundation/proxy_object.rb
 lib/lebowski/foundation/sc_object.rb
@@ -48,6 +49,7 @@ lib/lebowski/foundation/views/collection.rb
 lib/lebowski/foundation/views/list.rb
 lib/lebowski/foundation/views/list_item.rb
 lib/lebowski/foundation/views/grid.rb
+lib/lebowski/foundation/views/web.rb
 lib/lebowski/foundation/views/support/simple_item_array.rb
 lib/lebowski/foundation/panes/pane.rb
 lib/lebowski/foundation/panes/main.rb

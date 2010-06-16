@@ -72,6 +72,7 @@ module Lebowski
     ProxyFactory.proxy CollectionView
     ProxyFactory.proxy ListView
     ProxyFactory.proxy ListItemView
+    ProxyFactory.proxy WebView
     
     ProxyFactory.proxy Pane
     ProxyFactory.proxy MainPane

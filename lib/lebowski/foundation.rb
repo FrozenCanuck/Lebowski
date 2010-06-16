@@ -13,6 +13,7 @@ require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/inline_tex
 require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/delegate_support')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/collection_item_view_support')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/list_item_view_support')
+require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/application_context_support')
 
 require File.expand_path(File.dirname(__FILE__) + '/foundation/proxy_object')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/sc_object')
@@ -37,6 +38,7 @@ require File.expand_path(File.dirname(__FILE__) + '/foundation/views/collection'
 require File.expand_path(File.dirname(__FILE__) + '/foundation/views/list')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/views/list_item')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/views/grid')
+require File.expand_path(File.dirname(__FILE__) + '/foundation/views/web')
 
 require File.expand_path(File.dirname(__FILE__) + '/foundation/panes/pane')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/panes/main')

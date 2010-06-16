@@ -21,6 +21,10 @@ module Lebowski
       def open_sc_application(app_root_path, timeout=nil) 
         __remote_control_command("openScApplication", [app_root_path, timeout])
       end
+
+      def update_sc_application_context(app_name, timeout=nil)
+        __remote_control_command("updateScApplicationContext", [app_name, timeout])
+      end
       
       # SC Object Foundation Selenium Calls
       

@@ -1,7 +1,7 @@
-# require '../../../lib/lebowski/spec'
-# 
-# include Lebowski::Foundation
-# include Lebowski::Foundation::Views
+require '../../../lib/lebowski/spec'
+
+include Lebowski::Foundation
+include Lebowski::Foundation::Views
 
 require 'views/label_views'
 require 'views/button_views'
@@ -13,6 +13,7 @@ require 'views/select_field_views'
 require 'views/segmented_views'
 require 'views/disclosure_views'
 require 'views/list_views'
+require 'views/web_views'
 require 'panes/alert_panes'
 require 'panes/panel_panes'
 require 'panes/picker_panes'
@@ -46,6 +47,7 @@ describe "SproutCore Controls Test" do
   it_should_behave_like "segmented views"
   it_should_behave_like "disclosure views"
   it_should_behave_like "list views"
+  it_should_behave_like "web views"
   it_should_behave_like "alert panes"
   it_should_behave_like "panel panes"
   it_should_behave_like "picker panes"
