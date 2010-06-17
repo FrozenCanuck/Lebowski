@@ -186,16 +186,24 @@ module Lebowski
           @driver.sc_focus action_target, *action_locator_args
         end
         
-        def drag(x, y, relative_to=nil)
+        def drag(x, y, *params)
           if (not x.kind_of? Integer) or (not y.kind_of? Integer)
             raise ArgumentError.new "Must supply valid x-y coordinates: x = #{x}, y = #{y}" 
           end
           
-          relative_to = relative_to.kind_of?(Hash) ? relative_to[:relative_to] : relative_to
+          relative_to = nil
+          mouse_offset_x = 0
+          mouse_offset_y = 0
+          
+          if params.length > 0 and params[0].kind_of?(Hash)
+            relative_to = params[0][:relative_to]
+            mouse_offset_x = get_mouse_offset(params[0][:mouse_offset_x], :x)
+            mouse_offset_y = get_mouse_offset(params[0][:mouse_offset_y], :y)
+          end
           
           self.scroll_to_visible
-          mouse_down_at 0, 0
-          mouse_move_at 0, 0
+          mouse_down_at mouse_offset_x, mouse_offset_y
+          mouse_move_at mouse_offset_x, mouse_offset_y
           relative_to.scroll_to_visible if relative_to.kind_of?(PositionedElement)
           
           rel_x = 0
@@ -215,8 +223,8 @@ module Lebowski
             end
           end
           
-          rel_x = rel_x + x
-          rel_y = rel_y + y
+          rel_x = rel_x + x + mouse_offset_x
+          rel_y = rel_y + y + mouse_offset_y
           
           mouse_move_at rel_x, rel_y
           mouse_up_at rel_x, rel_y
@@ -224,7 +232,7 @@ module Lebowski
           stall :drag 
         end
         
-        def drag_to(source, offset_x=nil, offset_y=nil)
+        def drag_to(source, offset_x=nil, offset_y=nil, *params)
           if not (source.kind_of? PositionedElement or source == :window)
             raise ArgumentError.new "source must be an positioned element: #{source.class}"
           end
@@ -232,7 +240,13 @@ module Lebowski
           offset_x = offset_x.nil? ? 0 : offset_x
           offset_y = offset_y.nil? ? 0 : offset_y
           
-          drag offset_x, offset_y, source
+          params2 = { :relative_to => source }
+          if params.length > 0 and params[0].kind_of? Hash
+            params2[:mouse_offset_x] = params[0][:mouse_offset_x]
+            params2[:mouse_offset_y] = params[0][:mouse_offset_y]
+          end
+          
+          drag offset_x, offset_y, params2
         end
         
         def drag_on_to(source)
@@ -294,6 +308,16 @@ module Lebowski
           if not value.respond_to? :has_collection_item_view_support
             raise ArgumentError.new "#{name} must have collection item view support (#{CollectionItemViewSupport})"
           end
+        end
+        
+        def get_mouse_offset(offset, coord)
+          return 0 if offset.nil?
+          if offset == :center
+            return (width / 2).floor if (coord == :x)
+            return (height / 2).floor if (coord == :y)
+          end
+          return offset if (offset.kind_of? Integer and offset >= 0)
+          raise ArgumentError.new "Invalid offset value: #{offset}"
         end
       
       end

@@ -23,7 +23,25 @@ shared_examples_for "palette panes" do
       App.responding_panes.should have_one PalettePane
     
       pane = App.responding_panes.find_first PalettePane
-    
+      
+      last_position = pane.position
+
+      pane.drag -200, 200
+      pane.position.should have_x (last_position.x - 200)
+      pane.position.should have_y (last_position.y + 200)
+      
+      last_position = pane.position
+
+      pane.drag 50, 50, :mouse_offset_x => 10, :mouse_offset_y => 10
+      pane.position.should have_x (last_position.x + 50)
+      pane.position.should have_y (last_position.y + 50)
+      
+      last_position = pane.position
+
+      pane.drag -50, -50, :mouse_offset_x => :center, :mouse_offset_y => :center
+      pane.position.should have_x (last_position.x - 50)
+      pane.position.should have_y (last_position.y - 50)
+
       close_button = pane['contentView.group.close']
       close_button.click
       
@@ -53,6 +71,14 @@ shared_examples_for "palette panes" do
       pane.drag_to @anchor1, 100, -20
       pane.position.should have_x (@anchor1.position.x + 100)
       pane.position.should have_y (@anchor1.position.y - 20)
+      
+      pane.drag_to @anchor2, 0, 0, :mouse_offset_x => 10, :mouse_offset_y => 10
+      pane.position.should have_x @anchor2.position.x
+      pane.position.should have_y @anchor2.position.y
+      
+      pane.drag_to @anchor3, 5, 5, :mouse_offset_x => :center, :mouse_offset_y => :center
+      pane.position.should have_x (@anchor3.position.x + 5)
+      pane.position.should have_y (@anchor3.position.y + 5)
       
       close_button = pane['contentView.group.close']
       close_button.click
