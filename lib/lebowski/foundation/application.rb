@@ -300,6 +300,8 @@ module Lebowski
           return FIREFOX
         when :safari
           return SAFARI
+        when :chrome
+          return CHROME
         else
           return DEFAULT_BROWSER
         end
