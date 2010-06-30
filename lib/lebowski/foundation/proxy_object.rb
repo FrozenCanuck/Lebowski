@@ -167,15 +167,15 @@ module Lebowski
       
       def define(key, rel_path, expected_type=nil)
         if (not key.kind_of?(String)) or key.empty? or (not key.match(/[\. ]/).nil?)
-          raise ArgumentError.raise "key must be a valid string"
+          raise ArgumentError.new "key must be a valid string"
         end
         
         if (not rel_path.kind_of?(String)) or rel_path.empty?
-          raise ArgumentError.raise "rel_path must be a valid string"
+          raise ArgumentError.new "rel_path must be a valid string"
         end 
         
         if @defined_paths.has_key? key
-          raise ArgumentError.raise "key '#{key}' already defined as path '#{@defined_paths[key]}'"
+          raise ArgumentError.new "key '#{key}' already defined as path '#{@defined_paths[key]}'"
         end
 
         first_path_part = rel_path_first_part(rel_path)
