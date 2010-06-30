@@ -195,7 +195,7 @@ module Lebowski
         if not (type == SC_T_OBJECT or type == SC_T_HASH)
           err_msg = "Error trying to define key '#{key}'. "
           err_msg << "Relative path '#{rel_path}' does not point to an object. "
-          err_msg << "Path is refencing: #{type}. Absolute path = #{err_abs_path}"
+          err_msg << "Path is referencing: #{type}. Absolute path = #{err_abs_path}"
           raise ArgumentError.new err_msg
         end
         
