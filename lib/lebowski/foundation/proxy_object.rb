@@ -165,6 +165,9 @@ module Lebowski
         return "#{path}.#{rel_path}"
       end
       
+      #
+      # Defines a symbolic path for a given relative path. 
+      #
       def define(key, rel_path, expected_type=nil)
         if (not key.kind_of?(String)) or key.empty? or (not key.match(/[\. ]/).nil?)
           raise ArgumentError.new "key must be a valid string"
@@ -177,51 +180,37 @@ module Lebowski
         if @defined_paths.has_key? key
           raise ArgumentError.new "key '#{key}' already defined as path '#{@defined_paths[key]}'"
         end
-
-        first_path_part = rel_path_first_part(rel_path)
-        sub_path = rel_path_sub_path(rel_path, first_path_part)
         
-        type = ""
-        err_abs_path = abs_path_with(rel_path)
-        
-        if @defined_paths.has_key? first_path_part
-          obj = @defined_paths[first_path_part]
-          type = obj.sc_type_of(sub_path)
-          err_abs_path = obj.abs_path_with(sub_path)
-        else
-          type = sc_type_of(rel_path)   
-        end
-        
-        if not (type == SC_T_OBJECT or type == SC_T_HASH)
-          err_msg = "Error trying to define key '#{key}'. "
-          err_msg << "Relative path '#{rel_path}' does not point to an object. "
-          err_msg << "Path is referencing: #{type}. Absolute path = #{err_abs_path}"
-          raise ArgumentError.new err_msg
-        end
-        
-        obj = self[rel_path, expected_type]
-        
-        @defined_paths[key] = obj
-        
-        return obj
+        # Defer loading path until it is actually used
+        @defined_paths[key] = { :rel_path => rel_path, :expected_type => expected_type }
       end
       
+      #
+      # Returns a hash of all the defined symbolic paths
+      #
       def defined()
         return @defined_paths.clone if (not @defined_paths.nil?)
         return {}
       end
       
+      #
+      # Defines a path proxy for a relative path on this proxy object. The path proxy
+      # will be loaded only when actually requested for use.
+      #
+      # @param klass The klass to use as the path proxy
+      # @param rel_path The relative path agaist this proxy object 
+      #
       def proxy(klass, rel_path)
-        obj = self[rel_path]
-        if not obj.kind_of?(ProxyObject)
-          raise ArgumentError.new "rel_path does not point to an object that can be proxied: #{obj} (#{obj.class})"
+        if (not rel_path.kind_of?(String)) or rel_path.empty?
+          raise ArgumentError.new "rel_path must be a valid string"
         end
         
         if not (klass.kind_of?(Class) and klass.ancestors.member?(ProxyObject))
           raise ArgumentInvalidTypeError.new "klass", klass, 'class < ProxyObject'
         end
-        
-        @defined_proxies[rel_path] = obj.represent_as(klass)
+
+        # Defer loading path proxy until it is actually requested
+        @defined_proxies[rel_path] = { :klass => klass }
       end
       
       #
@@ -231,7 +220,7 @@ module Lebowski
       #
       def unravel_relative_path(rel_path)
         if not @defined_proxies[rel_path].nil?
-          return @defined_proxies[rel_path]
+          return load_defined_proxy(rel_path)
         end
         
         first_path_part = rel_path_first_part(rel_path)
@@ -239,7 +228,8 @@ module Lebowski
         
         return rel_path if (not @defined_paths.has_key?(first_path_part))
         
-        obj = @defined_paths[first_path_part]
+        obj = load_defined_path(first_path_part)
+        
         return obj if sub_path.empty?
         
         result = obj.unravel_relative_path(sub_path)
@@ -402,7 +392,11 @@ module Lebowski
       #
       def [](rel_path, expected_type=nil)
       
-        result = unravel_relative_path(rel_path)
+        begin
+          result = unravel_relative_path(rel_path)
+        rescue Exception => ex
+          raise StandardError.new "Error trying to access #{rel_path}: #{ex.message}",
+        end
         
         if (not result.kind_of?(String))
           if (not expected_type.nil?)
@@ -664,6 +658,75 @@ module Lebowski
           word_counter = word_counter.next
         end
         return camel_case_str
+      end
+      
+      #
+      # Used to perform lazy loading of a defined symbolic path on this proxy object
+      #
+      def load_defined_path(key)
+        val = @defined_paths[key]
+        
+        return val if val.kind_of?(ProxyObject)
+        
+        if not val.kind_of?(Hash)
+          raise StandardError.new "Unable to load defined path for #{key}. Unexpected type: #{val}"
+        end
+        
+        rel_path = val[:rel_path]
+        expected_type = val[:expected_type]
+        
+        first_path_part = rel_path_first_part(rel_path)
+        sub_path = rel_path_sub_path(rel_path, first_path_part)
+        
+        type = ""
+        err_abs_path = abs_path_with(rel_path)
+        
+        if @defined_paths.has_key? first_path_part
+          obj = load_defined_path(first_path_part)
+          type = obj.sc_type_of(sub_path)
+          err_abs_path = obj.abs_path_with(sub_path)
+        else
+          type = sc_type_of(rel_path)   
+        end
+        
+        if not (type == SC_T_OBJECT or type == SC_T_HASH)
+          err_msg = "Unable to define '#{key}'. "
+          err_msg << "Relative path '#{rel_path}' does not reference an object. "
+          err_msg << "Path is referencing: #{type}. Absolute path = #{err_abs_path}"
+          raise ArgumentError.new err_msg
+        end
+        
+        obj = self[rel_path, expected_type]
+        
+        @defined_paths[key] = obj
+        
+        return obj
+      end
+      
+      #
+      # Used to perform lazy loading of a defined path proxy on this proxy object
+      #
+      def load_defined_proxy(rel_path)
+        val = @defined_proxies[rel_path]
+        
+        return val if val.kind_of?(ProxyObject)
+        
+        if not val.kind_of?(Hash)
+          raise StandardError.new "Unable to load defined path proxy for #{rel_path}. Unexpected type: #{val}"
+        end
+        
+        klass = val[:klass]
+        
+        @defined_proxies[rel_path] = nil
+        
+        obj = self[rel_path]
+        if not obj.kind_of?(ProxyObject)
+          raise ArgumentError.new "rel_path #{rel_path} does not point to an object that can be proxied: #{obj} (#{obj.class})"
+        end
+        
+        @defined_proxies[rel_path] = obj.represent_as(klass)
+        
+        return  @defined_proxies[rel_path]
       end
       
     end
