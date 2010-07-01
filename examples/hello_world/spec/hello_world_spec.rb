@@ -48,9 +48,15 @@ App = Application.new \
 
 #
 # Now that we have the application created we then have to start it by
-# calling the applications' start method. This will open up two browsers. 
+# calling the application's start method. This will open up two browsers. 
 # One browser is the command console and the other browser is where the 
-# application is loaded into.
+# application is loaded into. 
+#
+# (Note: If you happen to only see the command console but not the window 
+# showing the SC application, then it may be the case that the browser you 
+# are using is set to not allow pop-up windows. Be sure that you browser
+# is configured to allow pop-up windows or else your Lebowski scripts will
+# fail.)
 #
 # At minimum, the framework will not continue until it can detect both
 # the SproutCore framework and the application's root object. However, 
@@ -78,7 +84,7 @@ App = Application.new \
 #   end
 #
 # wait_until is what start actually calls when provided a block. As well,
-# the wait_until methods is something the can be called on any proxy
+# the wait_until methods is something that can be called on any proxy
 # object.
 #
 App.start do |app|
@@ -87,21 +93,21 @@ end
 
 #
 # After starting the application, you can optionally move and resize the
-# browser window that your SproutCore applicaiton has been loaded into. 
+# browser window that your SproutCore application has been loaded into. 
 # If you'd like to instead just maximize the the browser to take up the
 # entire screen you can call window object's maximize method, like so:
 #
 #   App.window.maximize
 #
 # If you do not wish to move or resize the browser window then the browser
-# will be positioned and sized to defaults determined by the Selenium server.
+# will be positioned and sized to defaults determined by the Selenium framework.
 #
 App.window.move_to 1, 1 # Have a slight offset for Firefox so that the window will actually be moved
 App.window.resize_to 1024, 768 
 
 #
 # Because SproutCore property paths can be long when trying to access
-# specific view, we make a short-cut by defining a symbolic path for a 
+# specific views, we make a short-cut by defining a symbolic path for a 
 # specific path on the application object. Note that a path must point to 
 # either a SprouCore object or a plain-old JavaScript hash object. You
 # will get an exception if the path does not point to either one. 
