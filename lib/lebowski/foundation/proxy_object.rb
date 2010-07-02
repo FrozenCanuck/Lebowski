@@ -395,7 +395,7 @@ module Lebowski
         begin
           result = unravel_relative_path(rel_path)
         rescue Exception => ex
-          raise StandardError.new "Error trying to access #{rel_path}: #{ex.message}",
+          raise StandardError.new "Error trying to access #{rel_path}: #{ex.message}"
         end
         
         if (not result.kind_of?(String))
