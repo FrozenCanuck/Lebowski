@@ -50,6 +50,7 @@ lib/lebowski/foundation/views/list.rb
 lib/lebowski/foundation/views/list_item.rb
 lib/lebowski/foundation/views/grid.rb
 lib/lebowski/foundation/views/web.rb
+lib/lebowski/foundation/views/select_button.rb
 lib/lebowski/foundation/views/support/simple_item_array.rb
 lib/lebowski/foundation/panes/pane.rb
 lib/lebowski/foundation/panes/main.rb

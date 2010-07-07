@@ -14,6 +14,7 @@ require 'views/segmented_views'
 require 'views/disclosure_views'
 require 'views/list_views'
 require 'views/web_views'
+require 'views/select_button_views'
 require 'panes/alert_panes'
 require 'panes/panel_panes'
 require 'panes/picker_panes'
@@ -48,6 +49,7 @@ describe "SproutCore Controls Test" do
   it_should_behave_like "disclosure views"
   it_should_behave_like "list views"
   it_should_behave_like "web views"
+  it_should_behave_like "select button views"
   it_should_behave_like "alert panes"
   it_should_behave_like "panel panes"
   it_should_behave_like "picker panes"

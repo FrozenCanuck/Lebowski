@@ -50,5 +50,7 @@ require File.expand_path(File.dirname(__FILE__) + '/foundation/panes/picker')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/panes/sheet')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/panes/menu')
 
+require File.expand_path(File.dirname(__FILE__) + '/foundation/views/select_button')
+
 require File.expand_path(File.dirname(__FILE__) + '/foundation/application')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/proxy_factory')
