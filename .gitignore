@@ -4,3 +4,5 @@ tmp
 *.tmp
 examples/scui/date_picker_view/app/frameworks/
 examples/scui/combo_box_view/app/frameworks/
+examples/scui/content_editable_view/app/frameworks/
+examples/scui/color_well_view/app/frameworks/
