@@ -3,52 +3,34 @@ require '../../../../lib/lebowski/spec'
 include Lebowski::Foundation
 include Lebowski::SCUI::Views
 
-App = Application.new :app_root_path => "/test_app", :app_name => "TestApp", :browser => :firefox
+App = Application.new :app_root_path => "/test_app", :app_name => "TestApp"
 
-App.start
+App.start do |app|
+  app['mainPage.mainPane.isPaneAttached'] == true
+end
 
-App.define 'basic_editor', 'mainPage.mainPane.basic', ContentEditableView
-App.define 'resizable_editor', 'mainPage.mainPane.resizable', ContentEditableView
+App.window.move_to 1, 1 
+App.window.resize_to 1024, 768
 
-describe "VIEW: ContentEditableView" do
-
-    describe "DEBUGGING" do
-      before(:all) do
-        @editor = App['basic_editor']
-      end
-      
-      it "will debug" do
-        @editor.debug
-      end
-    end
-    break
-
-  # describe "TEST: basic" do
-  #   before(:all) do
-  #     @editor = App['basic_editor']
-  #   end
-  #    
-  #    it "will click the editor" do
-  #      @editor.click
-  #    end
-  #    
-  #    it "will print out the HTML content" do
-  #      puts @editor.value
-  #    end
-  # end
+describe "SCUI.ContentEditableView Tests" do
   
-  # describe "TEST: resizable" do
-  #   before(:all) do
-  #     @editor = App['resizable_editor']
-  #   end
-  #    
-  #    it "will click the editor" do
-  #      @editor.click
-  #    end
-  # 
-  #    it "will print out the HTML content" do
-  #      puts @editor.value
-  #    end
-  # end
+  before(:all) do
+    @editor = App['#basic-content-editor', ContentEditableView]
+  end
+    
+  it "will confirm initial property settings" do
+    @editor.should have_empty_selection
+    @editor.should have_value /^basic content editable view$/i
+    @editor.should_not have_image_selected
+    @editor.should_not have_hyperlink_selected
+  end
+  
+  describe "Find Elements Test" do
+    
+    it "will debug" do
+      
+    end
+    
+  end
   
 end

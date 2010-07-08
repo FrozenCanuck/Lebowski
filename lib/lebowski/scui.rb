@@ -3,6 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/scui/views/combo_box')
 require File.expand_path(File.dirname(__FILE__) + '/scui/views/linkit')
 require File.expand_path(File.dirname(__FILE__) + '/scui/views/select_field_tab')
 require File.expand_path(File.dirname(__FILE__) + '/scui/views/color_well')
+require File.expand_path(File.dirname(__FILE__) + '/scui/views/content_editable')
 require File.expand_path(File.dirname(__FILE__) + '/scui/mixins/node_item_view_support')
 require File.expand_path(File.dirname(__FILE__) + '/scui/mixins/terminal_view_support')
 require File.expand_path(File.dirname(__FILE__) + '/scui/mixins/link_support')
@@ -23,6 +24,7 @@ module Lebowski
       ProxyFactory.proxy CanvasView
       ProxyFactory.proxy SelectFieldTabView
       ProxyFactory.proxy ColorWellView
+      ProxyFactory.proxy ContentEditableView
       
     end
   end
