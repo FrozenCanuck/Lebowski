@@ -2,7 +2,7 @@
 // Project:   Lebowski Framework - The SproutCore Test Automation Framework
 // License:   Licensed under MIT license (see License.txt)
 // ==========================================================================
-/*globals Selenium PageBot selenium */
+/*globals Selenium PageBot selenium eval_css*/
 
 /**
   This file contains all Lebowski framework extensions for the Selenium Core framework. 
@@ -716,6 +716,91 @@ ScExt.CollectionView = {
 
 };
 
+ScExt.RangeGenerator = {
+  
+  generate: function(params) {
+    console.log('generating range');
+    console.log(params);
+    var startElementSelector = params['startElementSelector'];
+    var startElementIndex = params['startElementIndex'];
+    var startOffset = params['startOffset'];
+    var startBefore = params['startBefore'];
+    var startAfter = params['startAfter'];
+    var endElementSelector = params['endElementSelector'];
+    var endElementIndex = params['endElementIndex'];
+    var endOffset = params['endOffset'];
+    var endBefore = params['endBefore'];
+    var endAfter = params['endAfter'];
+    var collapseToStart = params['collapseToStart'];
+    var collapseToEnd = params['collapseToEnd'];
+
+    var startElement = eval_css(startElementSelector, selenium.browserbot.getDocument())[startElementIndex];
+    var endElement = eval_css(endElementSelector, selenium.browserbot.getDocument())[endElementIndex];
+
+    var startElemOffset = this._parseRangeElementOffset(startElement, startOffset);
+    var endElemOffset = this._parseRangeElementOffset(endElement, endOffset);
+
+    var range = selenium.browserbot.getDocument().createRange();
+
+    if (startBefore) {
+      range.setStartBefore(startElemOffset[0]);
+    } else if (startAfter) {
+      range.setStartAfter(startElemOffset[0]);
+    } else {
+      range.setStart(startElemOffset[0], startElemOffset[1]);
+    }
+
+    if (endBefore) {
+      range.setEndBefore(endElemOffset[0]);
+    } else if (endAfter) {
+      range.setEndAfter(endElemOffset[0]);
+    } else {
+      range.setEnd(endElemOffset[0], endElemOffset[1]); 
+    }
+    
+    if (collapseToStart === true) {
+      console.log('collapsing to start');
+      range.collapse(true);
+    } else if (collapseToEnd === true) {
+      console.log('collapsing to end');
+      range.collapse(false);
+    }
+
+    return range;
+  },
+  
+  _parseRangeElementOffset: function(element, offset) {
+    if (element.childNodes.length === 0) {
+      return [element, 0];
+    }
+
+    else if (typeof offset === 'number') {
+      return [element, offset];
+    }
+
+    // @tnN-M
+    else if (typeof offset === 'string') {
+      var matches = offset.match(/@tn(\d+)-(\d+)/i);
+      if (matches && matches.length === 3) {
+        var tnPos = matches[1]*1;
+        var tnOffset = matches[2]*1;
+        var tnCounter = 0;
+        for (var i = 0; i < element.childNodes.length; i++) {
+          var node = element.childNodes[i];
+          if (node.nodeName === "#text") {
+            if (tnPos === tnCounter) {
+              return [node, tnOffset];
+            }
+            tnCounter = tnCounter + 1;
+          }
+        }
+      }
+    }
+
+    return [element, 0];
+  }
+};
+
 ///////////////////// Selenium Core API Extensions - Actions for Testing ////////////////////////////////////
 
 /**
@@ -1018,6 +1103,18 @@ Selenium.prototype.doScCoreQueryDone = function(handle) {
   this._unregisterCoreQueryObject(handle);
 };
 
+/**
+  Used to select a range in a DOM structure
+*/
+Selenium.prototype.doSelectRange = function(params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params);
+  var range = ScExt.RangeGenerator.generate(decodedParams);
+  
+  var selection = this.browserbot.getCurrentWindow().getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+};
+
 ///////////////////// Selenium Core API Extensions - Accessors ////////////////////////////////////
 
 /**
@@ -1139,6 +1236,14 @@ Selenium.prototype.getScObjectArrayIndexLookup = function(path, lookupParams) {
   var array = $ScPath.getPath(path);
   var indexes = ScExt.ObjectArrayLookup.lookupIndexes(array, params);
   return indexes;
+};
+
+/**
+  Gets the count of elements that match the given CSS selector
+*/
+Selenium.prototype.getCssSelectorCount = function(selector) {
+  var result = this.browserbot.evaluateCssSelectorCount(selector, this.browserbot.getDocument());
+  return result;
 };
 
 /////// SC Core Query Specific Selenium Calls /////////////////
@@ -1418,4 +1523,14 @@ PageBot.prototype.locateElementByScCoreQuery = function(text) {
   
   return elem;
   
+};
+
+/**
+  Returns the number of DOM elements that match the given css selector.
+  
+  (Not entirely sure why this wasn't already part of the browser bot.)
+*/
+PageBot.prototype.evaluateCssSelectorCount = function(css, document) {
+  var elements = eval_css(css, document);
+  return elements.length;
 };

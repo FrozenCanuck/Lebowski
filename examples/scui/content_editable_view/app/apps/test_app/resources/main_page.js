@@ -31,7 +31,7 @@ TestApp.mainPage = SC.Page.design({
 		contentEditor: SCUI.ContentEditableView.design({
 		  layerId: 'basic-content-editor',
 			layout: { top: 50, left: 20, width: 400, height: 300 },
-			value: 'Basic content editable view',
+			value: 'Basic <b>content</b> <i>editable</i> <b>view</b>',
 			autoCommit: YES		
 		}),
 		

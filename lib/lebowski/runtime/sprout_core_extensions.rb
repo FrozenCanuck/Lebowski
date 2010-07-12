@@ -395,6 +395,42 @@ module Lebowski
         __remote_control_command("scWindowMaximize")
       end
       
+      def get_css_selector_count(selector)
+        return __number_command("getCssSelectorCount", [selector, ])
+      end
+      
+      def select_range(*params)
+        hash = nil
+        
+        if params.length == 0 
+          raise ArgumentError.new "no parameters were supplied"
+        end
+        
+        if params[0].kind_of? Hash
+          hash = params[0]
+        end
+          
+        encoded_hash = ObjectEncoder.encode_hash(hash)
+        
+        __remote_control_command("selectRange", [encoded_hash])
+      end
+      
+      def collapse_range(to_start, start_element_selector, start_element_index, start_offset, end_element_selector, end_element_index, end_offset)
+        params = {
+          :toStart => to_start,
+          :startElementSelector => start_element_selector,
+          :startElementIndex => start_element_index,
+          :startOffset => start_offset,
+          :endElementSelector => end_element_selector,
+          :endElementIndex => end_element_index,
+          :endOffset => end_offset
+        }
+        
+        encoded_params = ObjectEncoder.encode_hash(params)
+        
+        __remote_control_command("collapseRange", [encoded_params])
+      end
+      
       # Selenium User Extensions Testing/Debugging Calls   
     
       def __sc_test_computing_property_path(key, path)
