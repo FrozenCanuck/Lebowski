@@ -719,8 +719,6 @@ ScExt.CollectionView = {
 ScExt.RangeGenerator = {
   
   generate: function(params) {
-    console.log('generating range');
-    console.log(params);
     var startElementSelector = params['startElementSelector'];
     var startElementIndex = params['startElementIndex'];
     var startOffset = params['startOffset'];
@@ -759,10 +757,8 @@ ScExt.RangeGenerator = {
     }
     
     if (collapseToStart === true) {
-      console.log('collapsing to start');
       range.collapse(true);
     } else if (collapseToEnd === true) {
-      console.log('collapsing to end');
       range.collapse(false);
     }
 
@@ -1115,6 +1111,46 @@ Selenium.prototype.doSelectRange = function(params) {
   selection.addRange(range);
 };
 
+/**
+  Used to delete content within a given range
+*/
+Selenium.prototype.doRangeDeleteContent = function(params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params);
+  var range = ScExt.RangeGenerator.generate(decodedParams);
+  
+  var selection = this.browserbot.getCurrentWindow().getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  range.deleteContents();
+  
+  if (!$SC.browser.mozilla) {
+    range = this.browserbot.getDocument().createRange();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+};
+
+/**
+  Used to insert content at the beginning of a given range
+*/
+Selenium.prototype.doRangeInsertContent = function(params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params);
+  var range = ScExt.RangeGenerator.generate(decodedParams);
+  range.collapse(true);
+  
+  var content = decodedParams['content'];
+  var doc = this.browserbot.getDocument();
+  var selection = this.browserbot.getCurrentWindow().getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  
+  if ($SC.browser.msie) {
+    doc.selection.createRange().pasteHTML(content);       
+  } else {
+    doc.execCommand('inserthtml', false, content);
+  }
+};
+
 ///////////////////// Selenium Core API Extensions - Accessors ////////////////////////////////////
 
 /**
@@ -1413,6 +1449,16 @@ Selenium.prototype.getScCoreQueryElementTag = function(handle, elemIndex) {
   var elem = cq.get(elemIndex);
   if (!elem) return "";
   return elem.tagName;
+};
+
+Selenium.prototype.getElementTagName = function(selector, elemIndex) {
+  var elem = eval_css(selector, selenium.browserbot.getDocument())[elemIndex];
+  return elem.tagName.toLowerCase();
+};
+
+Selenium.prototype.getElementChildNodesCount = function(selector, elemIndex) {
+  var elem = eval_css(selector, selenium.browserbot.getDocument())[elemIndex];
+  return elem.childNodes.length;
 };
 
 /////// SC Collection View Specific Selenium Calls /////////////////

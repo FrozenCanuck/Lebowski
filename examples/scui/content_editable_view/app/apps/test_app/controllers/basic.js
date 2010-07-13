@@ -12,8 +12,6 @@
 */
 TestApp.basicContentEditorController = SC.ObjectController.create({
 
-  DEFAULT_VALUE: 'Basic content editable view',
-  	
   contentBinding: 'TestApp.mainPage.contentEditor',
   
   imageSource: null,
@@ -22,7 +20,7 @@ TestApp.basicContentEditorController = SC.ObjectController.create({
   	
 	reset: function() {
 	  var content = this.get('content');
-	  content.set('value', this.DEFAULT_VALUE);
+	  content.set('value', TestApp.DEFAULT_CONTENT_EDITABLE_VALUE);
 	  content.set('selection', '');
 	},
 	
@@ -45,7 +43,7 @@ TestApp.basicContentEditorController = SC.ObjectController.create({
 	  
 	  var content = this.get('content');
 	  
-	  content.insertHTML(src);
+	  content.insertHTML(src, false);
 	  
 	  this.set('htmlSource', '');
 	},

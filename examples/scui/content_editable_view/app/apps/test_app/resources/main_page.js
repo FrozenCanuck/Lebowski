@@ -31,7 +31,7 @@ TestApp.mainPage = SC.Page.design({
 		contentEditor: SCUI.ContentEditableView.design({
 		  layerId: 'basic-content-editor',
 			layout: { top: 50, left: 20, width: 400, height: 300 },
-			value: 'Basic <b>content</b> <i>editable</i> <b>view</b>',
+			value: TestApp.DEFAULT_CONTENT_EDITABLE_VALUE,
 			autoCommit: YES		
 		}),
 		
@@ -110,7 +110,7 @@ TestApp.mainPage = SC.Page.design({
       }),
       
       htmlControls: SC.View.design({
-        layerId: 'html-group',
+        layerId: 'html-controls',
         layout: { left: 100, top: 200, width: 300, height: 100 },
         childViews: 'label srcText insertSrc'.w(),
 

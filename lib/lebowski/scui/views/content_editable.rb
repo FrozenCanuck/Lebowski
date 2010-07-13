@@ -33,6 +33,41 @@ module Lebowski
           return ContentEditableViewSupport::Range.new self, *params
         end
         
+        def select_all()
+          body = find_element('body')
+          body.select_content
+        end
+        
+        def select_none()
+          set_cursor_to_end
+        end
+        
+        def set_cursor_to_start()
+          body = find_element('body')
+          range = create_range
+          range.set_start body, 0
+          range.set_end body, 0
+          range.collapse
+        end
+        
+        def set_cursor_to_end()
+          body = find_element('body')
+          nodes = body.child_nodes_count
+          range = create_range
+          range.set_start body, nodes
+          range.set_end body, nodes
+          range.collapse
+        end
+  
+        def delete_all_content()
+          body = find_element('body')
+          nodes = body.child_nodes_count
+          range = create_range
+          range.set_start body, 0
+          range.set_end body, nodes
+          range.delete_content
+        end
+        
       end
       
       module ContentEditableViewSupport
@@ -174,11 +209,32 @@ module Lebowski
           end
           
           def delete_content()
-            
+            if not has_boundaries_defined?
+              raise StandardError.new "unable to delete content. boundaries must be defined"
+            end
+          
+            @view.exec_driver_in_context do |driver|
+              driver.range_delete_content create_range_hash_object
+              driver.mouse_up('css=body')
+            end
           end
           
           def insert_content(content)
+            if not content.kind_of? String
+              raise ArgumentError.new "unable to insert content. content must be a string"
+            end
             
+            if not has_boundaries_defined?
+              raise StandardError.new "unable to insert content. boundaries must be defined"
+            end
+            
+            hash = create_range_hash_object
+            hash[:content] = content
+          
+            @view.exec_driver_in_context do |driver|
+              driver.range_insert_content hash
+              driver.mouse_up('css=body')
+            end
           end
           
         private
@@ -226,10 +282,34 @@ module Lebowski
             return "DOMElement<selector=#{selector},index=#{index}>"
           end
           
+          def tag()
+            value = ''
+            @view.exec_driver_in_context do |driver|
+              value = driver.get_element_tag_name @selector, @index
+            end
+            return value
+          end
+          
+          def child_nodes_count()
+            value = 0
+            @view.exec_driver_in_context do |driver|
+              value = driver.get_element_child_nodes_count @selector, @index
+            end
+            return value
+          end
+          
           def select()
             range = @view.create_range
             range.set_start_before self
             range.set_end_after self
+            range.select
+            return range
+          end
+          
+          def select_content()
+            range = @view.create_range
+            range.set_start self, 0
+            range.set_end self, child_nodes_count
             range.select
           end
           
@@ -245,6 +325,27 @@ module Lebowski
             range.set_start_before self
             range.set_end_after self
             range.collapse false
+          end
+    
+          def delete()
+            range = @view.create_range
+            range.set_start_before self
+            range.set_end_after self
+            range.delete_content
+          end
+          
+          def insert_content_before(content)
+            range = @view.create_range
+            range.set_start_before self
+            range.set_end_before self
+            range.insert_content content
+          end
+          
+          def insert_content_after(content)
+            range = @view.create_range
+            range.set_start_after self
+            range.set_end_after self
+            range.insert_content content
           end
           
         end

@@ -415,20 +415,44 @@ module Lebowski
         __remote_control_command("selectRange", [encoded_hash])
       end
       
-      def collapse_range(to_start, start_element_selector, start_element_index, start_offset, end_element_selector, end_element_index, end_offset)
-        params = {
-          :toStart => to_start,
-          :startElementSelector => start_element_selector,
-          :startElementIndex => start_element_index,
-          :startOffset => start_offset,
-          :endElementSelector => end_element_selector,
-          :endElementIndex => end_element_index,
-          :endOffset => end_offset
-        }
+      def range_delete_content(*params)
+        hash = nil
         
-        encoded_params = ObjectEncoder.encode_hash(params)
+        if params.length == 0 
+          raise ArgumentError.new "no parameters were supplied"
+        end
         
-        __remote_control_command("collapseRange", [encoded_params])
+        if params[0].kind_of? Hash
+          hash = params[0]
+        end
+          
+        encoded_hash = ObjectEncoder.encode_hash(hash)
+        
+        __remote_control_command("rangeDeleteContent", [encoded_hash])
+      end
+      
+      def range_insert_content(*params) 
+        hash = nil
+        
+        if params.length == 0 
+          raise ArgumentError.new "no parameters were supplied"
+        end
+        
+        if params[0].kind_of? Hash
+          hash = params[0]
+        end
+          
+        encoded_hash = ObjectEncoder.encode_hash(hash)
+        
+        __remote_control_command("rangeInsertContent", [encoded_hash])
+      end
+      
+      def get_element_tag_name(selector, index)
+        return __string_command("getElementTagName", [selector, index,])
+      end
+      
+      def get_element_child_nodes_count(selector, index)
+        return __number_command("getElementChildNodesCount", [selector, index])
       end
       
       # Selenium User Extensions Testing/Debugging Calls   
