@@ -1,7 +1,15 @@
+# ==========================================================================
+# Project:   Lebowski Framework - The SproutCore Test Automation Framework
+# License:   Licensed under MIT license (see License.txt)
+# ==========================================================================
+
 module Lebowski
   module SCUI
     module Views
 
+      #
+      # Represents a proxy to a SCUI LinkIt canvas view (LinkIt.CanvasView)
+      #
       class CanvasView < Lebowski::Foundation::Views::CollectionView        
         representing_sc_class 'LinkIt.CanvasView'
         

@@ -1,10 +1,79 @@
+# ==========================================================================
+# Project:   Lebowski Framework - The SproutCore Test Automation Framework
+# License:   Licensed under MIT license (see License.txt)
+# ==========================================================================
+
 require 'date'
 
 module Lebowski
   module SCUI
     module Views
 
+      #
+      # Represents a proxy to a SCUI date picker view (SCUI.DatePickerView)
+      #
+      class DatePickerView < Lebowski::Foundation::Views::View
+        representing_sc_class 'SCUI.DatePickerView'
+
+        def date_selected?(date)
+          return calendar.date_selected?(date)
+        end
+        
+        def showing_month?(month)
+          return calendar.showing_month?(month)
+        end
+        
+        def showing_year?(year)
+          return calendar.showing_year?(year)
+        end
+        
+        def select_date(date)
+          calendar.select_date(date)
+        end
+        
+        def select_previous_month
+          calendar.select_previous_month
+        end
+        
+        def select_next_month
+          calendar.select_next_month
+        end
+        
+        def select_none
+          calendar.select_none
+        end
+        
+        def select_today
+          calendar.select_today
+        end
+        
+        def today_selected?
+          return date_selected?(Time.now)
+        end
+
+        def display_calendar
+          click_button if !self['isShowingCalendar']
+        end
+        
+        def hide_calendar
+          click_button if self['isShowingCalendar']
+        end
+
+      private   
+           
+        def calendar
+          @calendar = DatePickerCalendar.new(self) if @calendar.nil?
+          return @calendar
+        end
+        
+        def click_button
+          self['_date_button'].click
+        end
+      
+      end
+      
       class DatePickerCalendar
+       
         def initialize(parent)
           @today_button = parent['_calendar_popup.contentView.todayButton']
           @none_button = parent['_calendar_popup.contentView.noneButton']
@@ -85,64 +154,7 @@ module Lebowski
           @today_button.click
         end
       end
-
-      class DatePickerView < Lebowski::Foundation::Views::View
-        representing_sc_class 'SCUI.DatePickerView'
-
-        def date_selected?(date)
-          return calendar.date_selected?(date)
-        end
-        
-        def showing_month?(month)
-          return calendar.showing_month?(month)
-        end
-        
-        def showing_year?(year)
-          return calendar.showing_year?(year)
-        end
-        
-        def select_date(date)
-          calendar.select_date(date)
-        end
-        
-        def select_previous_month
-          calendar.select_previous_month
-        end
-        
-        def select_next_month
-          calendar.select_next_month
-        end
-        
-        def select_none
-          calendar.select_none
-        end
-        
-        def select_today
-          calendar.select_today
-        end
-        
-        def today_selected?
-          return date_selected?(Time.now)
-        end
-
-        def display_calendar
-          click_button if !self['isShowingCalendar']
-        end
-        
-        def hide_calendar
-          click_button if self['isShowingCalendar']
-        end
-
-        private        
-          def calendar
-            @calendar = DatePickerCalendar.new(self) if @calendar.nil?
-            return @calendar
-          end
-          
-          def click_button
-            self['_date_button'].click
-          end
-      end
+      
     end
   end
 end

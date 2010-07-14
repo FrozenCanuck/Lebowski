@@ -1,3 +1,8 @@
+# ==========================================================================
+# Project:   Lebowski Framework - The SproutCore Test Automation Framework
+# License:   Licensed under MIT license (see License.txt)
+# ==========================================================================
+
 require File.expand_path(File.dirname(__FILE__) + '/scui/views/date_picker')
 require File.expand_path(File.dirname(__FILE__) + '/scui/views/combo_box')
 require File.expand_path(File.dirname(__FILE__) + '/scui/views/linkit')

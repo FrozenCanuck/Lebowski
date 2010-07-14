@@ -1,7 +1,15 @@
+# ==========================================================================
+# Project:   Lebowski Framework - The SproutCore Test Automation Framework
+# License:   Licensed under MIT license (see License.txt)
+# ==========================================================================
+
 module Lebowski
   module SCUI
     module Views
       
+      #
+      # Represents a proxy to a SCUI content editable view (SCUI.ContentEditableView)
+      #
       class ContentEditableView < Lebowski::Foundation::Views::WebView
         
         representing_sc_class 'SCUI.ContentEditableView'
