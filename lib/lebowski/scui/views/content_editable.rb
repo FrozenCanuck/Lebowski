@@ -56,6 +56,7 @@ module Lebowski
           range.set_start body, 0
           range.set_end body, 0
           range.collapse
+          return range
         end
         
         def set_cursor_to_end()
@@ -65,6 +66,7 @@ module Lebowski
           range.set_start body, nodes
           range.set_end body, nodes
           range.collapse
+          return range
         end
   
         def delete_all_content()
@@ -74,6 +76,16 @@ module Lebowski
           range.set_start body, 0
           range.set_end body, nodes
           range.delete_content
+        end
+        
+        def insert_content_at_start(content)
+          range = set_cursor_to_start
+          range.insert_content content
+        end
+        
+        def insert_content_at_end(content)
+          range = set_cursor_to_end
+          range.insert_content content
         end
         
       end
@@ -319,6 +331,7 @@ module Lebowski
             range.set_start self, 0
             range.set_end self, child_nodes_count
             range.select
+            return range
           end
           
           def set_cursor_before()
@@ -326,6 +339,7 @@ module Lebowski
             range.set_start_before self
             range.set_end_after self
             range.collapse
+            return range
           end
           
           def set_cursor_after()
@@ -333,6 +347,7 @@ module Lebowski
             range.set_start_before self
             range.set_end_after self
             range.collapse false
+            return range
           end
     
           def delete()
@@ -343,16 +358,12 @@ module Lebowski
           end
           
           def insert_content_before(content)
-            range = @view.create_range
-            range.set_start_before self
-            range.set_end_before self
+            range = set_cursor_before
             range.insert_content content
           end
           
           def insert_content_after(content)
-            range = @view.create_range
-            range.set_start_after self
-            range.set_end_after self
+            range = set_cursor_after
             range.insert_content content
           end
           
