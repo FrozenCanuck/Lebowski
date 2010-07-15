@@ -1,4 +1,4 @@
-require '../../../lib/lebowski/spec'
+require '../../../../lib/lebowski/spec'
 
 include Lebowski::Foundation
 include Lebowski::Foundation::Views
@@ -23,7 +23,7 @@ require 'panes/menu_panes'
 require 'panes/palette_panes'
 
 App = Application.new \
-  :app_root_path => "/test_app", 
+  :app_root_path => "/sc_controls", 
   :app_name => "TestApp"
 
 App.start do |app|

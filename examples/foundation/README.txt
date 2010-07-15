@@ -2,9 +2,9 @@ This is the SproutCore controls example for the Lebowski framework. The SproutCo
 is located in the app directory. The scripts using the Lebowski framework are located
 in the spec folder. 
 
-To get started, go to the sc_controls_spec.rb file located in the spec folder.
+To get started, go to the sc_controls_spec.rb file located in the sc_controls/spec folder.
 
-This example provides an application containing all the SproutCore view that the 
+The sc_controls example provides an application containing all the SproutCore view that the 
 Lebowski framework currently proxies. For each view shown in the application there
 is a spec file demonstrating how to use the proxy.
 
