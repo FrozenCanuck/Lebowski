@@ -61,21 +61,41 @@ module Lebowski
         return @prefilter.clone
       end
       
+      #
+      # Used to create a new filtered object array from this array based on this given filter. The new object
+      # array will only reference those items that match the given filter
+      #
       def filter(filter)
         merged_filter = merge_filter_with_prefilter(filter)
         return create_filtered_object_array(@parent, @array_rel_path, @array_length_property_name, merged_filter)
       end
       
+      #
+      # Returns an enumerable object of indexes for those items in the array that match the given filter
+      #
+      # This method gives you a chance to perform any processing on the given filter by overriding the
+      # find_indexes_process_filter method. Once indexes are found you can also process the index before
+      # a final result is returned by overriding the find_indexes_process_indexes method.
+      #
+      # @see #find_indexes_process_filter
+      # @see #find_indexes_process_indexes
+      #
       def find_indexes(filter=nil)
         raise ArgumentError.new "No filter was supplied" if (filter.nil? and @prefilter.empty?)
         
+        # Do some initial processing of the given filter
         if filter.nil?
+          # Filter is nil, so make it an empty hash object
           filter = {}
         elsif filter.kind_of? String
+          # Filter is just a string, therefore assume the string is an SproutCore type
           filter = { :sc_type => filter }
         elsif filter.kind_of?(Class) and filter.ancestors.member?(SCObject)
+          # Filter is an SCObject, therefore get the SC type as a string
           filter = { :sc_type => filter.represented_sc_class }
         elsif filter.kind_of?(Hash)
+          # Filter is a hash object. Just need to check if the hash contains the special
+          # key :sc_type. If so then do necessary conversions. 
           if filter.has_key? :sc_type
             type = filter[:sc_type]
             if type.kind_of?(Class) and type.ancestors.member?(SCObject)
@@ -86,30 +106,38 @@ module Lebowski
           raise ArgumentInvalidTypeError.new "filter", filter, 'class < SCObject', String, Hash
         end
         
+        # Merge the given filter with this object's prefilter
         filter = merge_filter_with_prefilter(filter)
         
+        # Give a chance for the filter to be processed before finding matching indexes
         processed_filter = find_indexes_process_filter(filter)
         raise StandardError.new "process filter can not be nil" if processed_filter.nil?
         
         if not processed_filter.empty?
+          # Filter is not empty therefore actually determine what indexes matches the filter
           sc_path = @parent.abs_path_with(@array_rel_path)
           indexes = @driver.get_sc_object_array_index_lookup(sc_path, processed_filter)
           return indexes if indexes.empty?
         else
+          # Filter is empty, so just return a range of indexes for this array
           val = unfiltered_count
           return [] if val <= 0 
           indexes = (0..(val - 1))
         end
         
+        # Now give a chance for the matching indexes to be processed before returning the
+        # final result
         processed_indexes = find_indexes_process_indexes(indexes)
         raise StandardError.new "process indexes can not be nil" if processed_indexes.nil?
         
+        # We're done. Return the final result
         return processed_indexes  
         
       end
       
       #
-      # Returns the number of child views this view has
+      # Returns the number of items in the array. If a filter is provided then the count
+      # will be for those items in the array that match the filter
       #
       def count(filter=nil, &block)
         if @prefilter.empty? and filter.nil? and (not block_given?)
@@ -126,6 +154,9 @@ module Lebowski
         return counter
       end
 
+      #
+      # Returns an item at the given index of the array
+      #
       def [](index, expected_type=nil)
         error = ArgumentError.new "index is out of bounds: #{index}" 
         
@@ -143,14 +174,24 @@ module Lebowski
         end
       end
       
+      #
+      # Returns the first item in the array
+      #
       def first(expected_type=nil)
         return self[0, expected_type]
       end
       
+      #
+      # Returns the last item in the array
+      #
       def last(expected_type=nil)
         return self[count - 1, expected_type]
       end
 
+      #
+      # Used to iterative through each item in the array. Can filter what items
+      # are iterated over by supply a filter object
+      #
       def each(filter=nil, &block)
         raise ArgumentError.new "block is required" if (not block_given?)
 
@@ -175,6 +216,13 @@ module Lebowski
       
       alias_method :each_with_index, :each
 
+      #
+      # Returns all the items matching a given filter. If the filter is nil
+      # then all the items are returns. If no mathing items are found then
+      # an empty array is returned.
+      #
+      # @return {Array} basic array containing the matching found items
+      #
       def find_all(filter=nil, &block)
         if filter.nil? and (not block_given?)
           raise ArugmentError.new "Must provide at least a filter or a block"
@@ -192,6 +240,10 @@ module Lebowski
         return collected
       end
       
+      #
+      # Returns the first item matching the given filter. If no items match 
+      # then nil is returned
+      #
       def find_first(filter, expected_type=nil)
         if filter.nil?
           raise ArgumentError.new "filter can not be nil"
@@ -202,6 +254,10 @@ module Lebowski
         return create_object(indexes[0], expected_type)
       end
       
+      #
+      # Returns the last item matching a given filter. If no items match then
+      # nil is returned.
+      #
       def find_last(filter, expected_type=nil)
         if filter.nil?
           raise ArgumentError.new "filter can not be nil"
@@ -212,34 +268,55 @@ module Lebowski
         return create_object(indexes[indexes.length - 1], expected_type)
       end
       
+      #
+      # Returns the index of the given object
+      #
       def index_of(obj)
         return -1 if (not obj.kind_of? ProxyObject)
         indexes = find_indexes({ :sc_guid => obj.sc_guid })
         return indexes.empty? ? -1 : indexes[0]
       end
       
+      #
+      # Used to determine if an object is part of this array
+      #
       def member?(obj)
         return (index_of(obj) >= 0)
       end
 
+      #
+      # Used to check if all items in the array match the given filter
+      #
       def all?(filter=nil, &block)
         return (count(filter, &block) == count)
       end
 
+      #
+      # Used to check if any items in the array match the given filter
+      #
       def any?(filter=nil, &block)
         return (count(filter, &block) > 0)
       end
       
       alias_method :some?, :any?
 
+      #
+      # Used to check if no items in the array match the given filter
+      #
       def none?(filter=nil, &block)
         return (count(filter, &block) == 0)
       end
 
+      #
+      # Used to check if only one item in the array matches the given filter
+      #
       def one?(filter=nil, &block)
         return (count(filter, &block) == 1)
       end
       
+      #
+      # Used to check if the array is empty
+      #
       def empty?()
         return (count == 0)
       end
@@ -262,10 +339,28 @@ module Lebowski
         end
       end
       
+      #
+      # Called by the find_indexes method. Used to do any processing of a given filter before
+      # it is used to find matching indexes. By default, the method just returns the given array
+      # without any processing done.
+      #
+      # @return {Hash} a filter object that has been processed.
+      #
+      # @see #find_indexes
+      #
       def find_indexes_process_filter(filter)
         return filter
       end
       
+      #
+      # Called by the find_indexes method. Used to do any processing of a given enumerable object of
+      # indexes before the final result is returned. By default, the method just returns the given
+      # indexes without any processing done.
+      #
+      # @return {Enumerable} an enumerable object of indexes 
+      #
+      # @see #find_indexes
+      #
       def find_indexes_process_indexes(indexes)
         return indexes
       end
