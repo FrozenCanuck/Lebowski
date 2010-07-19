@@ -6,6 +6,7 @@ include Lebowski::SCUI::Views
 App = MainApplication.new :app_root_path => "/test_app", :app_name => "TestApp" , :browser => :firefox
 
 App.start
+App.maximize
 
 describe "VIEW: SCUI.ComboBoxView" do
 
@@ -78,6 +79,12 @@ describe "VIEW: SCUI.ComboBoxView" do
     
     it "will confirm that typing 'a' leaves two items in the list" do
       @view.list.should have_count(2, 'a')
+    end
+    
+    it "will hide the list and verify that the list is hidden" do
+      @view.should have_list_displayed
+      @view.hide_list
+      @view.should_not have_list_displayed
     end
   end
   
