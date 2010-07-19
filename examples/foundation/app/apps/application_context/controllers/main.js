@@ -10,11 +10,8 @@ TestApp.mainController = SC.Object.create({
     var controller = TestApp.openWindowController;
     controller.set('windowNameValue', '');
     controller.set('windowTitleValue', '');
+    controller.set('windowLocationAnchorValue', '');
     controller.set('openingWindow', NO);
-    
-    controller = TestApp.localControlsController;
-    controller.set('labelText', '');
-    controller.set('value', '');
   }
   
 });

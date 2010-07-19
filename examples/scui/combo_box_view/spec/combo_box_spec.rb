@@ -3,7 +3,7 @@ require '../../../../lib/lebowski/spec'
 include Lebowski::Foundation
 include Lebowski::SCUI::Views
 
-App = Application.new :app_root_path => "/test_app", :app_name => "TestApp" , :browser => :firefox
+App = MainApplication.new :app_root_path => "/test_app", :app_name => "TestApp" , :browser => :firefox
 
 App.start
 

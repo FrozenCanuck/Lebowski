@@ -34,14 +34,14 @@ include TestApp::Views
 #
 ProxyFactory.proxy CustomRenderedView
 
-App = Application.new \
+App = MainApplication.new \
         :app_root_path => "/test_app", 
         :app_name => "TestApp"
 
 App.start
 
-App.window.move_to 1, 1
-App.window.resize_to 1024, 768
+App.move_to 1, 1
+App.resize_to 1024, 768
 
 #
 # Define a symbol path to the custom rendered view 

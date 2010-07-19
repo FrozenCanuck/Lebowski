@@ -916,7 +916,8 @@ Selenium.prototype.doUpdateScApplicationContext = function(appName, timeoutInSec
   Move the application window to a given x-y coordinate
 */
 Selenium.prototype.doScWindowMoveTo = function(x, y) {
-  var win = selenium.browserbot.getCurrentWindow();
+  var win = this.browserbot.getCurrentWindow();
+  win.focus();
   win.moveTo(x*1, y*1);
 };
 
@@ -924,7 +925,8 @@ Selenium.prototype.doScWindowMoveTo = function(x, y) {
   Resize the application window by a width and height
 */
 Selenium.prototype.doScWindowResizeTo = function(width, height) {
-  var win = selenium.browserbot.getCurrentWindow();
+  var win = this.browserbot.getCurrentWindow();
+  win.focus();
   win.resizeTo(width*1, height*1);
 };
 
@@ -932,9 +934,128 @@ Selenium.prototype.doScWindowResizeTo = function(width, height) {
   Maximizes the applicaiton window
 */
 Selenium.prototype.doScWindowMaximize = function() {
-  var win = selenium.browserbot.getCurrentWindow();
+  var win = this.browserbot.getCurrentWindow();
+  win.focus();
   win.resizeTo(window.screen.availWidth, window.screen.availHeight);
   win.moveTo(1,1); // Slight offset from origin so that Firefox will actually move the window
+};
+
+/**
+  Used to select an open window based on locator values. The window that is selected will
+  become the current context is which all commands there after are directed towards. 
+  
+  Expected input:
+  
+    {
+      locatorType: "location" | "title" | "name" | "top"
+      locatorValue: string | regex
+    }
+    
+  To select the main application window, just set the locationType to be "top", no locator
+  value is needed.
+  
+  @see #_getScOpenedWindow
+*/
+Selenium.prototype.doScSelectWindow = function(params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params);
+  var locatorType = decodedParams['locatorType'];
+  var locatorValue = decodedParams['locatorValue'];
+  
+  if (locatorType === "top") {
+    this.browserbot._selectTopWindow();
+  } else {
+    var name = this._getScOpenedWindowName(locatorType, locatorValue);
+    this.browserbot._selectWindowByName(name);
+  }
+
+  var win = this.browserbot.getCurrentWindow();
+  if (win) win.focus();
+};
+
+/**
+  Closes an opened window based on a matching locator type and value
+*/  
+Selenium.prototype.doScCloseOpenedWindow = function(params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params);
+  var locatorType = decodedParams['locatorType'];
+  var locatorValue = decodedParams['locatorValue'];
+  
+  var win = this._getScOpenedWindow(locatorType, locatorValue);
+  delete this.browserbot.openedWindows[win.name];
+  if (win) win.close();
+};
+
+/**
+  Checks if there is a opened window matching a given locator strategy. Expected input:
+  
+    {
+      locatorType: "location" | "title" | "name"
+      locatorValue: string | regex
+    }
+    
+  @see #_getScOpenedWindow
+*/
+Selenium.prototype.isScOpenedWindow = function(params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params);
+  var locatorType = decodedParams['locatorType'];
+  var locatorValue = decodedParams['locatorValue'];
+  
+  // This is a hack for the Safari browser. I'm not sure why this is happening, but if you
+  // open a window using window.open, call this method, and then call window.open
+  // again, and where you supply the exact same name to open, Selenium's console window
+  // will get redirect to the url supplied to the open method. It's really weird. I'm 
+  // sure it has something to do with how selenium has changed the default open method. 
+  // In any case, by updating the openedWindows object it, for whatever reason, fixes
+  // the problem. I don't like this hack, but I can't think of what the root cause is.
+  // Requires further investigation with the Selenium framework.  
+  var safariHack = '__safari_hack__' + Math.round(100000 * Math.random());
+  this.browserbot.openedWindows[safariHack] = {};
+  delete this.browserbot.openedWindows[safariHack];
+  
+  var name = this._getScOpenedWindowName(locatorType, locatorValue);
+  return name !== null;
+};
+
+/**
+  Returns an opened window matching a given locator type and value. The locator type
+  can either be 'name', 'title', or 'location'. The locator value can either be a string
+  or a regular expression. The assigned name of the first window that matches the locator 
+  will be returned, otherwise null is returned.
+*/
+Selenium.prototype._getScOpenedWindowName = function(locatorType, locatorValue) {
+  var openedWindows = this.browserbot.openedWindows;
+  var win = null;
+  var value = null;
+  
+  for (name in openedWindows) {
+    win = openedWindows[name];
+    if (!win || this.browserbot._windowClosed(win)) continue;
+    if (locatorType === 'location') {
+      value = win.location.href;
+    } else if (locatorType === 'title') {
+      try { value = win.document.title; } catch (e) { /* swallow any permission denied errors here */ }
+    } else if (locatorType === 'name') {
+      value = name;
+    } else {
+      return null;
+    } 
+    
+    if (typeof locatorValue === "string" && locatorValue === value) {
+      return name;
+    } else if (locatorValue instanceof RegExp && value.match(locatorValue)) {
+      return name;
+    }
+  }
+
+  return null;
+};
+
+Selenium.prototype._getScOpenedWindow = function(locatorType, locatorValue) {
+  var name = this._getScOpenedWindowName(locatorType, locatorValue);
+  //var win = this.browserbot.getWindowByName(name, true);
+  var win = this.browserbot.openedWindows[name];
+  if (!win) return null;
+  return win;
 };
 
 /** 

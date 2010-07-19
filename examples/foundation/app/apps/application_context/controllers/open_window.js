@@ -10,16 +10,18 @@ TestApp.openWindowController = SC.Object.create({
   
   windowTitleValue: '',
   
+  windowLocationAnchorValue: '',
+  
   openingWindow: NO,
   
   openWindow: function() {
     var that = this;
-    var win = window.open('/basic', this.get('windowNameValue'), 'width=400,height=300,status=no');
+    var url = "http://localhost:4020/basic#%@".fmt(this.get('windowLocationAnchorValue'));
+    var win = window.open(url, this.get('windowNameValue'), 'width=400,height=300,status=no');
+    window.currentWindow = win;
     var title = this.get('windowTitleValue');
-    this.set('openingWindow', YES);
     win.onload = function() {
       win.document.title = title;
-      SC.run(function() { that.set('openingWindow', NO); });
     };
   }
   

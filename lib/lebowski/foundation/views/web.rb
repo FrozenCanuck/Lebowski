@@ -15,11 +15,12 @@ module Lebowski
         
         representing_sc_class 'SC.WebView'
         
-        def application_context_locator()
+        def frame_app_context_locator()
           return "css=##{layer_id} iframe"
         end
         
       end
+      
     end
   end
 end

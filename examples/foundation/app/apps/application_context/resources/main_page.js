@@ -8,7 +8,7 @@ TestApp.mainPage = SC.Page.design({
   
   mainPane: SC.MainPane.design({
     layout: { left: 0, right: 0, top: 0, bottom: 0, centerY: 0 },
-    childViews: 'resetButton openWindow web1 web2 localControls'.w(),
+    childViews: 'resetButton openWindow web1 web2'.w(),
     
     resetButton: SC.ButtonView.design({
       layerId: 'reset-button',
@@ -20,8 +20,8 @@ TestApp.mainPage = SC.Page.design({
     
     openWindow: SC.View.design({
       layerId: 'open-window',
-      layout: { left: 10, width: 200, height: 100, centerY: 0 },
-      childViews: 'openButton nameLabel nameTextField titleLabel titleTextField'.w(),
+      layout: { left: 10, width: 200, height: 120, centerY: 0 },
+      childViews: 'openButton nameLabel nameTextField titleLabel titleTextField anchorLabel anchorTextField'.w(),
       
       openButton: SC.ButtonView.design({
         layout: { left: 0, right: 0, top: 0, height: 24 },
@@ -49,6 +49,16 @@ TestApp.mainPage = SC.Page.design({
       titleTextField: SC.TextFieldView.design({
         layout: { left: 50, right: 0, height: 24, top: 60 },
         valueBinding: 'TestApp.openWindowController.windowTitleValue'
+      }),
+      
+      anchorLabel: SC.LabelView.design({
+        layout: { left: 0, width: 50, height: 24, top: 90 },
+        value: 'Anchor:'
+      }),
+      
+      anchorTextField: SC.TextFieldView.design({
+        layout: { left: 50, right: 0, height: 24, top: 90 },
+        valueBinding: 'TestApp.openWindowController.windowLocationAnchorValue'
       })
     }),
     
@@ -62,30 +72,6 @@ TestApp.mainPage = SC.Page.design({
       layerId: 'web-view2',
       layout: { left: 430, width: 200, height: 100, centerY: 0 },
       value: '/basic'
-    }),
-    
-    localControls: SC.View.design({
-      layerId: 'local-controls',
-      layout: { left: 640, width: 200, height: 100, centerY: 0 },
-      childViews: 'button label textField'.w(),
-      
-      textField: SC.TextFieldView.design({
-        layout: { left: 0, right: 85, height: 24, top: 0 },
-        valueBinding: 'TestApp.localControlsController.value'
-      }),
-      
-      button: SC.ButtonView.design({
-        layout: { right: 0, width: 80, height: 24, top: 0 },
-        title: 'Update',
-        target: TestApp.localControlsController,
-        action: 'update'
-      }),
-      
-      label: SC.LabelView.design({
-        layout: { right: 0, left: 0, height: 24, top: 30 },
-        backgroundColor: 'green',
-        valueBinding: 'TestApp.localControlsController.labelText'
-      })
     })
   })
   

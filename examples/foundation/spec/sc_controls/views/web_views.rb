@@ -21,23 +21,28 @@ shared_examples_for "web views" do
       (1..3).each { @increment_button.click }
       @counter_label.should have_value /counter: 3/i
       
-      @first_web_view.acquire_application_context 'BasicApp'
+      frame1 = @first_web_view.frame
+      frame1.acquire_application_context 'BasicApp'
       
-      button = App['#increment-button']
+      button = frame1['#increment-button']
       button.click
       
-      label = App['#counter-label']
+      label = frame1['#counter-label']
       label.should have_value /counter: 1/i
       
-      @second_web_view.acquire_application_context 'BasicApp'
+      App.reset_application_context
       
-      button = App['#decrement-button']
+      frame2 = @second_web_view.frame
+      frame2.acquire_application_context 'BasicApp'
+      
+      button = frame2['#decrement-button']
       button.click
       
-      label = App['#counter-label']
+      label = frame2['#counter-label']
       label.should have_value /counter: -1/i
       
       App.reset_application_context
+      
       @counter_label.should have_value /counter: 3/i
     
       (1..3).each { @increment_button.click }
@@ -46,11 +51,11 @@ shared_examples_for "web views" do
     end
     
     it "will execute block of logic within the context of a web view" do
-
+    
       @reset_button.click
       @counter_label.should have_value /counter: 0/i
       
-      @first_web_view.exec_in_context('BasicApp') do |app|
+      @first_web_view.frame.exec_in_context('BasicApp') do |app|
         reset_button = app['#reset-button']
         inc_button = app['#increment-button']
         label = app['#counter-label']
@@ -65,7 +70,7 @@ shared_examples_for "web views" do
       @increment_button.click
       @counter_label.should have_value /counter: 1/i
       
-      @second_web_view.exec_in_context('BasicApp') do |app|
+      @second_web_view.frame.exec_in_context('BasicApp') do |app|
         reset_button = app['#reset-button']
         dec_button = app['#decrement-button']
         label = app['#counter-label']
@@ -87,7 +92,7 @@ shared_examples_for "web views" do
       @reset_button.click
       @counter_label.should have_value /counter: 0/i
       
-      @first_web_view.exec_driver_in_context do |driver|
+      @first_web_view.frame.exec_driver_in_context do |driver|
         driver.mouse_down "css=#reset-button"
         driver.mouse_up "css=#reset-button"
         

@@ -3,14 +3,14 @@ require '../../../../lib/lebowski/spec'
 include Lebowski::Foundation
 include Lebowski::SCUI::Views
 
-App = Application.new :app_root_path => "/test_app", :app_name => "TestApp"
+App = MainApplication.new :app_root_path => "/test_app", :app_name => "TestApp"
 
 App.start do |app|
   app['mainPage.mainPane.isPaneAttached'] == true
 end
 
-App.window.move_to 1, 1 
-App.window.resize_to 1024, 768
+App.move_to 1, 1 
+App.resize_to 1024, 768
 
 DEFAULT_CONTENT_EDITABLE_VALUE = App['DEFAULT_CONTENT_EDITABLE_VALUE'] 
 puts DEFAULT_CONTENT_EDITABLE_VALUE

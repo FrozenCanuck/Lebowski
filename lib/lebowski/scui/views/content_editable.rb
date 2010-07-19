@@ -38,7 +38,7 @@ module Lebowski
         end
         
         def create_range(*params)
-          return ContentEditableViewSupport::Range.new self, *params
+          return ContentEditableViewSupport::Range.new frame, *params
         end
         
         def select_all()
@@ -90,6 +90,10 @@ module Lebowski
         
       end
       
+      #
+      # TODO: This needs to be refactored so that the classes are generic and not specific
+      # to the content editable view proxy.
+      #
       module ContentEditableViewSupport
         
         class Range
@@ -97,7 +101,10 @@ module Lebowski
           
           attr_reader :start_element, :end_element, :start_offset, :end_offset
           
-          def initialize(view, *params) 
+          def initialize(app, *params) 
+            if not app.kind_of? Application
+              raise ArgumentInvalidTypeError.new "app", app, "class < Application"
+            end
             
             @start_element = nil
             @end_element = nil
@@ -128,7 +135,7 @@ module Lebowski
             assert_offset_is_valid(@start_offset, "start offset")
             assert_offset_is_valid(@end_offset, "end offset")
             
-            @view = view
+            @app = app
           end
           
           def set_start(elem, offset=0)
@@ -204,7 +211,7 @@ module Lebowski
               raise StandardError.new "unable to select range. start and end elements must be defined"
             end
             
-            @view.exec_driver_in_context do |driver|
+            @app.exec_driver_in_context do |driver|
               driver.select_range create_range_hash_object
               driver.mouse_up('css=body')
             end
@@ -222,7 +229,7 @@ module Lebowski
               hash[:collapseToEnd] = true
             end
             
-            @view.exec_driver_in_context do |driver|
+            @app.exec_driver_in_context do |driver|
               driver.select_range hash
               driver.mouse_up('css=body')
             end
@@ -233,7 +240,7 @@ module Lebowski
               raise StandardError.new "unable to delete content. boundaries must be defined"
             end
           
-            @view.exec_driver_in_context do |driver|
+            @app.exec_driver_in_context do |driver|
               driver.range_delete_content create_range_hash_object
               driver.mouse_up('css=body')
             end
@@ -251,7 +258,7 @@ module Lebowski
             hash = create_range_hash_object
             hash[:content] = content
           
-            @view.exec_driver_in_context do |driver|
+            @app.exec_driver_in_context do |driver|
               driver.range_insert_content hash
               driver.mouse_up('css=body')
             end
@@ -304,7 +311,7 @@ module Lebowski
           
           def tag()
             value = ''
-            @view.exec_driver_in_context do |driver|
+            @view.frame.exec_driver_in_context do |driver|
               value = driver.get_element_tag_name @selector, @index
             end
             return value
@@ -312,7 +319,7 @@ module Lebowski
           
           def child_nodes_count()
             value = 0
-            @view.exec_driver_in_context do |driver|
+            @view.frame.exec_driver_in_context do |driver|
               value = driver.get_element_child_nodes_count @selector, @index
             end
             return value
@@ -384,7 +391,7 @@ module Lebowski
           
           def count()
             value = 0
-            @view.exec_driver_in_context do |driver|
+            @view.frame.exec_driver_in_context do |driver|
               value = driver.get_css_selector_count(@selector)
             end
             return value

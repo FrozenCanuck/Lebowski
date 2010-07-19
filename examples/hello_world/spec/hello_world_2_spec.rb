@@ -40,7 +40,7 @@ include HelloWorldApp::Views
 #
 # You have to create an instance of you application before you make use of the path proxy.
 #
-App = Application.new \
+App = MainApplication.new \
         :app_root_path => "/hello_world", 
         :app_name => "HelloWorldApp", 
         :browser => :firefox
@@ -52,8 +52,8 @@ App.start do |app|
   app['isLoaded'] == true
 end
 
-App.window.move_to 1, 1
-App.window.resize_to 1024, 768
+App.move_to 1, 1
+App.resize_to 1024, 768
 
 #
 # Let's set up our symbolic path to the group view in our SproutCore application

@@ -1,7 +1,7 @@
-require '../../../../lib/lebowski/spec'
-
-include Lebowski::Foundation
-include Lebowski::Foundation::Views
+# require '../../../../lib/lebowski/spec'
+# 
+# include Lebowski::Foundation
+# include Lebowski::Foundation::Views
 
 require 'views/label_views'
 require 'views/button_views'
@@ -22,7 +22,7 @@ require 'panes/sheet_panes'
 require 'panes/menu_panes'
 require 'panes/palette_panes'
 
-App = Application.new \
+App = MainApplication.new \
   :app_root_path => "/sc_controls", 
   :app_name => "TestApp"
 
@@ -30,8 +30,8 @@ App.start do |app|
   app['mainPage.mainPane.isPaneAttached']
 end
 
-App.window.move_to 1, 1
-App.window.resize_to 1024, 768
+App.move_to 1, 1
+App.resize_to 1024, 768
 
 App.define 'controlsList', '#controls-list', ListView
 App.define 'controlContainer', '#control-container', View

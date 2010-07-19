@@ -27,7 +27,7 @@ lib/lebowski/foundation/mixins/delegate_support.rb
 lib/lebowski/foundation/mixins/collection_item_view_support.rb
 lib/lebowski/foundation/mixins/list_item_view_support.rb
 lib/lebowski/foundation/mixins/inline_text_field_support.rb
-lib/lebowski/foundation/mixins/application_context_support.rb
+lib/lebowski/foundation/mixins/frame_application_context_support.rb
 lib/lebowski/foundation/mixins/stall_support.rb
 lib/lebowski/foundation/proxy_object.rb
 lib/lebowski/foundation/sc_object.rb

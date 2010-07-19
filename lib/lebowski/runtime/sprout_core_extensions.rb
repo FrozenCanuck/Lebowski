@@ -395,6 +395,43 @@ module Lebowski
         __remote_control_command("scWindowMaximize")
       end
       
+      def sc_select_main_window()
+        sc_select_window('top', '')
+      end
+      
+      def sc_select_window(locator_type, locator_value)
+        hash = {
+          :locatorType => locator_type,
+          :locatorValue => locator_value
+        }
+        
+        encoded_hash = ObjectEncoder.encode_hash(hash)
+        
+        __remote_control_command("scSelectWindow", [encoded_hash])
+      end
+      
+      def is_sc_opened_window?(locator_type, locator_value)
+        hash = {
+          :locatorType => locator_type,
+          :locatorValue => locator_value
+        }
+        
+        encoded_hash = ObjectEncoder.encode_hash(hash)
+        
+        return __boolean_command("isScOpenedWindow", [encoded_hash])
+      end
+      
+      def sc_close_opened_window(locator_type, locator_value)
+        hash = {
+          :locatorType => locator_type,
+          :locatorValue => locator_value
+        }
+        
+        encoded_hash = ObjectEncoder.encode_hash(hash)
+        
+        return __boolean_command("scCloseOpenedWindow", [encoded_hash])
+      end
+      
       def get_css_selector_count(selector)
         return __number_command("getCssSelectorCount", [selector, ])
       end

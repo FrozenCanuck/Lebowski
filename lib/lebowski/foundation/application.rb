@@ -6,20 +6,194 @@
 module Lebowski
   module Foundation
     
-    #
-    # This class represents a SproutCore-based application. In order to interact with the
-    # actual application you must create an instance of this class and start it. Once
-    # started, you are then free to access any object or view that has been created by 
-    # the application within the web browser.  
-    #
-    class Application < Lebowski::Foundation::SCObject
+    class Application < Lebowski::Foundation::ProxyObject
       include Lebowski
       include Lebowski::Foundation
       include Lebowski::Foundation::Panes
       include Lebowski::Foundation::Mixins
       include Lebowski::Foundation::Mixins::KeyCheck
-      include Lebowski::Foundation::Mixins::WindowApplicationContextSupport
       
+      attr_reader :app_context_manager
+      attr_reader :parent_app
+      
+      def initialize(params)
+        super()
+        
+        if params.nil?
+          raise ArgumentError.new "must supply parameters to create application instance"
+        end
+        
+        if not params.kind_of?(Hash)
+          raise ArgumentError.new "must supply a hash containing parameters"
+        end
+        
+        if not params[:parent_app].nil?
+          @parent_app = params[:parent_app]
+          @app_context_manager = @parent_app.app_context_manager
+          @driver = @parent_app.driver
+        end
+      end
+      
+      def abs_path()
+        return nil
+      end
+      
+      def root_object(name, expected_type=nil)
+        return self['$' + name, expected_type]
+      end
+      
+      alias_method :framework, :root_object
+      
+      def main_pane(expected_type=nil)
+        return self['$SC.RootResponder.responder.mainPane', expected_type]
+      end
+      
+      def key_pane(expected_type=nil)
+        return self['$SC.RootResponder.responder.keyPane', expected_type]
+      end
+      
+      def responding_panes()
+        if @responding_panes.nil?
+          @responding_panes = ObjectArray.new self, '$SC.RootResponder.responder.panes'
+        end
+        return @responding_panes
+      end
+      
+      def define_root_object(key, name, expected_type=nil)
+        return define(key, '$' + name, expected_type)
+      end
+      
+      alias_method :define_framework, :define_root_object
+      
+      def acquire_application_context(app_name)
+        if app_name.nil?
+          raise ArugmentError.new "app_name can not be nil"
+        end
+        app_context_manager.switch_application_context_to self, app_name
+      end
+      
+      def do_aquire_application_context()
+        # no-op
+      end
+      
+      def has_current_application_context?()
+        return app_context_manager.has_current_application_context?(self)
+      end
+      
+      def exec_in_context(app_name, &block)
+        if app_name.nil?
+          raise ArgumentError.new "app_name can not be nil"
+        end
+        app_context_manager.exec_in_context self, app_name, &block
+      end
+      
+      def exec_driver_in_context(&block)
+        app_context_manager.exec_driver_in_context self, &block
+      end
+    
+    end
+
+    class WindowApplication < Application
+      
+      def initialize(params)
+        super(params)
+      end
+      
+      #
+      # Moves the browser window
+      #
+      def move_to(x, y)
+        exec_driver_in_context do |driver|
+          @driver.sc_window_move_to(x,y)
+        end
+      end
+      
+      #      
+      # Resizes the browser window
+      #
+      def resize_to(width, height)
+        exec_driver_in_context do |driver|
+          driver.sc_window_resize_to(width, height)
+        end
+      end
+      
+      #
+      # Maximizes the browser window
+      #
+      def maximize() 
+        exec_driver_in_context do |driver|
+          driver.sc_window_maximize
+        end
+      end
+      
+    end
+    
+    class OpenedWindowApplication < WindowApplication
+      
+      attr_reader :locator_type, :locator_value
+      
+      def initialize(params)
+        super(params)
+        
+        if params[:parent_app].nil?
+          raise ArugmentError.new "parent_app can not be nil"
+        end
+        
+        @locator_type = params[:locator_type]
+        @locator_value = params[:locator_value]
+      end
+      
+      #
+      # Used to check if this window is open
+      #
+      def is_opened?()
+        return @driver.is_sc_opened_window?(locator_type, locator_value)
+      end
+    
+      #
+      # Closes the opened window if it is currently open
+      #
+      def close()
+        return if (not is_opened?)
+        driver.sc_close_opened_window locator_type, locator_value
+        if has_current_application_context?
+          parent_app.reset_application_context
+        end
+      end
+      
+      def do_acquire_application_context()
+        @driver.sc_select_window(locator_type, locator_value)
+      end
+      
+    end
+    
+    class FrameApplication < Application
+      
+      attr_reader :locator
+      
+      def initialize(params)
+        super(params)
+        
+        if params[:parent_app].nil?
+          raise ArugmentError.new "parent_app can not be nil"
+        end
+        
+        @locator = params[:locator]
+      end
+      
+      def do_acquire_application_context()
+        @driver.select_frame(locator)
+      end
+      
+    end
+    
+    #
+    # This class represents a SproutCore-based main application. In order to interact with the
+    # actual application you must create an instance of this class and start it. Once
+    # started, you are then free to access any object or view that has been created by 
+    # the application within the web browser.  
+    #
+    class MainApplication < WindowApplication
     
       SAFARI = '*safari'
       FIREFOX = '*firefox'
@@ -38,8 +212,7 @@ module Lebowski
                   :port,
                   :base_url,
                   :session_id,
-                  :browser,
-                  :app_is_loaded_flag
+                  :browser
                   
       #
       # Creates an Application instance that will allow you to interact with a
@@ -67,15 +240,7 @@ module Lebowski
       #     :app_name => "HelloWorldApp"
       #
       def initialize(params)
-        super()
-        
-        if params.nil?
-          raise ArgumentError.new "must supply parameters to create application instance"
-        end
-        
-        if not params.kind_of?(Hash)
-          raise ArgumentError.new "must supply a hash containing parameters"
-        end
+        super(params)
         
         @host = get_selenium_server_host(params)
         @port = get_selenium_server_port(params)
@@ -88,7 +253,6 @@ module Lebowski
         raise ArgumentError.new "Application name is required - :app_name" if @app_name.nil?
         
         @rel_path = @app_name
-        @app_is_loaded_flag = get_app_is_loaded_flag(params)
         @timeout_in_seconds = get_timeout_in_second(params)
         @base_url = get_application_base_url(params)
         @session_id = get_session_id(params)
@@ -101,6 +265,9 @@ module Lebowski
           :timeout_in_second => @timeout_in_seconds
           
         @started = false 
+        
+        @app_context_manager = Support::ApplicationContextManager.new self
+        @parent_app = nil
       end
     
       #
@@ -150,9 +317,6 @@ module Lebowski
             raise TimeoutError.new err_message
           end
         end
-        
-        @current_application_context = ApplicationContext.new self, self, @app_name
-      	
       end
       
       def end()
@@ -166,86 +330,23 @@ module Lebowski
           err_message << "Confirm that selenium server is running on #{@selenium_server_host}:#{@selenium_server_port}"
           raise Runtime::SeleniumServerError.new err_message
         end
-        
-        @current_application_context = nil
       end
       
       def started?()
         return @started
       end
       
-      def window()
-        @window = Window.new(@driver) if @window.nil?
-        return @window
-      end
-      
-      def abs_path()
-        return nil
-      end
-      
-      def root_object(name, expected_type=nil)
-        return self['$' + name, expected_type]
-      end
-      
-      alias_method :framework, :root_object
-      
-      def main_pane(expected_type=nil)
-        return self['$SC.RootResponder.responder.mainPane', expected_type]
-      end
-      
-      def key_pane(expected_type=nil)
-        return self['$SC.RootResponder.responder.keyPane', expected_type]
-      end
-      
-      def responding_panes()
-        if @responding_panes.nil?
-          @responding_panes = ObjectArray.new self, '$SC.RootResponder.responder.panes'
-        end
-        return @responding_panes
-      end
-      
-      def define_root_object(key, name, expected_type=nil)
-        return define(key, '$' + name, expected_type)
-      end
-      
-      alias_method :define_framework, :define_root_object
-      
-      def switch_application_context_to(context, app_name=nil)  
-        
-        if not context.class.ancestors.member? ApplicationContextSupport
-          raise ArgumentInvalidTypeError.new "context", context, ApplicationContextSupport
-        end     
-        
-        context.sc_guid
-        
-        case context.application_context_type
-        when :frame
-          @driver.select_frame(context.application_context_locator)
-        when :window
-          @driver.select_window(context.application_context_locator)
-        else
-          raise StandardError.new "context type is invalid: #{context.application_context_type}"
-        end
-        
-        @driver.update_sc_application_context(app_name)
-        @current_application_context = ApplicationContext.new self, context, app_name
-      end
-      
       def reset_application_context()
-        return if (current_application_context.nil? or self.__eql?(current_application_context))
-        
-        @driver.select_window ""
-        
-        @driver.update_sc_application_context(@app_name)
-        @current_application_context = ApplicationContext.new self, self, @app_name
+        acquire_application_context app_name
       end
       
-      def current_application_context()
-        return @current_application_context
+      def opened_windows()
+        @opened_windows = Support::OpenedWindows.new(self) if @opened_windows.nil?
+        return @opened_windows
       end
       
-      def application_context_locator()
-        return ""
+      def do_acquire_application_context()
+        @driver.sc_select_main_window
       end
       
     private
@@ -315,73 +416,106 @@ module Lebowski
         return params[:app_name]
       end
       
-      def get_app_is_loaded_flag(params)
-        return params[:app_is_loaded_flag] 
-      end
-      
       def get_timeout_in_second(params)
         return DEFAULT_TIMEOUT_IN_SECONDS if params[:timeout_in_seconds].nil?
         return params[:timeout_in_seconds].to_i
       end
-      
-      def complete_application_context_switch(app_name, context)
-        @driver.update_sc_application_context(app_name)
-        @current_application_context = context
-      end
     
     end
     
-    #
-    # Represents the browser window the application has been loaded into
-    #
-    class Window
+    module Support
       
-      def initialize(driver)
-        @driver = driver
+      class ApplicationContextManager
+        include Lebowski::Foundation
+
+        def initialize(main_app)
+          @main_app = main_app
+          @driver = main_app.driver
+          @current_application_context = { :app => main_app, :app_name => main_app.app_name }
+        end
+
+        def switch_application_context_to(app, app_name=nil)  
+          if not app.kind_of? Application
+            raise ArgumentInvalidTypeError.new "app", app, "class < Application"
+          end
+          
+          app.do_acquire_application_context
+
+          @driver.update_sc_application_context(app_name) if not app_name.nil?
+          @current_application_context = { :app => app, :app_name => app_name }
+        end 
+
+        def has_current_application_context?(app)
+          return app.__eql?(@current_application_context[:app])
+        end
+
+        def exec_in_context(app, app_name=nil, &block)
+          previous_app_context = @current_application_context.clone
+          switch_application_context_to app, app_name
+          yield app
+          switch_application_context_to previous_app_context[:app], previous_app_context[:app_name]
+        end
+
+        def exec_driver_in_context(app, &block)
+          previous_app_context = nil
+          if not has_current_application_context?(app)
+            previous_app_context = @current_application_context.clone
+            switch_application_context_to app
+          end
+
+          yield @driver
+
+          if not previous_app_context.nil?
+            switch_application_context_to previous_app_context[:app], previous_app_context[:app_name]
+          end
+        end
+
       end
-      
-      #
-      # Moves the browser window
-      #
-      def move_to(x, y)
-        @driver.sc_window_move_to(x,y)
-      end
-      
-      #      
-      # Resizes the browser window
-      #
-      def resize_to(width, height)
-        @driver.sc_window_resize_to(width, height)
-      end
-      
-      #
-      # Maximizes the browser window
-      #
-      def maximize() 
-        @driver.sc_window_maximize
-      end
-      
-    end
-    
-    class ApplicationContext
-      include Mixins::ApplicationContextSupport
-      
-      def initialize(application, context, app_name)
-        @application = application
-        @context = context
-        @app_name = app_name
-      end
-      
-      def acquire_application_context(app_name=nil)
-        @application.switch_application_context_to(@context, @app_name)
-      end
-      
-      def application_context_type()
-        return @context.application_context_type
-      end
-      
-      def application_context_locator()
-        return @context.application_context_locator
+
+      class OpenedWindows
+
+        def initialize(parent_app)
+          @parent_app = parent_app
+          @driver = parent_app.driver
+        end
+
+        def window_with_location?(value)
+          return @driver.is_sc_opened_window?(:location, value)
+        end
+
+        def window_with_name?(value)
+          return @driver.is_sc_opened_window?(:name, value)
+        end
+
+        def window_with_title?(value)
+          return @driver.is_sc_opened_window?(:title, value)
+        end
+
+        def find_by_location(value)
+          return find_opened_window(:location, value)
+        end
+
+        def find_by_name(value)
+          return find_opened_window(:name, value)
+        end
+
+        def find_by_title(value)
+          return find_opened_window(:title, value)
+        end
+
+      private
+
+        def find_opened_window(locator_type, locator_value)
+          if @driver.is_sc_opened_window?(locator_type, locator_value)
+            return OpenedWindowApplication.new({
+              :locator_type => locator_type, 
+              :locator_value => locator_value, 
+              :parent_app => @parent_app
+            }) 
+          end
+          return nil
+        end
+
       end
       
     end

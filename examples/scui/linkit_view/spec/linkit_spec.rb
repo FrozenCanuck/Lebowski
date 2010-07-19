@@ -16,7 +16,7 @@ include LinkItDemo::Views
 ProxyFactory.proxy HumanView
 ProxyFactory.proxy PetView
 
-App = Application.new :app_root_path => "/family_tree", :app_name => "LinkItDemo", :browser => :firefox
+App = MainApplication.new :app_root_path => "/family_tree", :app_name => "LinkItDemo", :browser => :firefox
 
 App.start
 App.define 'canvas', 'mainPage.mainPane.canvas', CanvasView

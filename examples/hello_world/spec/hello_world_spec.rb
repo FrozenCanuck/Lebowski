@@ -41,7 +41,7 @@
 # For this hello world application, you can find the application root
 # object in the core.js file under the app/apps/hello_world folder. 
 #
-App = Application.new \
+App = MainApplication.new \
         :app_root_path => "/hello_world", 
         :app_name => "HelloWorldApp",
         :browser => :firefox # optional parameter. Firefox is the default browser
@@ -102,8 +102,8 @@ end
 # If you do not wish to move or resize the browser window then the browser
 # will be positioned and sized to defaults determined by the Selenium framework.
 #
-App.window.move_to 1, 1 # Have a slight offset for Firefox so that the window will actually be moved
-App.window.resize_to 1024, 768 
+App.move_to 1, 1 # Have a slight offset for Firefox so that the window will actually be moved
+App.resize_to 1024, 768 
 
 #
 # Because SproutCore property paths can be long when trying to access

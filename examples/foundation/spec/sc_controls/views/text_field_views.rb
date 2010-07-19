@@ -91,11 +91,11 @@ shared_examples_for "text field views" do
         #
         # Temporary check. The key up and key down events do not respond properly
         # within Firefox. This is do to the application window unable to obtain
-        # focus. If you click on the application window when it first appears then
-        # the key up and key down events work as expected. Unfortunately, calling
+        # proper focus. If you click on the application window when it first appears then
+        # the key up and key down events work as expected. Unfortunately, simply calling
         # window.focus() does not fix the problem.
         #
-        if App.browser != Application::FIREFOX
+        if App.browser != MainApplication::FIREFOX
           @custom_text_field.key_down 'a'
           @key_event_label.should have_value 'key down = a'
 
@@ -110,7 +110,7 @@ shared_examples_for "text field views" do
         #
         # Temporary check
         #
-        if App.browser != Application::FIREFOX
+        if App.browser != MainApplication::FIREFOX
           @custom_text_field.key_down :return
           @key_event_label.should have_value 'key down = return'
         
