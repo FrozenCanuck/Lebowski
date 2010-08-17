@@ -8,7 +8,7 @@
 # to create your own custom views in order to visualize data and interact
 # with the view in a way specific to your needs. To test your custom view 
 # within an application, you can create a proxy for it based on the view's
-# type. This file demonstrates how to create a proxy for a custom view.
+# type. This file demonstrates how to create a type proxy for a custom view.
 #
 
 module TestApp
@@ -23,10 +23,10 @@ module TestApp
     # representing. This is important so that the Lebowski framework 
     # can automtically detect the remote view's type and create the
     # right type of proxy instance for that view using the framework's 
-    # proxy factory. Indicate what type the proxy is representing is
+    # proxy factory. To indicate what type the proxy is representing is
     # done with the representing_sc_class built in method.
     #
-    # If you custom view inherits from something more specific then
+    # If your custom view inherits from something more specific then
     # the SC.View, then it is recommended that your proxy also try
     # reflect that same inheritence heirarchy. As an example, Let's
     # say you create a custom view that inherits from SC.ButtonView.
@@ -34,9 +34,10 @@ module TestApp
     # should instead make your proxy inherit from the ButtonView
     # proxy.
     #
-    # When creating a view proxy, it is ideal that your proxy consist
-    # of an a programming interface that makes it easy for people
-    # to perform specific user operations and access information. 
+    # When creating a type proxy for a view, it is ideal that your 
+    # proxy consist of an a programming interface that makes it easy 
+    # for people to perform specific user operations and access 
+    # information. 
     #
     class CustomRenderedView < Lebowski::Foundation::Views::View
       

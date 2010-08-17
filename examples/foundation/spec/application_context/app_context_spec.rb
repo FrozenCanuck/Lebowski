@@ -1,7 +1,12 @@
-require '../../../../lib/lebowski/spec'
+# ==========================================================================
+# Project:   Lebowski Framework - The SproutCore Test Automation Framework
+# License:   Licensed under MIT license (see License.txt)
+# ==========================================================================
 
-include Lebowski::Foundation
-include Lebowski::Foundation::Views
+# require '../../../../lib/lebowski/spec'
+# 
+# include Lebowski::Foundation
+# include Lebowski::Foundation::Views
 
 App = MainApplication.new \
   :app_root_path => "/application_context", 

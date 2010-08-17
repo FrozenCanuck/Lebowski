@@ -17,7 +17,7 @@ require 'custom_view'
 include TestApp::Views
 
 #
-# In order for the Lebowski framework to know about your view proxy and use it, you
+# In order for the Lebowski framework to know about your type proxy and use it, you
 # must register the proxy with the framework's proxy factory. Once registered, the
 # framework will return an instance of your proxy every time you access a view
 # within the browser that is of a type the proxy is representing.
@@ -32,7 +32,8 @@ include TestApp::Views
 # then the proxy factory will return an instance of CustomRenderedView every time 
 # we access a view that is an instance of TestApp.CustomRenderedView. 
 #
-ProxyFactory.proxy CustomRenderedView
+
+ProxyFactory.proxy CustomRenderedView # First registering our proxy with the ProxyFactory
 
 App = MainApplication.new \
         :app_root_path => "/test_app", 
@@ -44,7 +45,7 @@ App.move_to 1, 1
 App.resize_to 1024, 768
 
 #
-# Define a symbol path to the custom rendered view 
+# Define a symbolic path to the custom rendered view 
 #
 App.define 'custom_rendered_view', 'mainPage.mainPane.customRenderedView', CustomRenderedView
 

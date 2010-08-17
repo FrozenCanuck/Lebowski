@@ -12,8 +12,8 @@ module HelloWorldApp
   module Views
     
     #
-    # To make a path proxy for a view, the proxy needs to inherit the
-    # Lebowski framework's View proxy. 
+    # To make a path proxy for a view, the proxy needs to, at minimum, inherit from 
+    # the Lebowski framework's View proxy. 
     #
     class GroupView < Lebowski::Foundation::Views::View
       

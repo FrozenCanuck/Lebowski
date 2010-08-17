@@ -47,7 +47,7 @@ App = MainApplication.new \
         :browser => :firefox # optional parameter. Firefox is the default browser
 
 #
-# Now that we have the application created we then have to start it by
+# Now that we have the application created, we then have to start it by
 # calling the application's start method. This will open up two browsers. 
 # One browser is the command console and the other browser is where the 
 # application is loaded into. 
@@ -60,7 +60,7 @@ App = MainApplication.new \
 #
 # At minimum, the framework will not continue until it can detect both
 # the SproutCore framework and the application's root object. However, 
-# for more complex applications, loading the applicaiton to a proper
+# for more complex applications, loading the application to a proper
 # start state might take some time. In such cases, we want to wait
 # until everything in the application is fully loaded and set up
 # correctly. We can perform such a waiting action by optionally supplying 
@@ -95,9 +95,9 @@ end
 # After starting the application, you can optionally move and resize the
 # browser window that your SproutCore application has been loaded into. 
 # If you'd like to instead just maximize the the browser to take up the
-# entire screen you can call window object's maximize method, like so:
+# entire screen you can call application object's maximize method, like so:
 #
-#   App.window.maximize
+#   App.maximize
 #
 # If you do not wish to move or resize the browser window then the browser
 # will be positioned and sized to defaults determined by the Selenium framework.
@@ -118,7 +118,7 @@ App.resize_to 1024, 768
 # Here we define 'group' as the symbolic path for the path
 # 'mainPage.mainPane.groupView'
 #
-# Optionally, you can provided the expected type for the given path.
+# Optionally, you can provide the expected type for the given path.
 # In this case we want to confirm that the path points to an object
 # that is of type SC.View represented by the Lebowski frameworks 
 # View proxy.
@@ -133,11 +133,11 @@ App.define 'group', 'mainPage.mainPane.groupView', View
 describe "Hello World Test" do
   
   #
-  # For each example in our test (represented by the use of "it") 
-  # we want to access the label and two button views. We can do
-  # this easily using our application object and the 'group' path
-  # we defined earlier in the script. The framework will automtically 
-  # unravel the path like so:
+  # For each example in our test (represented by the use of "it", where 
+  # "it" is the thing that has been described) we want to access the label 
+  # and two button views. We can do this easily using our application object 
+  # and the 'group' path we defined earlier in the script. The framework will 
+  # automtically unravel the path like so:
   # 
   #   group.label ==> mainPage.mainPane.groupView.label
   #
@@ -174,8 +174,8 @@ describe "Hello World Test" do
   #
   #   @label.value.should eql 'click a button'
   #
-  # Thanks alright, but we can make it more readable using the RSpec extensions
-  # in order to do the following:
+  # Thanks alright, but we can make it more readable using the Lebowski
+  # RSpec extensions in order to have the following:
   #
   #   @label.should have_value 'click a button'
   #
@@ -191,7 +191,7 @@ describe "Hello World Test" do
   # whatever Ruby testing framework you like.
   #
   it "will check that label has an initial value 'click a button'" do
-    @label.should have_value /click a button/i
+    @label.should have_value /click a button/i # Using the Lebowski RSpec extensions
   end
   
   #
