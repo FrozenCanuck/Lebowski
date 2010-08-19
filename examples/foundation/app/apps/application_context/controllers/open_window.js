@@ -14,10 +14,18 @@ TestApp.openWindowController = SC.Object.create({
   
   openingWindow: NO,
   
-  openWindow: function() {
+  openBasicAppWindow: function() {
+    this._openAppInWindow('basic', 'width=400,height=300,status=no');
+  },
+  
+  openFramedAppWindow: function() {
+    this._openAppInWindow('frames', 'width=450,height=300,status=no');
+  },
+  
+  _openAppInWindow: function(app, settings) {
     var that = this;
-    var url = "http://localhost:4020/basic#%@".fmt(this.get('windowLocationAnchorValue'));
-    var win = window.open(url, this.get('windowNameValue'), 'width=400,height=300,status=no');
+    var url = "http://localhost:4020/%@#%@".fmt(app, this.get('windowLocationAnchorValue'));
+    var win = window.open(url, this.get('windowNameValue'), settings);
     window.currentWindow = win;
     var title = this.get('windowTitleValue');
     win.onload = function() {

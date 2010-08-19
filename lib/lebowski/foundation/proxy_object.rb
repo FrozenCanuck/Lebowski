@@ -18,6 +18,7 @@ module Lebowski
       
       include Lebowski::Foundation
       include Lebowski::Foundation::Mixins::WaitActions
+      include Lebowski::Foundation::Mixins::DefinePathsSupport
       
       attr_reader :parent,   # The parent object of this object. Must derive from Lebowski::Foundation::ProxyObject
                   :rel_path, # The relative path to the remote object using SC property path notation
@@ -49,7 +50,7 @@ module Lebowski
         @rel_path = rel_path
         @driver = driver
         @guid = nil
-        @defined_paths = {}
+        @cached_proxy_objects = {}
         @defined_proxies = {}
         @name = ""
         
@@ -166,81 +167,6 @@ module Lebowski
       end
       
       #
-      # Defines a symbolic path for a given relative path. 
-      #
-      def define(key, rel_path, expected_type=nil)
-        if (not key.kind_of?(String)) or key.empty? or (not key.match(/[\. ]/).nil?)
-          raise ArgumentError.new "key must be a valid string"
-        end
-        
-        if (not rel_path.kind_of?(String)) or rel_path.empty?
-          raise ArgumentError.new "rel_path must be a valid string"
-        end 
-        
-        if @defined_paths.has_key? key
-          raise ArgumentError.new "key '#{key}' already defined as path '#{@defined_paths[key]}'"
-        end
-        
-        # Defer loading path until it is actually used
-        @defined_paths[key] = { :rel_path => rel_path, :expected_type => expected_type }
-      end
-      
-      #
-      # Returns a hash of all the defined symbolic paths
-      #
-      def defined()
-        return @defined_paths.clone if (not @defined_paths.nil?)
-        return {}
-      end
-      
-      #
-      # Defines a path proxy for a relative path on this proxy object. The path proxy
-      # will be loaded only when actually requested for use.
-      #
-      # @param klass The klass to use as the path proxy
-      # @param rel_path The relative path agaist this proxy object 
-      #
-      def proxy(klass, rel_path)
-        if (not rel_path.kind_of?(String)) or rel_path.empty?
-          raise ArgumentError.new "rel_path must be a valid string"
-        end
-        
-        if not (klass.kind_of?(Class) and klass.ancestors.member?(ProxyObject))
-          raise ArgumentInvalidTypeError.new "klass", klass, 'class < ProxyObject'
-        end
-
-        # Defer loading path proxy until it is actually requested
-        @defined_proxies[rel_path] = { :klass => klass }
-      end
-      
-      #
-      # Given a relative path, unravel it to access an object. Unraveling means to take
-      # any defined paths in the given relative path and convert the entire path back
-      # into a full relative path without definitions.
-      #
-      def unravel_relative_path(rel_path)
-        if not @defined_proxies[rel_path].nil?
-          return load_defined_proxy(rel_path)
-        end
-        
-        first_path_part = rel_path_first_part(rel_path)
-        sub_path = rel_path_sub_path(rel_path, first_path_part)
-        
-        return rel_path if (not @defined_paths.has_key?(first_path_part))
-        
-        obj = load_defined_path(first_path_part)
-        
-        return obj if sub_path.empty?
-        
-        result = obj.unravel_relative_path(sub_path)
-        
-        return "#{obj.rel_path}.#{result}" if result.kind_of?(String)
-        return result if result.kind_of?(Lebowski::Foundation::SCObject)
-        
-        raise StandardError.new "Unexpected result unreeling rel path: #{result}"
-      end
-      
-      #
       # Gets the remote SproutCore GUID for this object
       #
       def sc_guid()
@@ -309,6 +235,68 @@ module Lebowski
       def object?(rel_path)
         type = sc_type_of(rel_path)
         return (type == SC_T_OBJECT or type == SC_T_HASH)
+      end
+      
+      # DEPRECATED
+      def proxy(klass, rel_path)
+        puts "DEPRECATED: proxy is deprecated. use define_proxy instead"
+        define_proxy(klass, rel_path)
+      end
+      
+      # DEPRECATED
+      def define(path, rel_path=nil, expected_type=nil)
+        puts "DEPRECATED: define is deprecated. use define_path instead"
+        define_path(path, rel_path, expected_type)
+      end
+      
+      #
+      # Defines a path proxy for a relative path on this proxy object. The path proxy
+      # will be loaded only when actually requested for use.
+      #
+      # @param klass The klass to use as the path proxy
+      # @param rel_path The relative path agaist this proxy object 
+      #
+      def define_proxy(klass, rel_path)
+        if (not rel_path.kind_of?(String)) or rel_path.empty?
+          raise ArgumentError.new "rel_path must be a valid string"
+        end
+        
+        if not (klass.kind_of?(Class) and klass.ancestors.member?(ProxyObject))
+          raise ArgumentInvalidTypeError.new "klass", klass, 'class < ProxyObject'
+        end
+
+        @defined_proxies[rel_path] = klass
+      end
+      
+      #
+      # Given a relative path, unravel it to access an object. Unraveling means to take
+      # any defined path in the given relative path and convert the entire path back
+      # into a full relative path without definitions.
+      #
+      def unravel_relative_path(rel_path)
+        path_parts = rel_path.split '.'
+        
+        full_rel_path = ""
+        defined_path = nil
+        counter = path_parts.length
+        
+        for path_part in path_parts do
+          path = defined_path.nil? ? path_part : "#{defined_path}.#{path_part}"
+          if path_defined? path
+            defined_path = path
+          else
+            break
+          end
+          counter = counter - 1
+        end
+        
+        full_rel_path << self.defined_path(defined_path).full_rel_path if (not defined_path.nil?)
+        if (counter > 0)
+          full_rel_path << "." if (not defined_path.nil?)
+          full_rel_path << path_parts.last(counter).join('.')
+        end
+        
+        return full_rel_path
       end
       
       #
@@ -391,62 +379,37 @@ module Lebowski
       # will be returned. 
       #
       def [](rel_path, expected_type=nil)
-      
-        begin
-          result = unravel_relative_path(rel_path)
-        rescue Exception => ex
-          raise StandardError.new "Error trying to access #{rel_path}: #{ex.message}"
+        if (not rel_path.kind_of?(String)) or rel_path.empty?
+          raise ArgumentError.new "rel_path must be a valid string"
         end
         
-        if (not result.kind_of?(String))
-          if (not expected_type.nil?)
-            got_expected_type = (expected_type == :object or result.sc_kind_of?(expected_type)) 
-            if (not got_expected_type)
-              raise UnexpectedTypeError.new(abs_path_with(rel_path), expected_type, "object", result)
-            end
-          end
-          return result 
+        if @cached_proxy_objects.has_key? rel_path
+          return @cached_proxy_objects[rel_path]
         end
         
-        rel_path = result
-        type = sc_type_of(rel_path)
-        
-        case type
-        when SC_T_NULL
-          return handle_type_null(rel_path, expected_type)
-        
-        when SC_T_UNDEFINED
-          return handle_type_undefined(rel_path, expected_type)
-        
-        when SC_T_ERROR
-          return handle_type_error(rel_path, expected_type)
-
-        when SC_T_STRING
-          return handle_type_string(rel_path, expected_type)
-        
-        when SC_T_NUMBER
-          return handle_type_number(rel_path, expected_type)
-        
-        when SC_T_BOOL
-          return handle_type_bool(rel_path, expected_type)
-        
-        when SC_T_ARRAY
-          return handle_type_array(rel_path, expected_type)
-        
-        when SC_T_HASH
-          return handle_type_hash(rel_path, expected_type)
-        
-        when SC_T_OBJECT
-          return handle_type_object(rel_path, expected_type)
+        defined_proxy = @defined_proxies.has_key?(rel_path) ? @defined_proxies[rel_path] : nil
           
-        when SC_T_CLASS
-          return handle_type_class(rel_path, expected_type)
+        path_defined = path_defined? rel_path
         
-        else
-          raise StandardError.new "Unrecognized returned type '#{type}' for path #{abs_path_with(rel_path)}"
+        if path_defined
+          path = defined_path rel_path
+          expected_type = path.expected_type if (path.has_expected_type? and expected_type.nil?)
         end
+      
+        unraveled_rel_path = unravel_relative_path rel_path
+        value = fetch_rel_path_value unraveled_rel_path, expected_type
+        
+        if value.kind_of? ProxyObject
+          value = value.represent_as(defined_proxy) if (not defined_proxy.nil?)
+          @cached_proxy_objects[rel_path] = value if (path_defined or not defined_proxy.nil?) 
+        end
+        
+        return value
       end
       
+      #
+      # Retain a reference to the original eql? method so we can still use it
+      #
       alias_method :__eql?, :eql?
       
       #
@@ -503,6 +466,45 @@ module Lebowski
       def rel_path_sub_path(rel_path, first_path_part)
         sub_path = (first_path_part != rel_path) ? rel_path.sub(/^(\w|-)*\./, "") : ""
         return sub_path
+      end
+      
+      def fetch_rel_path_value(rel_path, expected_type)
+        type = sc_type_of(rel_path)
+        
+        case type
+        when SC_T_NULL
+          return handle_type_null(rel_path, expected_type)
+        
+        when SC_T_UNDEFINED
+          return handle_type_undefined(rel_path, expected_type)
+        
+        when SC_T_ERROR
+          return handle_type_error(rel_path, expected_type)
+
+        when SC_T_STRING
+          return handle_type_string(rel_path, expected_type)
+        
+        when SC_T_NUMBER
+          return handle_type_number(rel_path, expected_type)
+        
+        when SC_T_BOOL
+          return handle_type_bool(rel_path, expected_type)
+        
+        when SC_T_ARRAY
+          return handle_type_array(rel_path, expected_type)
+        
+        when SC_T_HASH
+          return handle_type_hash(rel_path, expected_type)
+        
+        when SC_T_OBJECT
+          return handle_type_object(rel_path, expected_type)
+          
+        when SC_T_CLASS
+          return handle_type_class(rel_path, expected_type)
+        
+        else
+          raise StandardError.new "Unrecognized returned type '#{type}' for path #{abs_path_with(rel_path)}"
+        end
       end
       
       def handle_type_null(rel_path, expected_type)
@@ -658,75 +660,6 @@ module Lebowski
           word_counter = word_counter.next
         end
         return camel_case_str
-      end
-      
-      #
-      # Used to perform lazy loading of a defined symbolic path on this proxy object
-      #
-      def load_defined_path(key)
-        val = @defined_paths[key]
-        
-        return val if val.kind_of?(ProxyObject)
-        
-        if not val.kind_of?(Hash)
-          raise StandardError.new "Unable to load defined path for #{key}. Unexpected type: #{val}"
-        end
-        
-        rel_path = val[:rel_path]
-        expected_type = val[:expected_type]
-        
-        first_path_part = rel_path_first_part(rel_path)
-        sub_path = rel_path_sub_path(rel_path, first_path_part)
-        
-        type = ""
-        err_abs_path = abs_path_with(rel_path)
-        
-        if @defined_paths.has_key? first_path_part
-          obj = load_defined_path(first_path_part)
-          type = obj.sc_type_of(sub_path)
-          err_abs_path = obj.abs_path_with(sub_path)
-        else
-          type = sc_type_of(rel_path)   
-        end
-        
-        if not (type == SC_T_OBJECT or type == SC_T_HASH)
-          err_msg = "Unable to define '#{key}'. "
-          err_msg << "Relative path '#{rel_path}' does not reference an object. "
-          err_msg << "Path is referencing: #{type}. Absolute path = #{err_abs_path}"
-          raise ArgumentError.new err_msg
-        end
-        
-        obj = self[rel_path, expected_type]
-        
-        @defined_paths[key] = obj
-        
-        return obj
-      end
-      
-      #
-      # Used to perform lazy loading of a defined path proxy on this proxy object
-      #
-      def load_defined_proxy(rel_path)
-        val = @defined_proxies[rel_path]
-        
-        return val if val.kind_of?(ProxyObject)
-        
-        if not val.kind_of?(Hash)
-          raise StandardError.new "Unable to load defined path proxy for #{rel_path}. Unexpected type: #{val}"
-        end
-        
-        klass = val[:klass]
-        
-        @defined_proxies[rel_path] = nil
-        
-        obj = self[rel_path]
-        if not obj.kind_of?(ProxyObject)
-          raise ArgumentError.new "rel_path #{rel_path} does not point to an object that can be proxied: #{obj} (#{obj.class})"
-        end
-        
-        @defined_proxies[rel_path] = obj.represent_as(klass)
-        
-        return  @defined_proxies[rel_path]
       end
       
     end

@@ -14,6 +14,7 @@ require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/delegate_s
 require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/collection_item_view_support')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/list_item_view_support')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/frame_application_context_support')
+require File.expand_path(File.dirname(__FILE__) + '/foundation/mixins/define_paths_support')
 
 require File.expand_path(File.dirname(__FILE__) + '/foundation/proxy_object')
 require File.expand_path(File.dirname(__FILE__) + '/foundation/sc_object')

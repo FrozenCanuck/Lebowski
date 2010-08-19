@@ -47,7 +47,7 @@ App.resize_to 1024, 768
 #
 # Define a symbolic path to the custom rendered view 
 #
-App.define 'custom_rendered_view', 'mainPage.mainPane.customRenderedView', CustomRenderedView
+App.define_path 'custom_rendered_view', 'mainPage.mainPane.customRenderedView', CustomRenderedView
 
 describe "Custom Rendered View Test" do
   

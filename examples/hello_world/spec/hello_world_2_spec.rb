@@ -2,7 +2,7 @@
 # Project:   Lebowski Framework - The SproutCore Test Automation Framework
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
-# 
+
 # require '../../../lib/lebowski/spec'
 # 
 # include Lebowski::Foundation
@@ -58,14 +58,14 @@ App.resize_to 1024, 768
 #
 # Let's set up our symbolic path to the group view in our SproutCore application
 #
-App.define 'group', 'mainPage.mainPane.groupView', View
+App.define_path 'group', 'mainPage.mainPane.groupView', View
 
 #
 # Now we can go ahead and add our path proxy to our application. Notice that you have
 # to also supply the path the path proxy will be linked to. Anytime you now access
 # 'group', you will always get back an instance of the GroupView proxy. Not much to it.
 #
-App.proxy GroupView, 'group'
+App.define_proxy GroupView, 'group'
 
 describe "Hello World Test" do
 

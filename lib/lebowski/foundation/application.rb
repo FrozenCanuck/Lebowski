@@ -6,6 +6,11 @@
 module Lebowski
   module Foundation
     
+    #
+    # Represents a SproutCore Application. This is a base class that is derived
+    # by other classes. The class provides the common data and behavior that
+    # all other classes representing an application must have.
+    #
     class Application < Lebowski::Foundation::ProxyObject
       include Lebowski
       include Lebowski::Foundation
@@ -93,6 +98,10 @@ module Lebowski
     
     end
 
+    #
+    # Used to represent a SproutCore application that is contained within
+    # a web brower window
+    #
     class WindowApplication < Application
       
       def initialize(params)
@@ -128,6 +137,10 @@ module Lebowski
       
     end
     
+    #
+    # Used to represent a SproutCore application that is contained within
+    # a web browser window that was opened by another window
+    #
     class OpenedWindowApplication < WindowApplication
       
       attr_reader :locator_type, :locator_value
@@ -167,6 +180,10 @@ module Lebowski
       
     end
     
+    #
+    # Used to represent a SproutCore application that is contained within
+    # an IFrame.
+    #
     class FrameApplication < Application
       
       attr_reader :locator
@@ -182,6 +199,23 @@ module Lebowski
       end
       
       def do_acquire_application_context()
+        parents = []
+        current_parent = self.parent_app
+        while not current_parent.nil? do
+          parents << current_parent
+          current_parent = current_parent.parent_app
+        end
+        
+        parents = parents.reverse
+        
+        parents.each do |parent|
+          if parent.kind_of? FrameApplication
+            @driver.select_frame parent.locator
+          else
+            parent.do_acquire_application_context
+          end
+        end
+        
         @driver.select_frame(locator)
       end
       
@@ -340,6 +374,10 @@ module Lebowski
         acquire_application_context app_name
       end
       
+      def define_app_name(name)
+        define_path name
+      end
+      
       def opened_windows()
         @opened_windows = Support::OpenedWindows.new(self) if @opened_windows.nil?
         return @opened_windows
@@ -396,6 +434,9 @@ module Lebowski
         return client.browser_string if (not client.nil?)
         
         browser = params[:browser]
+        
+        return browser if browser.kind_of?(String)
+        
         case (browser)
         when :firefox
           return FIREFOX
@@ -425,8 +466,15 @@ module Lebowski
     
     module Support
       
+      #
+      # Application context manager is used to handle the switching between SproutCore
+      # applications and keeping track of what application currently posses the current
+      # context that all operations act upon
+      #
       class ApplicationContextManager
         include Lebowski::Foundation
+        
+        attr_reader :main_app
 
         def initialize(main_app)
           @main_app = main_app
@@ -437,6 +485,15 @@ module Lebowski
         def switch_application_context_to(app, app_name=nil)  
           if not app.kind_of? Application
             raise ArgumentInvalidTypeError.new "app", app, "class < Application"
+          end
+          
+          if not app.__eql? main_app 
+            if main_app.path_defined? app_name
+              root = main_app.defined_path app_name
+              app.root_defined_path_part = root
+            else
+              app.root_defined_path_part = main_app.root_defined_path_part
+            end
           end
           
           app.do_acquire_application_context

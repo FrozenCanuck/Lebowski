@@ -38,8 +38,8 @@ end
 App.move_to 1, 1
 App.resize_to 1024, 768
 
-App.define 'controlsList', '#controls-list', ListView
-App.define 'controlContainer', '#control-container', View
+App.define_path 'controlsList', '#controls-list', ListView
+App.define_path 'controlContainer', '#control-container', View
 
 describe "SproutCore Controls Test" do
   

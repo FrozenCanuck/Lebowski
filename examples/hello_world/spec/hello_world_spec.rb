@@ -107,13 +107,10 @@ App.resize_to 1024, 768
 
 #
 # Because SproutCore property paths can be long when trying to access
-# specific views, we make a short-cut by defining a symbolic path for a 
+# specific views, we make a short-cut by defining symbolic paths for a 
 # specific path on the application object. Note that a path must point to 
 # either a SprouCore object or a plain-old JavaScript hash object. You
 # will get an exception if the path does not point to either one. 
-#
-# Note: Defining symbolic paths must be done only after the application 
-# has been successfully started. 
 #
 # Here we define 'group' as the symbolic path for the path
 # 'mainPage.mainPane.groupView'
@@ -123,7 +120,7 @@ App.resize_to 1024, 768
 # that is of type SC.View represented by the Lebowski frameworks 
 # View proxy.
 #
-App.define 'group', 'mainPage.mainPane.groupView', View
+App.define_path 'group', 'mainPage.mainPane.groupView', View
 
 #
 # For this particular test script we are making use of the RSpec framework, 

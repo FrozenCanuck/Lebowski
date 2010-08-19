@@ -11,7 +11,7 @@
 App = MainApplication.new \
         :app_root_path => "/hello_world", 
         :app_name => "HelloWorldApp",
-        :browser => :firefox 
+        :browser => :firefox
 
 App.start do |app|
   app['isLoaded'] == true
@@ -20,7 +20,7 @@ end
 App.move_to 1, 1 
 App.resize_to 1024, 768 
 
-App.define 'group', 'mainPage.mainPane.groupView', View
+App.define_path 'group', 'mainPage.mainPane.groupView'
 
 describe "Hello World Test" do
   
