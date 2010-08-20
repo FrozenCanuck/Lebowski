@@ -1,3 +1,8 @@
+# ==========================================================================
+# Project:   Lebowski Framework - The SproutCore Test Automation Framework
+# License:   Licensed under MIT license (see License.txt)
+# ==========================================================================
+
 require File.expand_path(File.dirname(__FILE__) + '/foundation/core')
 
 require File.expand_path(File.dirname(__FILE__) + '/foundation/errors/unexpected_type')
