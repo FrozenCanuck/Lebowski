@@ -65,7 +65,7 @@ module Lebowski
       end
       
       def define_root_object(key, name, expected_type=nil)
-        return define(key, '$' + name, expected_type)
+        return define_path(key, '$' + name, expected_type)
       end
       
       alias_method :define_framework, :define_root_object
