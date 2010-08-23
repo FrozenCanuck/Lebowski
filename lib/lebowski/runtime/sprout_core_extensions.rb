@@ -365,6 +365,10 @@ module Lebowski
       
       # Selenium User Extension Utility Function Selenium Calls
       
+      def is_sc_bundle_loaded(bundle) 
+        return __boolean_command("isScBundleLoaded", [bundle])
+      end
+      
       def get_sc_object_array_index_lookup(scpath, lookup_params)
         encoded_params = ObjectEncoder.encode_hash(lookup_params)
         return __number_array_command("getScObjectArrayIndexLookup", [scpath, encoded_params])

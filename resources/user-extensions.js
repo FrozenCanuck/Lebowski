@@ -1403,6 +1403,10 @@ Selenium.prototype.getCssSelectorCount = function(selector) {
   return result;
 };
 
+Selenium.prototype.isScBundleLoaded = function(bundle) {
+  return SC.bundleIsLoaded(bundle);
+};
+
 /////// SC Core Query Specific Selenium Calls /////////////////
 
 /**

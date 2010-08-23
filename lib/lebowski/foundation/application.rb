@@ -64,6 +64,10 @@ module Lebowski
         return @responding_panes
       end
       
+      def bundle_loaded?(bundle) 
+        return @driver.is_sc_bundle_loaded(bundle)
+      end
+      
       def define_root_object(key, name, expected_type=nil)
         return define_path(key, '$' + name, expected_type)
       end
