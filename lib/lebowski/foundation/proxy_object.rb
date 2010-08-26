@@ -240,12 +240,17 @@ module Lebowski
       # DEPRECATED
       def proxy(klass, rel_path)
         puts "DEPRECATED: proxy is deprecated. use define_proxy instead"
+        puts "... klass = #{klass}"
+        puts "... rel_path = #{rel_path}"
         define_proxy(klass, rel_path)
       end
       
       # DEPRECATED
       def define(path, rel_path=nil, expected_type=nil)
         puts "DEPRECATED: define is deprecated. use define_path instead"
+        puts "... path = #{path}"
+        puts "... rel_path = #{rel_path}"
+        puts "... expected_type = #{expected_type}"
         define_path(path, rel_path, expected_type)
       end
       
