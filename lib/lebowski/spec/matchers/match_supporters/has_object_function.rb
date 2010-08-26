@@ -13,6 +13,12 @@ module Lebowski
           
           return false if @args.length == 0 
           
+          #
+          # Note: If the method name is "test" then trying to invoke
+          # a method with name "test" on the given object will always
+          # fail whenever __send__ is used. There appears to be an
+          # actual method called test that belongs to a Ruby object.
+          #
           method_name = obj_property(@expected)
           
           ret_val = nil

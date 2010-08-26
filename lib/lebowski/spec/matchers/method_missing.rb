@@ -15,6 +15,11 @@ module Spec
     # try other default pattern matchers
     #
     def method_missing(sym, *args, &block)
+      #
+      # Note: Be sure that the symbol does not contain the word "test". test
+      # is a private method on Ruby objects and will cause the Be and Has
+      # matches to fail.
+      #
       return Lebowski::Spec::Matchers::Be.new(sym, *args) if sym.to_s =~ /^be_/
       return Lebowski::Spec::Matchers::Has.new(sym, *args) if sym.to_s =~ /^have_/
       return Lebowski::Spec::Operators::That.new(sym, *args) if sym.to_s =~ /^that_/      
