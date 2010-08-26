@@ -73,7 +73,16 @@ TestApp.mainPage = SC.Page.design({
     web1: SC.WebView.design({
       layerId: 'web-view1',
       layout: { left: 220, width: 200, height: 100, top: 40 },
-      value: '/basic'
+      value: '/basic',
+      
+      iframeDidLoad: function() {
+        var iframe = this.$('iframe')[0];
+        if (iframe && iframe.contentWindow) {
+          var contentWindow = iframe.contentWindow;
+          TestApp.webView1ContentWindow = contentWindow;
+          contentWindow.BasicApp.crossedAppContextBoundaryContent = SC.ButtonView.create({ value: 'test', foo: 'bar' });
+        }
+      }
     }),
     
     web2: SC.WebView.design({

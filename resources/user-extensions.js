@@ -42,7 +42,15 @@ var ScExt = {};
   Checks if the given value is indeed an SC.Object
 */
 ScExt.isScObject = function(obj) {
-  return (obj && typeof(obj) === "object" && obj.kindOf && obj.kindOf($SC.Object));
+  return $SC.typeOf(obj) === $SC.T_OBJECT;
+};
+
+/**
+  Checks if the given value is either an instance of SC.Object or a JS hash object
+*/
+ScExt.isObject = function(obj) {
+  var type = $SC.typeOf(obj);
+  return type === $SC.T_OBJECT || type === $SC.T_HASH;
 };
 
 /**
@@ -163,6 +171,27 @@ ScExt.typeOfArrayContent = function(array) {
 */
 ScExt.PathParser = {
   
+  /**
+    In order to identify an object of a specific type, we check properties on 
+    the object instead of using the standard SC.kindOf or obj.kindOf function. 
+    Why? Because there are potential cases where the object you are trying to 
+    identify the type of comes from a different application context instead of 
+    the current application context that $SC and $App currently refer to. For instance, 
+    the app context is refering to an SC app within an iframe but some objects
+    within that app context are actually coming from the parent window that the iframe
+    is contained within. This means an object is crossing an app context.
+    
+    Passing around different app contexts becomes tricky, especially for these
+    types of corner cases. Therefore it is just easier to check for specific
+    properties on an object to identify its type. We just have to make sure the
+    property to use is unique enough. 
+  */
+  _identifiers: {
+    'SC.Object': 'isObject',
+    'SC.View': 'isView',
+    'SC.CollectionView': 'itemViewForContentIndex'
+  },
+  
   _isArrayIndex: function (val) {
     return isNaN(parseInt(val, 0)) === false;
   },
@@ -265,6 +294,19 @@ ScExt.PathParser = {
     return objPathChain;
   },
   
+  /**
+    Will return the value associated with the given SC property path. If the 
+    path evaluates to nothing then null will be returned. Example:
+    
+      getPath('path.to.some.property')
+    
+    In cases where you want to confirm that the value returned is an object
+    of a specific type, you can pass in the type as a string, such as 'SC.Object'.
+    if the type is not matched then null is returned. Example:
+    
+      getPath('path.to.object', 'SC.Object')
+      
+  */
   getPath: function(path, scClass) {
     var chain = this.computeObjectChain(path);
     if (chain.length === 0 ) return null;
@@ -272,7 +314,8 @@ ScExt.PathParser = {
     
     if (!scClass) return pathValue;
     
-    if (ScExt.isScObject(pathValue) && pathValue.kindOf(scClass)) {
+    var identifier = this._identifiers[scClass];
+    if (ScExt.isObject(pathValue) && identifier && pathValue[identifier] !== undefined) {
       return pathValue;
     } else {
       return null;
@@ -1063,7 +1106,7 @@ Selenium.prototype._getScOpenedWindow = function(locatorType, locatorValue) {
   to an actual SC view object.
 */
 Selenium.prototype.doScViewScrollToVisible = function(path) {
-  var view = $ScPath.getPath(path, $SC.View);
+  var view = $ScPath.getPath(path, 'SC.View');
   if (!view) return;
   ScExt.viewScrollToVisible(view);
 };
@@ -1299,7 +1342,7 @@ Selenium.prototype.getScTypeOfArrayContent = function(path) {
   Returns a SproutCore object's GUID
 */
 Selenium.prototype.getScGuid = function(path) {
-  var value = $ScPath.getPath(path, $SC.Object);
+  var value = $ScPath.getPath(path, 'SC.Object');
   var guid = $SC.guidFor(value);
   return guid;
 };
@@ -1308,7 +1351,7 @@ Selenium.prototype.getScGuid = function(path) {
   Returns a SproutCore object's type
 */
 Selenium.prototype.getScObjectClassName = function(path) {
-  var obj = $ScPath.getPath(path, $SC.Object);
+  var obj = $ScPath.getPath(path, 'SC.Object');
   if (!obj) return "";
   var className = $SC._object_className(obj.constructor);
   return (className === 'Anonymous') ? "" : className;
@@ -1318,7 +1361,7 @@ Selenium.prototype.getScObjectClassName = function(path) {
   Checks if a SproutCore object is a kind of type
 */
 Selenium.prototype.isScObjectKindOfClass = function(path, className) {
-  var obj = $ScPath.getPath(path, $SC.Object);
+  var obj = $ScPath.getPath(path, 'SC.Object');
   if (!obj) return false;
   
   var klass = ScExt.string2ScClass(className);
@@ -1332,7 +1375,7 @@ Selenium.prototype.isScObjectKindOfClass = function(path, className) {
   object derives from. 
 */
 Selenium.prototype.getScObjectClassNames = function(path) {
-  var obj = $ScPath.getPath(path, $SC.Object);
+  var obj = $ScPath.getPath(path, 'SC.Object');
   var classNames = ScExt.getScObjectClassNames(obj);
   return classNames;
 };
@@ -1360,7 +1403,7 @@ Selenium.prototype.getScLocalizedString = function(str) {
   DOM elements into a string. 
 */
 Selenium.prototype.getScViewLayer = function(path) {
-  var view = $ScPath.getPath(path, $SC.View);
+  var view = $ScPath.getPath(path, 'SC.View');
   if (!view) return "";
   return view.get('layer').outerHTML;
 };
@@ -1369,7 +1412,7 @@ Selenium.prototype.getScViewLayer = function(path) {
   Gets a SproutCore view's frame
 */
 Selenium.prototype.getScViewFrame = function(path) {
-  var view = $ScPath.getPath(path, $SC.View);
+  var view = $ScPath.getPath(path, 'SC.View');
   if (!view) return "";
   var frame = view.get('frame');
   if (!frame) return null;
@@ -1424,7 +1467,7 @@ Selenium.prototype.isScBundleLoaded = function(bundle) {
           otherwise -1 is returned
 */
 Selenium.prototype.getScCoreQuery = function(path, selector) {   
-  var view = $ScPath.getPath(path, $SC.View);
+  var view = $ScPath.getPath(path, 'SC.View');
   if (!view) return -1;
   
   var cq = null;
@@ -1589,13 +1632,13 @@ Selenium.prototype.getElementChildNodesCount = function(selector, elemIndex) {
 /////// SC Collection View Specific Selenium Calls /////////////////
 
 Selenium.prototype.getScCollectionViewContentGroupIndexes = function(path) {
-  var collectionView = $ScPath.getPath(path, $SC.CollectionView);
+  var collectionView = $ScPath.getPath(path, 'SC.CollectionView');
   if (!collectionView) return [];
   return ScExt.CollectionView.getContentGroupIndexes(collectionView);
 };
 
 Selenium.prototype.getScCollectionViewContentSelectedIndexes = function(path) {
-  var collectionView = $ScPath.getPath(path, $SC.CollectionView);
+  var collectionView = $ScPath.getPath(path, 'SC.CollectionView');
   if (!collectionView) return [];
   var selectionSet = collectionView.get('selection');
   if (!selectionSet) return [];
@@ -1604,31 +1647,31 @@ Selenium.prototype.getScCollectionViewContentSelectedIndexes = function(path) {
 };
 
 Selenium.prototype.getScCollectionViewContentNowShowingIndexes = function(path) {
-  var collectionView = $ScPath.getPath(path, $SC.CollectionView);
+  var collectionView = $ScPath.getPath(path, 'SC.CollectionView');
   if (!collectionView) return [];
   return ScExt.indexSet2Array(collectionView.get('nowShowing'));
 };
 
 Selenium.prototype.getScCollectionViewContentIsGroup = function(path, index) {
-  var collectionView = $ScPath.getPath(path, $SC.CollectionView);
+  var collectionView = $ScPath.getPath(path, 'SC.CollectionView');
   if (!collectionView) -1;
   return ScExt.CollectionView.getContentIsGroup(collectionView, parseInt(index, 0));
 };
 
 Selenium.prototype.getScCollectionViewContentIsSelected = function(path, index) {
-  var collectionView = $ScPath.getPath(path, $SC.CollectionView);
+  var collectionView = $ScPath.getPath(path, 'SC.CollectionView');
   if (!collectionView) -1;
   return ScExt.CollectionView.getContentIsSelected(collectionView, parseInt(index, 0));
 };
 
 Selenium.prototype.getScCollectionViewContentDisclosureState = function(path, index) {
-  var collectionView = $ScPath.getPath(path, $SC.CollectionView);
+  var collectionView = $ScPath.getPath(path, 'SC.CollectionView');
   if (!collectionView) -1;
   return ScExt.CollectionView.getContentDisclosureState(collectionView, parseInt(index, 0));
 };
 
 Selenium.prototype.getScCollectionViewContentOutlineLevel = function(path, index) {
-  var collectionView = $ScPath.getPath(path, $SC.CollectionView);
+  var collectionView = $ScPath.getPath(path, 'SC.CollectionView');
   if (!collectionView) -1;
   return ScExt.CollectionView.getContentOutlineLevel(collectionView, parseInt(index, 0));
 };
@@ -1662,7 +1705,7 @@ Selenium.prototype.getScCollectionViewContentOutlineLevel = function(path, index
 */
 PageBot.prototype.locateElementByScPath = function(path) { 
   
-  var obj = $ScPath.getPath(path, $SC.View);
+  var obj = $ScPath.getPath(path, 'SC.View');
   if (!obj) return null;
 
   // Return the view's layer. The layer is the root DOM element of the view
