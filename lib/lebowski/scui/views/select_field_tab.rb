@@ -13,9 +13,9 @@ module Lebowski
       class SelectFieldTabView < Lebowski::Foundation::Views::View
         representing_sc_class 'SCUI.SelectFieldTab'
         
-        def select_field
-          @select_field = child_views.find_first(SelectFieldView) if @select_field.nil?
-          return @select_field
+        def select_button
+          @select_button = child_views.find_first(SelectButtonView) if @select_button.nil?
+          return @select_button
         end
         
         def container
