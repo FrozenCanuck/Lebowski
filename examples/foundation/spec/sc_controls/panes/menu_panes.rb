@@ -13,7 +13,7 @@ shared_examples_for "menu panes" do
       App.responding_panes.should_not have_any MenuPane
       @basic_menu.click
       App.responding_panes.should have_one MenuPane
-      pane = App.key_pane(MenuPane)
+      pane = App.responding_panes.find_first(MenuPane)
       pane.click_off
       App.responding_panes.should_not have_any MenuPane
       
@@ -23,7 +23,7 @@ shared_examples_for "menu panes" do
       
       @basic_menu.click
       App.responding_panes.should have_one MenuPane
-      pane = App.key_pane(MenuPane)
+      pane = App.responding_panes.find_first(MenuPane)
       pane.menu_items.click "menu item 1"
       App.responding_panes.should_not have_any MenuPane
       @status_label.should have_value /clicked menu item 1/i
@@ -34,7 +34,7 @@ shared_examples_for "menu panes" do
       
       @basic_menu.click
       App.responding_panes.should have_one MenuPane
-      pane = App.key_pane(MenuPane)
+      pane = App.responding_panes.find_first(MenuPane)
       pane.menu_items.click /2/
       App.responding_panes.should_not have_any MenuPane
       @status_label.should have_value /clicked menu item 2/i
@@ -45,7 +45,7 @@ shared_examples_for "menu panes" do
       
       @basic_menu.click
       App.responding_panes.should have_one MenuPane
-      pane = App.key_pane(MenuPane)
+      pane = App.responding_panes.find_first(MenuPane)
       pane.menu_items.click 'foo'
       App.responding_panes.should have_one MenuPane
       @status_label.should have_value /opened sc\.menupane/i
