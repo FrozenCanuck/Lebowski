@@ -4,7 +4,7 @@
 # ==========================================================================
 
 module Lebowski
-  module Spec
+  module RSpec
     module Matchers
       
       class HasObjectFunction < MatchSupporter
@@ -46,12 +46,12 @@ module Lebowski
           return false if not invoked_method
           
           operator = @args[@args.length - 1]
-          if operator.kind_of? Lebowski::Spec::Operators::Operator
+          if operator.kind_of? Lebowski::RSpec::Operators::Operator
             @result = operator.evaluate(ret_val) 
             return true
           end
           
-          @result = Lebowski::Spec::Util.match?(@args[@args.length - 1], ret_val)
+          @result = Lebowski::RSpec::Util.match?(@args[@args.length - 1], ret_val)
           
           return true
           

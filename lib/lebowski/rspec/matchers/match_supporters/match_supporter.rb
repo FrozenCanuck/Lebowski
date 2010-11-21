@@ -4,7 +4,7 @@
 # ==========================================================================
 
 module Lebowski
-  module Spec
+  module RSpec
     module Matchers
       
       class MatchSupporter

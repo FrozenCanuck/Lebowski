@@ -3,7 +3,7 @@
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
 
-module Spec
+module RSpec
   module Matchers
     
     #
@@ -20,9 +20,9 @@ module Spec
       # is a private method on Ruby objects and will cause the Be and Has
       # matches to fail.
       #
-      return Lebowski::Spec::Matchers::Be.new(sym, *args) if sym.to_s =~ /^be_/
-      return Lebowski::Spec::Matchers::Has.new(sym, *args) if sym.to_s =~ /^have_/
-      return Lebowski::Spec::Operators::That.new(sym, *args) if sym.to_s =~ /^that_/      
+      return Lebowski::RSpec::Matchers::Be.new(sym, *args) if sym.to_s =~ /^be_/
+      return Lebowski::RSpec::Matchers::Has.new(sym, *args) if sym.to_s =~ /^have_/
+      return Lebowski::RSpec::Operators::That.new(sym, *args) if sym.to_s =~ /^that_/      
       super
     end
   end

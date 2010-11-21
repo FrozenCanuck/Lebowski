@@ -4,7 +4,7 @@
 # ==========================================================================
 
 module Lebowski
-  module Spec
+  module RSpec
     module Matchers
       
       #
@@ -17,7 +17,7 @@ module Lebowski
       # to include custom pattern checks that are used before the default pattern
       # checks are performed.
       #
-      class Has < ::Spec::Matchers::Has
+      class Has < ::RSpec::Matchers::Has
       
         def matches?(actual)
           support = HasPredicateWithPrefixHas.new(actual, @expected, *@args)

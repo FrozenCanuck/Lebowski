@@ -4,7 +4,7 @@
 # ==========================================================================
 
 module Lebowski
-  module Spec
+  module RSpec
     module Matchers
       
       #
@@ -24,7 +24,7 @@ module Lebowski
       # to try custom patterns before ultimately applying the default pattern
       # checks
       #
-      class Be < ::Spec::Matchers::BePredicate
+      class Be < ::RSpec::Matchers::BePredicate
         
         def matches?(actual)
           

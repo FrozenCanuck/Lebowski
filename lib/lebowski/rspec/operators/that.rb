@@ -4,7 +4,7 @@
 # ==========================================================================
 
 module Lebowski
-  module Spec
+  module RSpec
     module Operators
 
       class That < Operator
@@ -102,7 +102,7 @@ module Lebowski
         end
         
         def matches?(value)
-          return Lebowski::Spec::Util.match?(@args[0], value)
+          return Lebowski::RSpec::Util.match?(@args[0], value)
         end
         
         def equals?(value)
