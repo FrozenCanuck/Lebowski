@@ -1113,19 +1113,21 @@ Selenium.prototype.doScViewScrollToVisible = function(path) {
 
 /**
   Action to raise a mouse down event
+  TODO: Should position the envent in the center of the element instead of relative coordinates 5,5
 */
 Selenium.prototype.doScMouseDown = function(locator) {
   try {
-    this.doMouseDown(locator);
+    this.doMouseDownAt(locator,"5,5");
   } catch (ex) {}
 };
 
 /**
   Action to raise a mouse up event
+  TODO: Should position the envent in the center of the element instead of relative coordinates 5,5
 */
 Selenium.prototype.doScMouseUp = function(locator) {
   try {
-    this.doMouseUp(locator);
+    this.doMouseUpAt(locator,"5,5");
   } catch (ex) {}
 };
 
