@@ -3,12 +3,12 @@
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
 
-module Lebowski # :nodoc:
-  module VERSION # :nodoc:
-    MAJOR  = 0
-    MINOR  = 2
-    PATCH   = 1
-    BUILD    = nil
+module Lebowski
+  module Version
+    MAJOR = 0
+    MINOR = 2
+    PATCH = 1
+    BUILD = nil
 
     STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join('.')
 
