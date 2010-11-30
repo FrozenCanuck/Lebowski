@@ -13,7 +13,6 @@ if ARGV.length == 0
   exit
 end
 
-require 'rubygems'
 gem 'lebowski'
 require 'lebowski'
 

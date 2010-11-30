@@ -14,16 +14,15 @@ if ARGV.length == 0
   exit
 end
 
-require 'rubygems'
-gem 'rspec', '>=1.3.0'
-require 'spec'
-require 'spec/autorun'
+gem 'rspec', "= 2.1.0"
+require 'rspec'
+
 gem 'lebowski'
-require 'lebowski/spec'
+require 'lebowski/rspec'
 
 include Lebowski::Foundation
 include Lebowski::Foundation::Views
 include Lebowski::Foundation::Panes
 include Lebowski::SCUI::Views
 
-exit ::Spec::Runner::CommandLine.run
+require 'rspec/autorun'
