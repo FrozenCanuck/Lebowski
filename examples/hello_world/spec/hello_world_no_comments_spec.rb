@@ -3,10 +3,10 @@
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
 
-# require '../../../lib/lebowski/spec'
-# 
-# include Lebowski::Foundation
-# include Lebowski::Foundation::Views
+require '../../../lib/lebowski/rspec'
+
+include Lebowski::Foundation
+include Lebowski::Foundation::Views
 
 App = MainApplication.new \
         :app_root_path => "/hello_world", 
@@ -14,7 +14,7 @@ App = MainApplication.new \
         :browser => :firefox
 
 App.start do |app|
-  app['isLoaded'] == true
+  app['mainPage.mainPane.isPaneAttached'] == true
 end
 
 App.move_to 1, 1 

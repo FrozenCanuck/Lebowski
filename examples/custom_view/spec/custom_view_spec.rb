@@ -3,10 +3,10 @@
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
 
-# require '../../../lib/lebowski/spec'
-# 
-# include Lebowski::Foundation
-# include Lebowski::Foundation::Views
+require '../../../lib/lebowski/rspec'
+
+include Lebowski::Foundation
+include Lebowski::Foundation::Views
 
 #
 # Refer to the custom_view.rb file to learn how to create your own view proxy

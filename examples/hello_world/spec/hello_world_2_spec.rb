@@ -3,7 +3,7 @@
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
 
-# require '../../../lib/lebowski/spec'
+# require '../../../lib/lebowski/rspec'
 # 
 # include Lebowski::Foundation
 # include Lebowski::Foundation::Views

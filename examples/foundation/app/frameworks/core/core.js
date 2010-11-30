@@ -3,6 +3,6 @@
 // License:   Licensed under MIT license (see License.txt)
 // ==========================================================================
 
-Core = SC.Object.create({
+window.Core = SC.Object.create({
   
 });

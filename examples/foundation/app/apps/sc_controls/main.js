@@ -7,22 +7,20 @@
 TestApp.main = function main() {
 
   TestApp.getPath('mainPage.mainPane').append() ;
-
   TestApp.configureControlsList();
-  TestApp.configureEmployeeLists();
-
+  TestApp.listViewsController.reset();
 };
 
 TestApp.configureControlsList = function() {
   var view = null,
       pane = null,
       i = 0;
-  
+
   var controlsListRoot = SC.Object.create({
     treeItemIsExpanded: YES,
     treeItemChildren: []
   });
-  
+
   var viewsItemRoot = SC.Object.create({ name: 'Views', treeItemChildren: [], treeItemIsExpanded: YES });
   var panesItemRoot = SC.Object.create({ name: 'Panes', treeItemChildren: [], treeItemIsExpanded: YES });
 
@@ -43,11 +41,11 @@ TestApp.configureControlsList = function() {
     SC.Object.create({ name: 'SC.WebView', page: 'webViewsPage' }),
     SC.Object.create({ name: 'SC.SelectButtonView', page: 'selectButtonViewsPage' })
   ];
-  
+
   for (i = 0; i < views.length; i++) {
     viewsItemRoot.treeItemChildren.pushObject(views[i]);
   }
-  
+
   var panes = [
     SC.Object.create({ name: 'SC.AlertPane', page: 'alertPanesPage' }),
     SC.Object.create({ name: 'SC.PanelPane', page: 'panelPanesPage' }),
@@ -56,7 +54,7 @@ TestApp.configureControlsList = function() {
     SC.Object.create({ name: 'SC.MenuPane', page: 'menuPanesPage' }),
     SC.Object.create({ name: 'SC.PalettePane', page: 'palettePanesPage' })
   ];
-  
+
   for (i = 0; i < panes.length; i++) {
     panesItemRoot.treeItemChildren.pushObject(panes[i]);
   }
@@ -64,16 +62,6 @@ TestApp.configureControlsList = function() {
   TestApp.controlsListController.set('content', controlsListRoot);
 };
 
-TestApp.configureEmployeeLists = function() {
-  var employees = TestApp.store.find(Core.Employee);
-  var controller = TestApp.getPath('firstEmployeeListController');
-  controller.set('content', employees.toArray());
-  
-  controller = TestApp.getPath('groupEmployeesController');
-  controller.set('content', employees.toArray());
-};
-
 function main() { 
   TestApp.main(); 
-  TestApp.isLoaded = YES;
 }

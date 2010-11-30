@@ -4,16 +4,14 @@
 // ==========================================================================
 /*globals TestApp */
 
-TestApp = SC.Application.create(
+window.TestApp = SC.Application.create(
   /** @scope TestApp.prototype */ {
 
   NAMESPACE: 'TestApp',
   VERSION: '0.1.0',
 
-  store: SC.Store.create().from(SC.Record.fixtures),
-
-  isLoaded: NO
-
+  store: SC.Store.create().from(SC.Record.fixtures)
+  
 }) ;
 
 // Apply a patch to the SC.TextFieldView for SproutCore v1.0.1046.
