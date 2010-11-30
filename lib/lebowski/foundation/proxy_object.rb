@@ -449,7 +449,7 @@ module Lebowski
       #
       def method_missing(sym, *args, &block)
         if (not sym.to_s =~ /\?$/) and (args.length == 0)
-          camel_case = to_camel_case(sym.to_s)
+          camel_case = Util.to_camel_case(sym.to_s)
           return self[camel_case] if sc_path_defined?(camel_case)  
         end
         super
@@ -646,25 +646,6 @@ module Lebowski
         end
         
         return value
-      end
-      
-      #
-      # Will return a string in camel case format for any value that follows the Ruby
-      # variable and method naming convention (e.g. my_variable_name). As an example:
-      # 
-      #   Util.to_camel_case(:some_long_name) # => "someLongName"
-      #   Util.to_camel_case("function_foo_bar") # => "functionFooBar"
-      #
-      def to_camel_case(value)
-        camel_case_str = ""
-        word_counter = 1
-        words = value.to_s.split('_')
-        return words[0] if words.length == 1
-        words.each do |word|
-          camel_case_str << ((word_counter == 1) ? word : word.sub(/./) { |s| s.upcase })   
-          word_counter = word_counter.next
-        end
-        return camel_case_str
       end
       
     end

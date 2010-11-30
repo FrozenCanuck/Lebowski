@@ -97,6 +97,16 @@ ScExt.viewScrollToVisible = function(view) {
 };
 
 /**
+  Will return a scrollable parent view of a given view. If no scrollable
+  parent view can be found then null is returned. 
+*/
+ScExt.getScrollableParentView = function(view) {
+  var pv = view.get('parentView');
+  while (pv && !pv.get('isScrollable')) pv = pv.get('parentView');
+  return (pv && pv.get('isScrollable')) ? pv : null;
+};
+
+/**
   Gets all the class names that the given object inherits from. For instance, if
   an object is of type SC.ButtonView, then the following will be returned
   in order:
@@ -338,26 +348,65 @@ var $ScPath = ScExt.PathParser;
 ScExt.MouseEventSimulation = {
   
   simulateEvent: function(mouseEvent, locator, x, y, button) {
-    var element = selenium.browserbot.findElement(locator);
+    var element = selenium.browserbot.findElement(locator),
+        coord = element ? $SC.viewportOffset(element) : { x: 0, y: 0 },
+        width = element ? element.clientWidth : 0,
+        height = element ? element.clientHeight : 0;
+    
+    x = x ? (x === 'center' ? width / 2 : x) : 0;
+    y = y ? (y === 'center' ? height / 2 : y) : 0;
+    
+    var coords = element ? $SC.viewportOffset(element) : { x: 0, y: 0 },
+        clientX = coords.x + x,
+        clientY = coords.y + y;
+        
     event = $SC.Event.simulateEvent(element, mouseEvent, { 
-      screenX: 0,
-      screenY: 0,
-      clientX: $SC.none(x) ? 0 : x,
-      clientY: $SC.none(x) ? 0 : y,
-      pageX: 0,
-      pageY: 0,
+      screenX: 0, // assume 0 is fine
+      screenY: 0, // assume 0 is fine
+      clientX: clientX,
+      clientY: clientY,
+      pageX: clientX,
+      pageY: clientY,
       bubbles: true,
-      button: $SC.none(button) ? 0 : button,
+      button: button ? button : 0,
       altKey: selenium.browserbot.altKeyDown,
       metaKey: selenium.browserbot.metaKeyDown,
       ctrlKey: selenium.browserbot.controlKeyDown,
       shiftKey: selenium.browserbot.shiftKeyDown
     });
+    
     $SC.Event.trigger(element, mouseEvent, event);
+  },
+
+  /**
+    Will simulate a mouse move event
+    
+    Simulating a mouse move event works a bit differently from the other
+    mouse events. This is due to the way certain browsers behave when you
+    perform a mouse move. 
+    
+    In Safari, when you invoke a mouse move event and your mouse is placed 
+    over the browser, it causes another mouse move event to occur having 
+    clientX and clientY coordinates where the mouse is positioned. This causes 
+    unexpected behavior and prevents not only mouse move to not behave correctly, 
+    but also any drag and drop operation. 
+    
+    In order to prevent this unexpected behavior, the mousemove event is temporarily 
+    enabled and then immediately disabled so that no other mouse move events 
+    raised by the browser itself will intefere.
+    
+    Because the mouse move event is immediate disabled after triggering a simulated
+    mouse move event, you may want to enable it later. To do so, you will need
+    to invoke the doScEnableMouseMoveEvent method.
+  */
+  mouseMove: function(locator, x, y) {
+    this.enableMouseMoveEvent();
+    this.simulateEvent('mousemove', locator, x, y, 0);
+    this.disableMouseMoveEvent();
   },
   
   /**
-    Will simulate a mouse down on a function key
+    Will simulate a mouse down event
   */
   mouseDown: function(locator, x, y) {
     this.simulateEvent('mousedown', locator, x, y, 0);
@@ -382,6 +431,64 @@ ScExt.MouseEventSimulation = {
   */
   mouseUpRight: function(locator, x, y) {
     this.simulateEvent('mouseup', locator, x, y, Selenium.RIGHT_MOUSE_CLICK);
+  },
+  
+  disableMouseMoveEvent: function() {
+    var responder = this._getRootResponder();
+    var doc = this._getDocument();
+
+    $SC.Event.remove(doc, "mousemove", responder, responder["mousemove"]);
+  },
+
+  enableMouseMoveEvent: function() {
+    var responder = this._getRootResponder();
+    var doc = this._getDocument();
+
+    $SC.Event.add(doc, "mousemove", responder, responder["mousemove"]);
+  },
+  
+  _getRootResponder: function() {
+    return $SC.RootResponder.responder;
+  },
+  
+  _getDocument: function() {
+    return selenium.browserbot.currentWindow.document;
+  }
+  
+};
+
+/**
+  Used to simulate a mouse wheel events using SproutCore's SC.Event object
+*/
+ScExt.MouseWheelSimulation = {
+  
+  simulateEvent: function(locator, deltaX, deltaY, delta) {
+    var element = selenium.browserbot.findElement(locator);
+    event = $SC.Event.simulateEvent(element, 'mousewheel', { 
+      wheelDelta: !!delta ? delta : 0,
+      wheelDeltaX: !!deltaX ? deltaX : 0,
+      wheelDeltaY: !!deltaY ? deltaY : 0,
+      bubbles: true,
+      altKey: selenium.browserbot.altKeyDown,
+      metaKey: selenium.browserbot.metaKeyDown,
+      ctrlKey: selenium.browserbot.controlKeyDown,
+      shiftKey: selenium.browserbot.shiftKeyDown
+    });
+    $SC.Event.trigger(element, 'mousewheel', event);
+  },
+  
+  /**
+    Will simulate a mouse wheel on the x-axis
+  */
+  wheelDeltaX: function(locator, delta) {
+    this.simulateEvent(locator, delta, 0, delta);
+  },
+  
+  /**
+    Will simulate a mouse wheel on the y-axis
+  */
+  wheelDeltaY: function(locator, delta) {
+    this.simulateEvent(locator, 0, delta, delta);
   }
   
 };
@@ -1116,8 +1223,8 @@ Selenium.prototype.doScViewScrollToVisible = function(path) {
 */
 Selenium.prototype.doScMouseDown = function(locator) {
   try {
-    this.doMouseDown(locator);
-  } catch (ex) {}
+    ScExt.MouseEventSimulation.mouseDown(locator);
+  } catch (e) {}
 };
 
 /**
@@ -1125,8 +1232,8 @@ Selenium.prototype.doScMouseDown = function(locator) {
 */
 Selenium.prototype.doScMouseUp = function(locator) {
   try {
-    this.doMouseUp(locator);
-  } catch (ex) {}
+    ScExt.MouseEventSimulation.mouseUp(locator);
+  } catch (e) {}
 };
 
 /**
@@ -1134,8 +1241,8 @@ Selenium.prototype.doScMouseUp = function(locator) {
 */
 Selenium.prototype.doScMouseDownRight = function(locator) {
   try {
-    this.doMouseDownRight(locator);
-  } catch (ex) {}
+    ScExt.MouseEventSimulation.mouseDownRight(locator);
+  } catch (e) {}
 };
 
 /**
@@ -1143,8 +1250,73 @@ Selenium.prototype.doScMouseDownRight = function(locator) {
 */
 Selenium.prototype.doScMouseUpRight = function(locator) {
   try {
-    this.doMouseUpRight(locator);
-  } catch (ex) {}
+    ScExt.MouseEventSimulation.mouseUpRight(locator);
+  } catch (e) {}
+};
+
+/**
+  Action to raise a mouse move at event
+*/
+Selenium.prototype.doScMouseMoveAt = function(locator, params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params),
+      x = decodedParams ? decodedParams.x : 0,
+      y = decodedParams ? decodedParams.y : 0;
+
+  try {
+    ScExt.MouseEventSimulation.mouseMove(locator, x, y);
+  } catch (e) {}
+};
+
+/**
+  Action to raise a mouse up at event
+*/
+Selenium.prototype.doScMouseUpAt = function(locator, params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params),
+      x = decodedParams ? decodedParams.x : 0,
+      y = decodedParams ? decodedParams.y : 0;
+
+  try {
+    ScExt.MouseEventSimulation.mouseUp(locator, x, y);
+  } catch (e) {}
+};
+
+/**
+  Action to raise a mouse down at event
+*/
+Selenium.prototype.doScMouseDownAt = function(locator, params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params),
+      x = decodedParams ? decodedParams.x : 0,
+      y = decodedParams ? decodedParams.y : 0;
+
+  try {
+    ScExt.MouseEventSimulation.mouseDown(locator, x, y);
+  } catch (e) {}
+};
+
+/**
+  Action to raise a right mouse up at event
+*/
+Selenium.prototype.doScMouseUpRightAt = function(locator, params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params),
+      x = decodedParams ? decodedParams.x : 0,
+      y = decodedParams ? decodedParams.y : 0;
+
+  try {
+    ScExt.MouseEventSimulation.mouseUpRight(locator, x, y);
+  } catch (e) {}
+};
+
+/**
+  Action to raise a right mouse down at event
+*/
+Selenium.prototype.doScMouseDownRightAt = function(locator, params) {
+  var decodedParams = ScExt.ObjectDecoder.decodeHash(params),
+      x = decodedParams ? decodedParams.x : 0,
+      y = decodedParams ? decodedParams.y : 0;
+
+  try {
+    ScExt.MouseEventSimulation.mouseDownRight(locator, x, y);
+  } catch (e) {}
 };
 
 /**
@@ -1169,6 +1341,22 @@ Selenium.prototype.doScRightClick = function(locator) {
 Selenium.prototype.doScDoubleClick = function(locator) {
   this.doScClick(locator);
   this.doScClick(locator);
+};
+
+/**
+  Action performs a mouse wheel event on the x-axis that is recognized
+  by the SproutCore framework. 
+*/
+Selenium.prototype.doScMouseWheelDeltaX = function(locator, delta) {
+  ScExt.MouseWheelSimulation.wheelDeltaX(locator, delta*1); 
+};
+
+/**
+  Action performs a mouse wheel event on the y-axis that is recognized
+  by the SproutCore framework. 
+*/
+Selenium.prototype.doScMouseWheelDeltaY = function(locator, delta) {
+  ScExt.MouseWheelSimulation.wheelDeltaY(locator, delta*1); 
 };
 
 /** @private
@@ -1315,6 +1503,44 @@ Selenium.prototype.doRangeInsertContent = function(params) {
   }
 };
 
+/**
+  Will disable all autoscrolling within the SproutCore application. Useful
+  when you do not want scrollable views to automatically scroll since they
+  can interfere with certain automated user actions like drag and drop. When
+  the action is complete be use to enable all autoscrolling.
+  
+  @see doScEnableAllAutoscrolling
+*/
+Selenium.prototype.doScDisableAllAutoscrolling = function() {
+  var sv = $SC.Drag._scrollableViews;
+  this._scrollableViews = sv;
+  $SC.Drag._scrollableViews = {};
+};
+
+/**
+  Will enable all autoscrolling within the SproutCore application. Call 
+  this after a user action is complete that you did not want autoscrolling
+  to interfere with.
+  
+  @see doScDisableAllAutoscrolling
+*/
+Selenium.prototype.doScEnableAllAutoscrolling = function() {
+  var sv = this._scrollableViews ? this._scrollableViews : {};
+  $SC.Drag._scrollableViews = sv;
+};
+
+/**
+  Will enabled the mouse move event so that SproutCore will respond to it.
+  The mouse move event gets disabled whenever the need to invoke a mouse
+  mouse event is simulated by the ScExt.MouseEventSimulation's mouseMove
+  method.
+  
+  @see ScExt.MouseEventSimulation#mouseMove
+*/
+Selenium.prototype.doScEnableMouseMoveEvent = function() {
+  ScExt.MouseEventSimulation.enableMouseMoveEvent();
+};
+
 ///////////////////// Selenium Core API Extensions - Accessors ////////////////////////////////////
 
 /**
@@ -1423,9 +1649,11 @@ Selenium.prototype.getScViewFrame = function(path) {
   Gets a DOM element's current window position
 */
 Selenium.prototype.getScElementWindowPosition = function(path) {
-  var x = this.getElementPositionLeft(path);
-  var y = this.getElementPositionTop(path);
-  return [x, y];
+  var element = this.browserbot.findElement(path);
+  if (!element) return null;
+  var coords = $SC.viewportOffset(element);
+  if (!coords) return null;
+  return [coords.x, coords.y];
 };
 
 /**
@@ -1448,6 +1676,12 @@ Selenium.prototype.getCssSelectorCount = function(selector) {
 
 Selenium.prototype.isScBundleLoaded = function(bundle) {
   return $SC.bundleIsLoaded(bundle);
+};
+
+Selenium.prototype.getScScrollableParentViewLayerId = function(path) {
+  var view = $ScPath.getPath(path, 'SC.View');
+  var parent = view ? ScExt.getScrollableParentView(view) : null;
+  return parent ? parent.get('layerId') : null;  
 };
 
 /////// SC Core Query Specific Selenium Calls /////////////////

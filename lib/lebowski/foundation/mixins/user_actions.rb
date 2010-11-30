@@ -16,11 +16,6 @@ module Lebowski
         include KeyCheck
         include StallSupport
         
-        def mouse_move()
-          @driver.sc_mouse_move action_target, *action_locator_args
-          stall :mouse_move
-        end
-        
         def mouse_move_at(x, y)
           @driver.sc_mouse_move_at action_target, x, y, *action_locator_args
           stall :mouse_move          
@@ -36,20 +31,59 @@ module Lebowski
           stall :mouse_down
         end
         
-        #
-        # Used to perform a mouse up on this view in the remote application
-        #
-        def mouse_up()
-          @driver.sc_mouse_up action_target, *action_locator_args
-          stall :mouse_up
+        def right_mouse_down_at(x, y)
+          @driver.sc_right_mouse_down_at action_target, x, y, *action_locator_args
+          stall :right_mouse_down
+        end
+        
+        def right_mouse_up_at(x, y)
+          @driver.sc_right_mouse_up_at action_target, x, y, *action_locator_args
+          stall :right_mouse_up
+        end
+        
+        def click_at(x, y)
+          mouse_down_at x, y
+          mouse_up_at x, y
+          stall :click
+        end
+        
+        def right_click_at(x, y)
+          right_mouse_down_at x, y
+          right_mouse_up_at x, y
+          stall :right_click
+        end
+        
+        def mouse_move()
+          @driver.sc_mouse_move action_target, *action_locator_args
+          stall :mouse_move
         end
         
         #
         # Used to perform a mouse down on this view in the remote application
         #
         def mouse_down()
-          @driver.sc_mouse_down action_target, *action_locator_args
-          stall :mouse_down
+          mouse_down_at :center, :center
+        end
+        
+        #
+        # Used to perform a mouse up on this view in the remote application
+        #
+        def mouse_up()
+          mouse_up_at :center, :center
+        end
+        
+        #
+        # Used to perform a mouse down with right button on this view in the remote application
+        #
+        def right_mouse_down()
+          right_mouse_down_at :center, :center
+        end
+        
+        #
+        # Used to perform a mouse up with right button on this view in the remote application
+        #
+        def right_mouse_up()
+          right_mouse_up_at :center, :center
         end
         
         #
@@ -61,10 +95,13 @@ module Lebowski
           stall :click
         end
         
-        def click_at(x, y)
-          mouse_down_at x, y
-          mouse_up_at x, y
-          stall :click
+        #
+        # Used to perform a single right click on this view in the remote application
+        #
+        def right_click()
+          right_mouse_down
+          right_mouse_up
+          stall :right_click
         end
         
         #
@@ -82,46 +119,21 @@ module Lebowski
           @driver.sc_double_click action_target, *action_locator_args
           stall :double_click
         end
-
+        
         #
-        # Used to perform a mouse up with right button on this view in the remote application
+        # Used to perform a mouse wheel action on the x-axis
         #
-        def right_mouse_up()
-          @driver.sc_right_mouse_up action_target, *action_locator_args
-          stall :right_mouse_up
+        def mouse_wheel_delta_x(delta)
+          @driver.sc_mouse_wheel_delta_x action_target, delta, *action_locator_args
+          stall :mouse_wheel
         end
         
         #
-        # Used to perform a mouse down with right button on this view in the remote application
+        # Used to perform a mouse wheel action on the y-axis
         #
-        def right_mouse_down()
-          @driver.sc_right_mouse_down action_target, *action_locator_args
-          stall :right_mouse_down
-        end
-        
-        def right_mouse_up_at(x, y)
-          @driver.sc_right_mouse_up_at action_target, x, y, *action_locator_args
-          stall :right_mouse_up
-        end
-        
-        def right_mouse_down_at(x, y)
-          @driver.sc_right_mouse_down_at action_target, x, y, *action_locator_args
-          stall :right_mouse_down
-        end
-        
-        #
-        # Used to perform a single right click on this view in the remote application
-        #
-        def right_click()
-          right_mouse_down_at 0, 0
-          right_mouse_up_at 0, 0
-          stall :right_click
-        end
-        
-        def right_click_at(x, y)
-          right_mouse_down_at x, y
-          right_mouse_up_at x, y
-          stall :right_click
+        def mouse_wheel_delta_y(delta)
+          @driver.sc_mouse_wheel_delta_y action_target, delta, *action_locator_args
+          stall :mouse_wheel
         end
         
         #
@@ -206,33 +218,29 @@ module Lebowski
             mouse_offset_y = get_mouse_offset(params[0][:mouse_offset_y], :y)
           end
           
+          # First be sure to disable autoscrolling in the application. This needs
+          # to be done so that autoscrolling will not interfere with our drag
+          # and drop user action
+          @driver.sc_disable_all_autoscrolling
+          
           self.scroll_to_visible
+          
           mouse_down_at mouse_offset_x, mouse_offset_y
           mouse_move_at mouse_offset_x, mouse_offset_y
-          relative_to.scroll_to_visible if relative_to.kind_of?(PositionedElement)
+                    
+          # Make sure the element we are dragging relative to is visible
+          relative_to.scroll_to_visible if relative_to.kind_of? PositionedElement
           
-          rel_x = 0
-          rel_y = 0     
+          rel_pos = relative_position(x, y, relative_to)
+          mouse_move_at rel_pos.x, rel_pos.y
           
-          if not relative_to.nil?
-            position = self.position
-            rel_x = rel_x + position.x * -1
-            rel_y = rel_y + position.y * -1
-            if relative_to.kind_of? PositionedElement
-              position = relative_to.position
-              rel_x = rel_x + position.x
-              rel_y = rel_y + position.y
-            elsif relative_to == :window
-            else
-              raise ArgumentError.new "relative to source must be a positioned element: #{relative_to.class}"
-            end
-          end
+          rel_pos = relative_position(x, y, relative_to)
+          mouse_up_at rel_pos.x, rel_pos.y
           
-          rel_x = rel_x + x + mouse_offset_x
-          rel_y = rel_y + y + mouse_offset_y
-          
-          mouse_move_at rel_x, rel_y
-          mouse_up_at rel_x, rel_y
+          # Enable autoscrolling and mouse move events since we have completed the 
+          # drag and drop operation
+          @driver.sc_enable_all_autoscrolling
+          @driver.sc_enable_mouse_move_event
           
           stall :drag 
         end
@@ -302,6 +310,30 @@ module Lebowski
         end
         
       private
+      
+        def relative_position(x, y, relative_to)
+          rel_x = 0
+          rel_y = 0     
+          
+          if not relative_to.nil?
+            position = self.position
+            rel_x += position.x * -1
+            rel_y += position.y * -1
+            if relative_to.kind_of? PositionedElement
+              position = relative_to.position
+              rel_x += position.x
+              rel_y += position.y
+            elsif relative_to == :window
+            else
+              raise ArgumentError.new "relative to source must be a positioned element: #{relative_to.class}"
+            end
+          end
+          
+          rel_x += x
+          rel_y += y
+          
+          return Lebowski::Coords.new rel_x, rel_y
+        end
       
         def assert_is_collection_view(value, name)
           if not value.kind_of? Lebowski::Foundation::Views::CollectionView

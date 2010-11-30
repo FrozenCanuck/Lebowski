@@ -23,11 +23,19 @@ module Lebowski
         end
         
         def apply_drag_before(source)
-          source.drag_to self
+          params = { 
+            :mouse_offset_x => :center, 
+            :mouse_offset_y => :center 
+          }
+          source.drag_to self, (self.width / 2).floor, 2, params
         end
         
         def apply_drag_after(source)
-          source.drag_to self, 0, row_height
+          params = { 
+            :mouse_offset_x => :center, 
+            :mouse_offset_y => :center
+          }
+          source.drag_to self, (self.width / 2).floor, row_height - 2, params
         end
         
         def row_height()

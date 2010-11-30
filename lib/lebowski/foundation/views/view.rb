@@ -82,6 +82,16 @@ module Lebowski
         end
         
         #
+        # Gets the parent view of this view that is scrollable. If this view
+        # has no parent that is scrollable then null is returned
+        #
+        def scrollable_parent_view()
+          layer_id = @driver.get_sc_scrollable_parent_view_layer_id(abs_path)
+          app = Util::get_root_application_object(self)
+          return app["##{layer_id}"] if (not layer_id.nil?)
+        end
+        
+        #
         # Gets the string representing of the view's layer. The layer in SproutCore is 
         # the root DOM element of the view. This method will return an HTML string 
         # representation of the entire layer that is equivalent to the following:

@@ -77,6 +77,25 @@ module Lebowski
       def get_root_application_object()
         return Util.get_root_application_object(self)
       end
+      
+      #
+      # Will return a string in camel case format for any value that follows the Ruby
+      # variable and method naming convention (e.g. my_variable_name). As an example:
+      # 
+      #   Util.to_camel_case(:some_long_name) # => "someLongName"
+      #   Util.to_camel_case("function_foo_bar") # => "functionFooBar"
+      #
+      def self.to_camel_case(value)
+        camel_case_str = ""
+        word_counter = 1
+        words = value.to_s.split('_')
+        return words[0] if words.length == 1
+        words.each do |word|
+          camel_case_str << ((word_counter == 1) ? word : word.sub(/./) { |s| s.upcase })   
+          word_counter = word_counter.next
+        end
+        return camel_case_str
+      end
 
     end
     

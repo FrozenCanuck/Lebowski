@@ -171,45 +171,45 @@ module Lebowski
       alias_method :sc_mouse_enter, :sc_mouse_move
       alias_method :sc_mouse_exit, :sc_mouse_move
       
-      def sc_mouse_move_at(type, x, y, *params)
-        coords = "#{x},#{y}"
-        __remote_control_command("mouseMoveAt", [__locator(type, *params), coords])
-      end
-      
       def sc_mouse_down(type, *params)
-        __remote_control_command("scMouseDown", [__locator(type, *params),])
+        __remote_control_command("scMouseDown", [__locator(type, *params)])
       end
       
       def sc_mouse_up(type, *params)
-        __remote_control_command("scMouseUp", [__locator(type, *params), ])
+        __remote_control_command("scMouseUp", [__locator(type, *params)])
       end
       
-      def sc_mouse_down_at(type, x, y, *params)
-        coords = "#{x},#{y}"
-        __remote_control_command("mouseDownAt", [__locator(type, *params), coords])
-      end
-    
-      def sc_mouse_up_at(type, x, y, *params)
-        coords = "#{x},#{y}"
-        __remote_control_command("mouseUpAt", [__locator(type, *params), coords])
-      end
-            
       def sc_right_mouse_down(type, *params)
-        __remote_control_command("scMouseDownRight", [__locator(type, *params), ])
+        __remote_control_command("scMouseDownRight", [__locator(type, *params)])
       end
       
       def sc_right_mouse_up(type, *params)
-        __remote_control_command("scMouseUpRight", [__locator(type, *params), ])
+        __remote_control_command("scMouseUpRight", [__locator(type, *params)])
+      end
+      
+      def sc_mouse_move_at(type, x, y, *params)
+        encoded_params = ObjectEncoder.encode_hash({ :x => x, :y => y })
+        __remote_control_command("scMouseMoveAt", [__locator(type, *params), encoded_params])
+      end
+      
+      def sc_mouse_down_at(type, x, y, *params)
+        encoded_params = ObjectEncoder.encode_hash({ :x => x, :y => y })
+        __remote_control_command("scMouseDownAt", [__locator(type, *params), encoded_params])
+      end
+    
+      def sc_mouse_up_at(type, x, y, *params)
+        encoded_params = ObjectEncoder.encode_hash({ :x => x, :y => y })
+        __remote_control_command("scMouseUpAt", [__locator(type, *params), encoded_params])
       end
       
       def sc_right_mouse_down_at(type, x, y, *params)
-        coords = "#{x},#{y}"
-        __remote_control_command("mouseDownRightAt", [__locator(type, *params), coords])
+        encoded_params = ObjectEncoder.encode_hash({ :x => x, :y => y })
+        __remote_control_command("scMouseDownRightAt", [__locator(type, *params), encoded_params])
       end
       
       def sc_right_mouse_up_at(type, x, y, *params)
-        coords = "#{x},#{y}"
-        __remote_control_command("mouseUpRightAt", [__locator(type, *params), coords])
+        encoded_params = ObjectEncoder.encode_hash({ :x => x, :y => y })
+        __remote_control_command("scMouseUpRightAt", [__locator(type, *params), encoded_params])
       end
       
       def sc_basic_click(type, *params)
@@ -226,6 +226,18 @@ module Lebowski
       
       def sc_double_click(type, *params)
         __remote_control_command("scDoubleClick", [__locator(type, *params), ])
+      end
+      
+      def sc_mouse_wheel_delta_x(type, delta, *params)
+        __remote_control_command("scMouseWheelDeltaX", [__locator(type, *params), delta])
+      end
+      
+      def sc_mouse_wheel_delta_y(type, delta, *params)
+        __remote_control_command("scMouseWheelDeltaY", [__locator(type, *params), delta])
+      end
+      
+      def sc_enable_mouse_move_event()
+        __remote_control_command("scEnableMouseMoveEvent", [])
       end
       
       def sc_focus(type, *params)
@@ -365,6 +377,25 @@ module Lebowski
       
       # Selenium User Extension Utility Function Selenium Calls
       
+      # Disables all autoscrolling when performing a drag and drop
+      # operation within a SproutCore Application. Call this
+      # when you don't want autoscrolling to interfere with some
+      # user action. 
+      #
+      # @see sc_disable_all_autoscrolling
+      def sc_disable_all_autoscrolling
+        __remote_control_command("scDisableAllAutoscrolling")
+      end
+      
+      # Used to enable all autoscrolling. Call this after you have
+      # completed a user action that you did not want autoscrolling
+      # to intefere with.
+      #
+      # @see sc_disable_all_autoscrolling
+      def sc_enable_all_autoscrolling
+        __remote_control_command("scEnableAllAutoscrolling")
+      end
+      
       def is_sc_bundle_loaded(bundle) 
         return __boolean_command("isScBundleLoaded", [bundle])
       end
@@ -499,6 +530,10 @@ module Lebowski
       
       def get_element_child_nodes_count(selector, index)
         return __number_command("getElementChildNodesCount", [selector, index])
+      end
+      
+      def get_sc_scrollable_parent_view_layer_id(path)
+        return __string_command("getScScrollableParentViewLayerId", [path])
       end
       
       # Selenium User Extensions Testing/Debugging Calls   
