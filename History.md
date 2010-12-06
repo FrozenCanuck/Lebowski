@@ -1,3 +1,14 @@
+# lebowski 0.3.0 December 6, 2010
+
+* Updated to now work with Ruby 1.9.2 and RSpec v2
+* Fixes drag and drop user actions
+* Fixes clicking on segmented view's buttons
+* Fixes mouse user actions so that, by default, DOM elements are clicked in the center instead of relative (0, 0)
+* Fixes RSpec extension That operator's contains? method 
+* Note: If creating an instance of the Selenium client driver that you want to pass to Lebowski's 
+        MainApplication, you must now supply the client with a timeout value or else you will immediately get a 
+        timeout error (e.g. set :timeout_in_seconds => 60)
+
 # lebowski 0.2.1 October 6, 2010
 
 * Fixed MainApplication object's define_root_object method
