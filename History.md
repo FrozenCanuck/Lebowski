@@ -4,7 +4,10 @@
 * Fixes drag and drop user actions
 * Fixes clicking on segmented view's buttons
 * Fixes mouse user actions so that, by default, DOM elements are clicked in the center instead of relative (0, 0)
-* Fixes RSpec extension That operator's contains? method 
+* Fixes RSpec extension That operator's contains? method
+* Added user actions mouse_wheel_delta_x and mouse_wheel_delta_y
+* View proxy now includes scrollable_parent_view method
+* Updated framework to build gem with Jeweler. Rubyforge and Hoe are no longer used 
 * Note: If creating an instance of the Selenium client driver that you want to pass to Lebowski's 
         MainApplication, you must now supply the client with a timeout value or else you will immediately get a 
         timeout error (e.g. set :timeout_in_seconds => 60)
