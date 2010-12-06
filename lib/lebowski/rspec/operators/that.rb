@@ -96,9 +96,15 @@ module Lebowski
           
         def contains?(value)
           return false if value.nil?
-          @args.all? do |x|
-            value.member? x
+          if value.kind_of? String
+            return false if @args.length > 1
+            return value == @args[0]
+          elsif value.kind_of? Array
+            return @args.all? do |x|
+              value.member? x
+            end
           end
+          return false
         end
         
         def matches?(value)
