@@ -2,13 +2,16 @@ describe "List View Test" do
     
   before(:all) do
     show_control :list_view
-    @list = App['#first-employee-list', ListView]
-    @reset = App['#reset-list-view-button', ButtonView]
+    @app = App.get_instance
+    @list = @app['#first-employee-list', ListView]
+    @reset = @app['#reset-list-view-button', ButtonView]
+  end
+  
+  before(:each) do
+    @reset.click
   end
   
   it "will move an item view before another item within the same list" do
-    
-    @reset.click
     
     benny_hill = @list.item_views.find_first({ :guid => '10' })
     amy_grant = @list.item_views.find_first({ :guid => '14' })
@@ -31,8 +34,6 @@ describe "List View Test" do
   
   it "will move an item view after another item within the same list" do
     
-    @reset.click
-    
     benny_hill = @list.item_views.find_first({ :guid => '10' })
     lily_allen = @list.item_views.find_first({ :guid => '7' })
     
@@ -54,8 +55,6 @@ describe "List View Test" do
   
   it "will move an item view to beginning of the list" do
     
-    @reset.click
-    
     jim_jones = @list.item_views.find_first({ :guid => '9' })
     
     jim_jones.drag_to_start_of @list
@@ -73,8 +72,6 @@ describe "List View Test" do
   end
   
   it "will move an item view to end of the list" do
-    
-    @reset.click
     
     bob_izzo = @list.item_views.find_first({ :guid => '1' })
     

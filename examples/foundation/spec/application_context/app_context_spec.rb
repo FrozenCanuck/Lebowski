@@ -3,10 +3,13 @@
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
 
-# require '../../../../lib/lebowski/spec'
-# 
-# include Lebowski::Foundation
-# include Lebowski::Foundation::Views
+begin
+  kind_of? ::Lebowski::Foundation
+rescue Exception => e
+  require_relative '../../../../lib/lebowski/rspec'  
+  include Lebowski::Foundation
+  include Lebowski::Foundation::Views
+end
 
 App = MainApplication.new \
   :app_root_path => "/application_context", 
@@ -52,9 +55,9 @@ end
 App.move_to 1, 1
 App.resize_to 1024, 768
 
-require 'opened_windows'
-require 'basic_frames'
-require 'windows_and_frames'
-require 'nested_frames'
-require 'windows_and_nested_frames'
-require 'cross_app_context_boundary'
+require './opened_windows'
+require './basic_frames'
+require './windows_and_frames'
+require './nested_frames'
+require './windows_and_nested_frames'
+require './cross_app_context_boundary'

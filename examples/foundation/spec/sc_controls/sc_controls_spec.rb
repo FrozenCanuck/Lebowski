@@ -3,10 +3,13 @@
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
 
-# require '../../../../lib/lebowski/spec'
-# 
-# include Lebowski::Foundation
-# include Lebowski::Foundation::Views
+begin
+  kind_of? ::Lebowski::Foundation
+rescue Exception => e
+  require_relative '../../../../lib/lebowski/rspec'  
+  include Lebowski::Foundation
+  include Lebowski::Foundation::Views
+end
 
 App = MainApplication.new \
   :app_root_path => "/sc_controls", 

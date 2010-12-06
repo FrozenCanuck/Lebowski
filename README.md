@@ -32,13 +32,13 @@ in order to open up a browser, load your SproutCore application, and communicate
 Knowledge of selenium server is not required to use the framework. (Note that the selenium server is
 dependent on your system having the latest Java runtime installed). 
 
-The framework also comes with extensions to [RSpec](http://rspec.info/) that you can optionally use to 
+The framework also comes with extensions to [RSpec](http://relishapp.com/rspec) that you can optionally use to 
 write your scripts, but RSpec is not required to use the Lebowski framework. 
 
 #Installing Lebowski
 
 Installing the Lebowski framework is simple. First, make sure that you have the latest Ruby installed 
-on your machine (version 1.9+). Once you have Ruby installed, you can get the Lebowski framework
+on your machine (versions >= 1.9.2). Once you have Ruby installed, you can get the Lebowski framework
 by invoking the following from your terminal:
 
     $ gem install lebowski
@@ -48,8 +48,8 @@ Depending on the setup of your system you may have to call `gem1.9` and use the 
 If everything worked out you should have the lebowski gem installed on your computer. The framework is
 dependent on two gems:
 
-  * selenium-client 1.2.18
-  * rspec 1.3.0
+  * selenium-client, ~> 1.2.18
+  * rspec, ~> 2.1.0
 
 For RSpec, it is only required if you plan on using the Lebowski's RSpec extensions.
 
@@ -68,7 +68,7 @@ you can grab the framework by doing the following:
 
     $ gem install sproutcore
     
-At this time, the Lebowski framework works with SproutCore v1.0.1046.
+At this time, the Lebowski framework works with SproutCore v1.4.x.
 
 In addition to SproutCore, it is also advised that you, at minimum, have [Firefox](http://www.mozilla.com/en-US/firefox/personal.html) 
 installed on your system since that is the default browser used to run your SproutCore application using

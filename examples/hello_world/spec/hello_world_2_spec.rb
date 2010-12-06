@@ -3,10 +3,13 @@
 # License:   Licensed under MIT license (see License.txt)
 # ==========================================================================
 
-# require '../../../lib/lebowski/rspec'
-# 
-# include Lebowski::Foundation
-# include Lebowski::Foundation::Views
+begin
+  kind_of? ::Lebowski::Foundation
+rescue Exception => e
+  require_relative '../../../lib/lebowski/rspec'  
+  include Lebowski::Foundation
+  include Lebowski::Foundation::Views
+end
 
 #
 # If this is your first time working with the Lebowski framework and haven't

@@ -6,6 +6,18 @@
 
 TestApp.segmentedViewsPage = SC.Page.design({
   
+  resetButton: SC.outlet('mainView.resetButton'),
+  
+  basic1SegmentedView: SC.outlet('mainView.basicSegmentedView1.segmentedView'),
+  
+  basic2SegmentedView: SC.outlet('mainView.basicSegmentedView2.segmentedView'),
+  
+  allowEmptySelectionSegmentedView: SC.outlet('mainView.allowEmptySelection.segmentedView'),
+  
+  allowMultipleSelectionSegmentedView: SC.outlet('mainView.allowMultipleSelection.segmentedView'),
+  
+  allowEmptyMultipleSelectionSegmentedView: SC.outlet('mainView.allowEmptyMultipleSelection.segmentedView'),
+  
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
     childViews: [
@@ -14,19 +26,28 @@ TestApp.segmentedViewsPage = SC.Page.design({
       'allowEmptySelection',
       'allowMultipleSelection', 
       'allowEmptyMultipleSelection',
-      'disabledSegmentedView'
+      'disabledSegmentedView',
+      'resetButton'
     ],
+    
+    resetButton: SC.ButtonView.design({
+      layout: { top: 0, left: 300, width: 80, height: 24 },
+      layerId: 'reset-segmented-views-button',
+      title: 'Reset',
+      target: TestApp.segmentedViewsController,
+      action: 'reset'
+    }),
     
     basicSegmentedView1: SC.View.design({
       layout: { top: 0, left: 0, right: 0, height: 25 },
-      childViews: 'label segementedView'.w(),
+      childViews: 'label segmentedView'.w(),
       
       label: SC.LabelView.design({
         layout: { left: 0, centerY: 0, width: 150, height: 20 },
         value: 'Basic Segmented View 1:'
       }),
       
-      segementedView: SC.SegmentedView.design({
+      segmentedView: SC.SegmentedView.design({
         layerId: 'first-basic-segmented',
         layout: { left: 130, centerY: 0, width: 200, height: 23 },
         items: 'foo bar'.w()
@@ -35,14 +56,14 @@ TestApp.segmentedViewsPage = SC.Page.design({
     
     basicSegmentedView2: SC.View.design({
       layout: { top: 30, left: 0, right: 0, height: 25 },
-      childViews: 'label segementedView'.w(),
+      childViews: 'label segmentedView'.w(),
       
       label: SC.LabelView.design({
         layout: { left: 0, centerY: 0, width: 150, height: 20 },
         value: 'Basic Segmented View 2:'
       }),
       
-      segementedView: SC.SegmentedView.design({
+      segmentedView: SC.SegmentedView.design({
         layerId: 'second-basic-segmented',
         layout: { left: 130, centerY: 0, width: 200, height: 23 },
         itemTitleKey: 'title',
@@ -57,14 +78,14 @@ TestApp.segmentedViewsPage = SC.Page.design({
     
     allowEmptySelection: SC.View.design({
       layout: { top: 60, left: 0, right: 0, height: 25 },
-      childViews: 'label segementedView'.w(),
+      childViews: 'label segmentedView'.w(),
       
       label: SC.LabelView.design({
         layout: { left: 0, centerY: 0, width: 150, height: 20 },
         value: 'Allow Empty Selection:'
       }),
       
-      segementedView: SC.SegmentedView.design({
+      segmentedView: SC.SegmentedView.design({
         layerId: 'allow-empty-segmented',
         layout: { left: 130, centerY: 0, width: 200, height: 23 },
         items: 'cat dog pig'.w(),
@@ -74,14 +95,14 @@ TestApp.segmentedViewsPage = SC.Page.design({
     
     allowMultipleSelection: SC.View.design({
       layout: { top: 90, left: 0, right: 0, height: 25 },
-      childViews: 'label segementedView'.w(),
+      childViews: 'label segmentedView'.w(),
       
       label: SC.LabelView.design({
         layout: { left: 0, centerY: 0, width: 150, height: 20 },
         value: 'Allow Multiple Selection:'
       }),
       
-      segementedView: SC.SegmentedView.design({
+      segmentedView: SC.SegmentedView.design({
         layerId: 'allow-multiple-segmented',
         layout: { left: 130, centerY: 0, width: 200, height: 23 },
         items: 'cat dog pig'.w(),
@@ -93,14 +114,14 @@ TestApp.segmentedViewsPage = SC.Page.design({
     
     allowEmptyMultipleSelection: SC.View.design({
       layout: { top: 120, left: 0, right: 0, height: 25 },
-      childViews: 'label segementedView'.w(),
+      childViews: 'label segmentedView'.w(),
       
       label: SC.LabelView.design({
         layout: { left: 0, centerY: 0, width: 150, height: 20 },
         value: 'Allow Empty & Multiple:'
       }),
       
-      segementedView: SC.SegmentedView.design({
+      segmentedView: SC.SegmentedView.design({
         layerId: 'allow-empty-multiple-segmented',
         layout: { left: 130, centerY: 0, width: 200, height: 23 },
         items: 'cat dog pig'.w(),

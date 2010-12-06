@@ -2,22 +2,25 @@ describe "Palette Pane Test" do
     
   before(:all) do
     show_control :palette_pane
-    @create_palette = App['#create-palette', ButtonView]
-    @reset_palette_id_counter = App['#reset-palette-id-counter', ButtonView]
-    @anchor1 = App['#palette-anchor-1', View]
-    @anchor2 = App['#palette-anchor-2', View]
-    @anchor3 = App['#palette-anchor-3', View]
+    @app = App.get_instance
+    @create_palette = @app['#create-palette', ButtonView]
+    @reset = @app['#reset-palette-id-counter', ButtonView]
+    @anchor1 = @app['#palette-anchor-1', View]
+    @anchor2 = @app['#palette-anchor-2', View]
+    @anchor3 = @app['#palette-anchor-3', View]
+  end
+  
+  before(:each) do
+    @reset.click
   end
   
   it "will open multiple palette panes, drag them, and close them all" do
     
-    @reset_palette_id_counter.click
-    
     3.times { @create_palette.click }
     
-    App.responding_panes.should have_count(PalettePane, 3)
+    @app.responding_panes.should have_count(PalettePane, 3)
     
-    panes = App.responding_panes.filter(PalettePane)
+    panes = @app.responding_panes.filter(PalettePane)
     panes.should have_count 3
     
     pane1 = panes.find_first({ :id => 0 })
@@ -34,7 +37,7 @@ describe "Palette Pane Test" do
       pane['contentView.group.close'].click
     end
     
-    App.responding_panes.should have_count(PalettePane, 0)
+    @app.responding_panes.should have_count(PalettePane, 0)
     
   end
   

@@ -2,18 +2,24 @@ describe "Web View Test" do
     
   before(:all) do
     show_control :web_view
-    @first_web_view = App['#first-web-view', WebView]
-    @second_web_view = App['#second-web-view', WebView]
     
-    counter = App['webViewsPage.mainView.counter', View]
+    @app = App.get_instance
+    
+    @first_web_view = @app['#first-web-view', WebView]
+    @second_web_view = @app['#second-web-view', WebView]
+    
+    counter = @app['webViewsPage.mainView.counter', View]
     @counter_label = counter['label', LabelView]
     @increment_button = counter['incButton', ButtonView]
-    @reset_button = counter['resetButton', ButtonView]
+    @reset = counter['resetButton', ButtonView]
+  end
+  
+  before(:each) do
+    @reset.click
   end
   
   it "will execute block of driver commands within the context of a web view" do
     
-    @reset_button.click
     @counter_label.should have_value /counter: 0/i
     
     @first_web_view.frame.exec_driver_in_context do |driver|

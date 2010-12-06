@@ -2,8 +2,14 @@ describe "List View Test" do
     
   before(:all) do
     show_control :list_view
-    @list1 = App['#first-employee-list', ListView]
-    @list2 = App['#second-employee-list', ListView]
+    @app = App.get_instance
+    @list1 = @app['#first-employee-list', ListView]
+    @list2 = @app['#second-employee-list', ListView]
+    @reset = @app['#reset-list-view-button', ButtonView]
+  end
+  
+  before(:each) do
+    @reset.click
   end
       
   it "will drag items having company 'widgets inc' to another list view" do

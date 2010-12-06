@@ -2,14 +2,20 @@ describe "Palette Pane Test" do
     
   before(:all) do
     show_control :palette_pane
-    @create_palette = App['#create-palette', ButtonView]
+    @app = App.get_instance
+    @create_palette = @app['#create-palette', ButtonView]
+    @reset = @app['#reset-palette-id-counter', ButtonView]
+  end
+  
+  before(:each) do
+    @reset.click
   end
   
   it "will create a palette pane and drag it relative to the window's origin" do
     
     @create_palette.click
     
-    pane = App.responding_panes.find_first PalettePane
+    pane = @app.responding_panes.find_first PalettePane
     
     pane.drag_to :window
     

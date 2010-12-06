@@ -2,14 +2,17 @@ describe "List View Test" do
     
   before(:all) do
     show_control :list_view
-    @list = App['#first-employee-list', ListView]
-    @reset = App['#reset-list-view-button', ButtonView]
+    @app = App.get_instance
+    @list = @app['#first-employee-list', ListView]
+    @reset = @app['#reset-list-view-button', ButtonView]
+  end
+  
+  before(:each) do
+    @reset.click
   end
       
   it "will select items with title matching 'manager'" do
   
-    @reset.click
-    
     @list.item_views.should have_some({ :title => /manager/i })
     @list.item_views.should have_count({ :title => /manager/i }, 2)
         

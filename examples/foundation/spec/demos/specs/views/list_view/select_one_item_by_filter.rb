@@ -2,13 +2,16 @@ describe "List View Test" do
     
   before(:all) do
     show_control :list_view
-    @list = App['#first-employee-list', ListView]
-    @reset = App['#reset-list-view-button', ButtonView]
+    @app = App.get_instance
+    @list = @app['#first-employee-list', ListView]
+    @reset = @app['#reset-list-view-button', ButtonView]
+  end
+      
+  before(:each) do
+    @reset.click
   end
       
   it "will select the item view with guid '9'" do
-    
-    @reset.click
     
     @list.item_views.should have_one({ :guid => '9' })
         
@@ -26,8 +29,6 @@ describe "List View Test" do
   end
   
   it "will select the item view with first name 'Amy' and last name 'Grant'" do
-    
-    @reset.click
     
     @list.item_views.should have_one({ 'firstName' => 'Amy', 'lastName' => 'Grant' })
         

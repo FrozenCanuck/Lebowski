@@ -2,6 +2,7 @@ pkg
 tmp
 *.bak
 *.tmp
+Gemfile.lock
 lebowski-start-server-tmp
 examples/scui/date_picker_view/app/frameworks/
 examples/scui/combo_box_view/app/frameworks/

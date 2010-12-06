@@ -9,6 +9,7 @@ TestApp.main = function main() {
   TestApp.getPath('mainPage.mainPane').append() ;
   TestApp.configureControlsList();
   TestApp.listViewsController.reset();
+  TestApp.segmentedViewsController.reset();
 };
 
 TestApp.configureControlsList = function() {

@@ -2,13 +2,16 @@ describe "List View Test" do
     
   before(:all) do
     show_control :list_view
-    @list = App['#first-employee-list', ListView]
-    @reset = App['#reset-list-view-button', ButtonView]
+    @app = App.get_instance
+    @list = @app['#first-employee-list', ListView]
+    @reset = @app['#reset-list-view-button', ButtonView]
+  end
+  
+  before(:each) do
+    @reset.click
   end
   
   it "will select an item by index" do
-    
-    @reset.click
     
     @list.item_views[0].select
     @list.item_views.selected.should have_count 1
