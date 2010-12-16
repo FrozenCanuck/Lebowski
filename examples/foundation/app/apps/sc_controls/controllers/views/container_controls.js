@@ -18,6 +18,10 @@ TestApp.containerControlsController = SC.Object.create({
   
   showView2: function() {
     this.set('nowShowing', 'view2');
+  },
+  
+  reset: function() {
+    this.showEmptyContainer();
   }
   
 });

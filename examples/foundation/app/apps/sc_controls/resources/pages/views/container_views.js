@@ -6,6 +6,14 @@
 
 TestApp.containerViewsPage = SC.Page.design({
   
+  emptyButton: SC.outlet('mainView.header.emptyButton'),
+  
+  showView1Button: SC.outlet('mainView.header.view1Button'),
+  
+  showView2Button: SC.outlet('mainView.header.view2Button'),
+  
+  containerView: SC.outlet('mainView.container'),
+  
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
     childViews: 'header container'.w(),

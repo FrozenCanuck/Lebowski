@@ -10,13 +10,15 @@ SPECS_ROOT_FOLDER = 'specs'
 VIEWS_ROOT_FOLDER = 'views'
 PANES_ROOT_FOLDER = 'panes'
 
-SC_CONTROLS = {
-  :segmented_view => { :type => 'SC.SegmentedView', :path => "#{VIEWS_ROOT_FOLDER}/segmented_view" },
-  :web_view => { :type => 'SC.WebView', :path => "#{VIEWS_ROOT_FOLDER}/web_view" },
-  :list_view => { :type => 'SC.ListView', :path => "#{VIEWS_ROOT_FOLDER}/list_view" },
-  :list_item_view => { :type => 'SC.ListItemView', :path => "#{VIEWS_ROOT_FOLDER}/list_item_view" },
-  :palette_pane => { :type => 'SC.PalettePane', :path => "#{PANES_ROOT_FOLDER}/palette_pane" }
-}
+SC_CONTROLS = { }
+
+def add_view_spec(group, sc_type, sub_path)
+  SC_CONTROLS[group] = { :type => sc_type, :path => "#{VIEWS_ROOT_FOLDER}/#{sub_path}" }
+end
+
+def add_pane_spec(group, sc_type, sub_path)
+  SC_CONTROLS[group] = { :type => sc_type, :path => "#{PANES_ROOT_FOLDER}/#{sub_path}" }
+end
 
 module App
   
@@ -71,3 +73,12 @@ def run_specs(path=:all, spec=nil)
     require_relative path
   end
 end
+
+add_view_spec :button_view, 'SC.ButtonView', 'button_view'
+add_view_spec :label_view, 'SC.LabelView', 'label_view'
+add_view_spec :container_view, 'SC.ContainerView', 'container_view'
+add_view_spec :segmented_view, 'SC.SegmentedView', 'segmented_view'
+add_view_spec :web_view, 'SC.WebView', 'web_view'
+add_view_spec :list_view, 'SC.ListView', 'list_view'
+add_view_spec :list_item_view, 'SC.ListItemView', 'list_item_view'
+add_pane_spec :palette_pane, 'SC.PalettePane', 'palette_pane'

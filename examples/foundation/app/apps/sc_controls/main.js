@@ -10,6 +10,8 @@ TestApp.main = function main() {
   TestApp.configureControlsList();
   TestApp.listViewsController.reset();
   TestApp.segmentedViewsController.reset();
+  TestApp.labelControlsController.reset();
+  TestApp.containerControlsController.reset();
 };
 
 TestApp.configureControlsList = function() {
