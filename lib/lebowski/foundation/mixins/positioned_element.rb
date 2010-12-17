@@ -33,7 +33,7 @@ module Lebowski
         end
         
         def scroll_to_visible()
-          
+          # no-op
         end
         
       end

@@ -351,10 +351,19 @@ ScExt.MouseEventSimulation = {
     var element = selenium.browserbot.findElement(locator),
         coord = element ? $SC.viewportOffset(element) : { x: 0, y: 0 },
         width = element ? element.clientWidth : 0,
-        height = element ? element.clientHeight : 0;
+        height = element ? element.clientHeight : 0,
+        which = 0;
     
     x = x ? (x === 'center' ? width / 2 : x) : 0;
     y = y ? (y === 'center' ? height / 2 : y) : 0;
+    
+    if ($SC.browser.msie) {
+      button = button ? button : 1;
+      which = button === 2 ? 3 : button === 4 ? 2 : 1;
+    } else {
+      button = button ? button : 0;
+      which = button === 1 ? 2 : button === 2 ? 3 : 0;
+    } 
     
     var coords = element ? $SC.viewportOffset(element) : { x: 0, y: 0 },
         clientX = coords.x + x,
@@ -368,7 +377,8 @@ ScExt.MouseEventSimulation = {
       pageX: clientX,
       pageY: clientY,
       bubbles: true,
-      button: button ? button : 0,
+      button: button,
+      which: which,
       altKey: selenium.browserbot.altKeyDown,
       metaKey: selenium.browserbot.metaKeyDown,
       ctrlKey: selenium.browserbot.controlKeyDown,

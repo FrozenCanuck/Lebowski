@@ -27,11 +27,13 @@ module Lebowski
         end
         
         def mouse_down_at(x, y)
+          scroll_to_visible
           @driver.sc_mouse_down_at action_target, x, y, *action_locator_args
           stall :mouse_down
         end
         
         def right_mouse_down_at(x, y)
+          scroll_to_visible
           @driver.sc_right_mouse_down_at action_target, x, y, *action_locator_args
           stall :right_mouse_down
         end
@@ -108,6 +110,7 @@ module Lebowski
         # Used to perform a single basic click on this view in the remote application
         #
         def basic_click()
+          scroll_to_visible
           @driver.sc_basic_click action_target, *action_locator_args
           stall :click
         end
@@ -116,6 +119,7 @@ module Lebowski
         # Used to perform a double click on this view in the remote application
         #
         def double_click()
+          scroll_to_visible
           @driver.sc_double_click action_target, *action_locator_args
           stall :double_click
         end
@@ -222,8 +226,6 @@ module Lebowski
           # to be done so that autoscrolling will not interfere with our drag
           # and drop user action
           @driver.sc_disable_all_autoscrolling
-          
-          self.scroll_to_visible
           
           mouse_down_at mouse_offset_x, mouse_offset_y
           mouse_move_at mouse_offset_x, mouse_offset_y
