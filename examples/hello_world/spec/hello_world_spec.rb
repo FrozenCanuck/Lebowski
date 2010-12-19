@@ -70,10 +70,11 @@ App = MainApplication.new \
 # the application's start method with a wait block. 
 #
 # For the hello world example app, we do not want to continue with the 
-# script until the application's isLoaded variable is equal to true. If
-# the condition is not met before a timeout is met then an exception will
-# be thrown. The default timeout is 10 seconds. We can alter the timeout
-# by supplying a timeout value, like so:
+# script until the application's main pane has been attached by checking
+# the pane's isPaneAttached property.  If the condition is not met before 
+# a timeout is met then an exception will be thrown. The default timeout 
+# is 10 seconds. We can alter the timeout by supplying a timeout value, 
+# like so:
 #
 #   App.start(20) do |app|
 #     ...
@@ -91,7 +92,7 @@ App = MainApplication.new \
 # object.
 #
 App.start do |app|
-  app['isLoaded'] == true
+  app['mainPage.mainPane.isPaneAttached'] == true
 end
 
 #

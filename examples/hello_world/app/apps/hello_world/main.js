@@ -13,6 +13,5 @@ HelloWorldApp.main = function main() {
 } ;
 
 function main() { 
-  HelloWorldApp.main(); 
-  HelloWorldApp.isLoaded = YES;
+  HelloWorldApp.main();
 }

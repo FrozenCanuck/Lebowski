@@ -9,8 +9,6 @@ HelloWorldApp = SC.Application.create({
   NAMESPACE: 'HelloWorldApp',
   VERSION: '1.0.0',
 
-  store: SC.Store.create().from(SC.Record.fixtures),
-    
-  isLoaded: NO
+  store: SC.Store.create().from(SC.Record.fixtures)
 
 }) ;

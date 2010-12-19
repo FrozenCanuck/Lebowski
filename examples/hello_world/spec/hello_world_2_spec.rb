@@ -52,7 +52,7 @@ App = MainApplication.new \
 # Now get the application started.
 #
 App.start do |app|
-  app['isLoaded'] == true
+  app['mainPage.mainPane.isPaneAttached'] == true
 end
 
 App.move_to 1, 1
