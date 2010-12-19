@@ -81,4 +81,6 @@ add_view_spec :segmented_view, 'SC.SegmentedView', 'segmented_view'
 add_view_spec :web_view, 'SC.WebView', 'web_view'
 add_view_spec :list_view, 'SC.ListView', 'list_view'
 add_view_spec :list_item_view, 'SC.ListItemView', 'list_item_view'
+
 add_pane_spec :palette_pane, 'SC.PalettePane', 'palette_pane'
+add_pane_spec :picker_pane, 'SC.PickerPane', 'picker_pane'

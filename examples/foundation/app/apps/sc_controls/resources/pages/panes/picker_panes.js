@@ -6,6 +6,10 @@
 
 TestApp.pickerPanesPage = SC.Page.design({
 
+  menuPickerButton: SC.outlet('mainView.pickerPanes.menuPicker'),
+  
+  pointerPickerButton: SC.outlet('mainView.pickerPanes.pointerPicker'),
+
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
     childViews: 'statusLabel pickerPanes'.w(),
