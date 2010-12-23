@@ -212,6 +212,11 @@ module Lebowski
         __remote_control_command("scMouseUpRightAt", [__locator(type, *params), encoded_params])
       end
       
+      def sc_double_click_at(type, x, y, *params)
+        encoded_params = ObjectEncoder.encode_hash({ :x => x, :y => y })
+        __remote_control_command("scDoubleClickAt", [__locator(type, *params), encoded_params])
+      end
+      
       def sc_basic_click(type, *params)
         __remote_control_command("click", [__locator(type, *params), ])
       end
@@ -222,10 +227,6 @@ module Lebowski
       
       def sc_right_click(type, *params)
         __remote_control_command("scRightClick", [__locator(type, *params), ])
-      end
-      
-      def sc_double_click(type, *params)
-        __remote_control_command("scDoubleClick", [__locator(type, *params), ])
       end
       
       def sc_mouse_wheel_delta_x(type, delta, *params)

@@ -49,6 +49,12 @@ module Lebowski
           stall :click
         end
         
+        def double_click_at(x, y)
+          scroll_to_visible
+          @driver.sc_double_click_at action_target, x, y, *action_locator_args
+          stall :double_click
+        end
+        
         def right_click_at(x, y)
           right_mouse_down_at x, y
           right_mouse_up_at x, y
@@ -89,6 +95,13 @@ module Lebowski
         end
         
         #
+        # Used to perform a double click on this view in the remote application
+        #
+        def double_click()
+          double_click_at :center, :center
+        end
+        
+        #
         # Used to perform a single click on this view in the remote application
         #
         def click()
@@ -113,15 +126,6 @@ module Lebowski
           scroll_to_visible
           @driver.sc_basic_click action_target, *action_locator_args
           stall :click
-        end
-        
-        #
-        # Used to perform a double click on this view in the remote application
-        #
-        def double_click()
-          scroll_to_visible
-          @driver.sc_double_click action_target, *action_locator_args
-          stall :double_click
         end
         
         #

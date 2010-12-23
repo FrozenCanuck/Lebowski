@@ -1330,6 +1330,22 @@ Selenium.prototype.doScMouseDownRightAt = function(locator, params) {
 };
 
 /**
+  Action performs a click at event
+*/
+Selenium.prototype.doScClickAt = function(locator, params) {  
+  this.doScMouseDownAt(locator, params);
+  this.doScMouseUpAt(locator, params);
+};
+
+/**
+  Action performs a double click at event
+*/
+Selenium.prototype.doScDoubleClickAt = function(locator, params) {  
+  this.doScClickAt(locator, params);
+  this.doScClickAt(locator, params);
+};
+
+/**
   Action performs a single click that is recognized by the SproutCore framework. 
 */
 Selenium.prototype.doScClick = function(locator) {
