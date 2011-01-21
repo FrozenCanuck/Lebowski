@@ -352,17 +352,25 @@ ScExt.MouseEventSimulation = {
         coord = element ? $SC.viewportOffset(element) : { x: 0, y: 0 },
         width = element ? element.clientWidth : 0,
         height = element ? element.clientHeight : 0,
-        which = 0;
+        which = 1;
     
     x = x ? (x === 'center' ? width / 2 : x) : 0;
     y = y ? (y === 'center' ? height / 2 : y) : 0;
     
     if ($SC.browser.msie) {
       button = button ? button : 1;
-      which = button === 2 ? 3 : button === 4 ? 2 : 1;
+      switch (button) {
+        case 1: which = 1; break;
+        case 4: which = 2; break;
+        case 2: which = 3; break;
+      }
     } else {
       button = button ? button : 0;
-      which = button === 1 ? 2 : button === 2 ? 3 : 0;
+      switch (button) {
+        case 0: which = 1; break;
+        case 1: which = 2; break;
+        case 2: which = 3; break;
+      }
     } 
     
     var coords = element ? $SC.viewportOffset(element) : { x: 0, y: 0 },
