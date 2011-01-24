@@ -1,3 +1,9 @@
+# lebowski 0.3.1 January 23, 2011
+
+* Fixed mouse down and right mouse down user actions
+* Fixed double click user action
+* Fixed mouse event simulation bug. Event's which property now assigned the correct value
+
 # lebowski 0.3.0 December 6, 2010
 
 * Updated to now work with Ruby 1.9.2 and RSpec v2
