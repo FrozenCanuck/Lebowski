@@ -33,7 +33,7 @@ module Lebowski
         end
         
         def click_off()
-          modal.click
+          modal.click_at(0, 0)
         end
         
       end
