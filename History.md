@@ -1,3 +1,7 @@
+# lebowski 0.3.2 January 26, 2011
+
+* Fixed picker pane proxy's click_off method. parent modal pane will now always be clicked and not get blocked by the picker pane.
+
 # lebowski 0.3.1 January 23, 2011
 
 * Fixed mouse down and right mouse down user actions
