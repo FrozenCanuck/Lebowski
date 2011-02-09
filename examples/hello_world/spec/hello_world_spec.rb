@@ -18,7 +18,7 @@ end
 #
 # You can follow along with the script by reading the comments
 # below. Be sure to have everything configured correctly by going over
-# the frameworks README file, if you haven't alredy done so.
+# the frameworks README file, if you haven't already done so.
 #
 # You will need to have both the selenium server started as well
 # as the hello world example application started using sc-server.
