@@ -116,11 +116,15 @@ ScExt.getScrollableParentView = function(view) {
 ScExt.getScObjectClassNames = function(obj) {
   if (!ScExt.isScObject(obj)) return [];
   
+  // Make sure that SC has had a chance to find all 
+  // the object class names
+  $SC._object_className(obj.constructor);
+  
   var classNames = [];
   var superclass = obj.constructor;
   while (superclass) {
-    var sc = superclass.toString();
-    if (classNames.indexOf(sc) < 0) {
+    var sc = superclass._object_className;
+    if (sc && classNames.indexOf(sc) < 0) {
       classNames.push(sc);
     }
     superclass = superclass.superclass;
@@ -275,7 +279,7 @@ ScExt.PathParser = {
     
     for (var i = 1; i < parts.length; i++) {
       if (this._isArrayIndex(parts[i])) {
-        if (typeof objPathChain[i - 1] === "function") {
+        if ($SC.typeOf(objPathChain[i - 1]) === $SC.T_FUNCTION) {
           // Last part is a function, therefore invoke the function with the index
           var target = objPathChain[i - 2];
           var func = objPathChain[i - 1];
@@ -286,10 +290,10 @@ ScExt.PathParser = {
           current_obj = this._getObjectFromArray(array, parts[i]);
         }
       } else {
-        if (current_obj.getPath && typeof current_obj.getPath === "function") {
+        if ($SC.typeOf(current_obj.getPath) === $SC.T_FUNCTION) {
           // Object is a SC object. Use the get method
           current_obj = current_obj.getPath(parts[i]);
-        } else if (current_obj.get && typeof current_obj.get === "function") {
+        } else if ($SC.typeOf(current_obj.get) === $SC.T_FUNCTION) {
           current_obj = current_obj.get(parts[i]);
         } else {
           // Object is just a plain old JS object
@@ -377,7 +381,7 @@ ScExt.MouseEventSimulation = {
         clientX = coords.x + x,
         clientY = coords.y + y;
         
-    event = $SC.Event.simulateEvent(element, mouseEvent, { 
+    var event = $SC.Event.simulateEvent(element, mouseEvent, { 
       screenX: 0, // assume 0 is fine
       screenY: 0, // assume 0 is fine
       clientX: clientX,
@@ -482,7 +486,7 @@ ScExt.MouseWheelSimulation = {
   
   simulateEvent: function(locator, deltaX, deltaY, delta) {
     var element = selenium.browserbot.findElement(locator);
-    event = $SC.Event.simulateEvent(element, 'mousewheel', { 
+    var event = $SC.Event.simulateEvent(element, 'mousewheel', { 
       wheelDelta: !!delta ? delta : 0,
       wheelDeltaX: !!deltaX ? deltaX : 0,
       wheelDeltaY: !!deltaY ? deltaY : 0,
@@ -556,7 +560,7 @@ ScExt.KeyEventSimulation = {
     if (!keyCode && !charCode) return;
 
     var element = selenium.browserbot.findElement(locator);
-    event = $SC.Event.simulateEvent(element, keyEvent, { 
+    var event = $SC.Event.simulateEvent(element, keyEvent, { 
       which: $SC.none(keyCode) ? charCode : keyCode, 
       charCode: charCode || 0, 
       keyCode: keyCode || 0, 
