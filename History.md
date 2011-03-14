@@ -1,3 +1,7 @@
+# lebowski 0.3.3.pre.0 March 13, 2011
+
+* Initial Fixes to allow Lebowski to work with IE 7/8. Updates made to user-extensions.js file
+
 # lebowski 0.3.2 January 26, 2011
 
 * Fixed picker pane proxy's click_off method. parent modal pane will now always be clicked and not get blocked by the picker pane.
