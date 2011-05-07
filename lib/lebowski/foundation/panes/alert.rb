@@ -6,10 +6,6 @@
 module Lebowski
   module Foundation
     
-    SC_BUTTON1_STATUS = 'button1'
-    SC_BUTTON2_STATUS = 'button2'
-    SC_BUTTON3_STATUS = 'button3'
-    
     module Panes
       
       #
@@ -35,9 +31,9 @@ module Lebowski
         
         ALERT_PROPERTY_TYPE = 'icon'
         
-        BUTTON_ONE = 'buttonOne'
-        BUTTON_TWO = 'buttonTwo'
-        BUTTON_THREE = 'buttonThree'
+        BUTTON_ONE = 'button1'
+        BUTTON_TWO = 'button2'
+        BUTTON_THREE = 'button3'
         
         BUTTONS = [BUTTON_ONE, BUTTON_TWO, BUTTON_THREE]
         

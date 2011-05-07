@@ -20,13 +20,38 @@ module Lebowski
         end
         
         def buttons()
-          if @items.nil?
-            @items = Support::SimpleItemArray.new self, '.sc-radio-button'
-          end
+          @items = create_simple_item_array if @items.nil?
           return @items
         end
         
+      protected
+      
+        def create_simple_item_array()
+          return Support::RadioViewItemArray.new self
+        end
+        
       end
+      
+      module Support
+      
+        class RadioViewItemArray < SimpleItemArray
+          
+          SELECTOR = '.sc-radio-button'
+          
+          def click_with_index(value)
+            cq = @parent.core_query(SELECTOR)
+            cq[value].mouse_down
+            cq.done
+            
+            cq = @parent.core_query(SELECTOR)
+            cq[value].mouse_up
+            cq.done
+          end
+          
+        end
+        
+      end
+      
     end
   end
 end

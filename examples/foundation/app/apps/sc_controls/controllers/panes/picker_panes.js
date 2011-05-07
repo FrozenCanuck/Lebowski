@@ -15,12 +15,8 @@ TestApp.pickerPanesController = SC.ObjectController.create({
     close: SC.ButtonView.design({
       layout: { width: 200, height: 25, centerX: 0, centerY: 0 },
       title: 'Close Palette Pane',
-      action: function() {
-        var pane = this.get('pane');
-        var paneType = SC._object_className(pane.constructor);
-        TestApp.pickerPanesController.set('status', 'Closed %@'.fmt(paneType));
-        pane.remove();
-      }
+      target: 'TestApp.pickerPanesController',
+      action: 'closePickerPane'
     })
   }),
   
@@ -39,6 +35,13 @@ TestApp.pickerPanesController = SC.ObjectController.create({
       layout: { width: 400, height: 200 },
       contentView: this.modalPaneView
     }).popup(anchor, type);
+  },
+  
+  closePickerPane: function(view) {
+    var pane = view.get('pane');
+    var paneType = SC._object_className(pane.constructor);
+    TestApp.pickerPanesController.set('status', 'Closed %@'.fmt(paneType));
+    pane.remove();
   }
   
 });

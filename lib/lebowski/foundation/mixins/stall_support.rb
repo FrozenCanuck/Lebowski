@@ -16,13 +16,9 @@ module Lebowski
       #
       module StallSupport
     
-        DEFAULT_STALL = 0.2
+        DEFAULT_STALL = 0
     
-        DEFAULT_KEY_STALLS = {
-          :click => 0.2,
-          :double_click => 0.5,
-          :select => 0.5
-        }
+        DEFAULT_KEY_STALLS = {}
       
         @@adjusted_default_stall = DEFAULT_STALL
       

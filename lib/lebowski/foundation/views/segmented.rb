@@ -30,7 +30,7 @@ module Lebowski
       protected
       
         def create_simple_item_array()
-          return Support::SegmentItemArray.new self, '.sc-segment'
+          return Support::SegmentItemArray.new self
         end
         
       end
@@ -80,6 +80,11 @@ module Lebowski
             return if (index == :no_index)
             item = self[index]
             item.deselect
+          end
+          
+          def click_with_index(value)
+            segment = @parent["childViews.#{value}", View]
+            segment.click if (not segment.nil?)
           end
         
         protected

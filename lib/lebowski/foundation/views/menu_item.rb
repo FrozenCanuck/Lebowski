@@ -18,6 +18,10 @@ module Lebowski
           mouse_move
           mouse_down
           mouse_up
+          
+          # Need to incoporate an intentional sleep so sproutcore
+          # has enough time to do its thing
+          sleep 0.2
         end
         
       end

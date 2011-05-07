@@ -5,10 +5,16 @@
 /*globals TestApp */
 
 TestApp.menuPanesPage = SC.Page.design({
+  
+  statusLabel: SC.outlet('mainView.statusLabel'),
+  
+  shortMenuButton: SC.outlet('mainView.shortMenu'),
+  
+  longMenuButton: SC.outlet('mainView.longMenu'),
 
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
-    childViews: 'statusLabel basicMenu'.w(),
+    childViews: 'statusLabel shortMenu longMenu'.w(),
     
     statusLabel: SC.LabelView.design({
       layerId: 'menu-panes-status-label',
@@ -17,12 +23,18 @@ TestApp.menuPanesPage = SC.Page.design({
       valueBinding: 'TestApp.menuPanesController.status'
     }),
     
-    basicMenu: SC.ButtonView.design({
-      layerId: 'basic-menu-pane',
+    shortMenu: SC.ButtonView.design({
       layout: {left: 0, top: 30, width: 200, height: 25 },
-      title: 'Basic Menu Pane',
+      title: 'Short Menu Pane',
       target: TestApp.menuPanesController,
-      action: 'showMenuPane'
+      action: 'showShortMenuPane'
+    }),
+    
+    longMenu: SC.ButtonView.design({
+      layout: {left: 0, top: 60, width: 200, height: 25 },
+      title: 'Long Menu Pane',
+      target: TestApp.menuPanesController,
+      action: 'showLongMenuPane'
     })
   })
 

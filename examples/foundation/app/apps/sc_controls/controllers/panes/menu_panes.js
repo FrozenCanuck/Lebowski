@@ -8,28 +8,8 @@ TestApp.menuPanesController = SC.ObjectController.create({
   
   status: '--',
   
-  showMenuPane: function(view) {
+  showShortMenuPane: function(view) {
     var controller = this;
-    
-    var subMenuItems = [
-      {
-        title: 'Sub item 1',
-        isEnabled: true, 
-        target: this,
-        action: 'clickedMenuItem'
-      },
-      {
-        title: 'Sub item 2',
-        isEnabled: true, 
-        target: this,
-        action: 'clickedMenuItem' 
-      }
-    ];
-    
-    var subMenu = SC.MenuPane.create({
-      layout: { width: 200 },
-      items: subMenuItems
-    });
     
     var items = [
       { 
@@ -54,16 +34,6 @@ TestApp.menuPanesController = SC.ObjectController.create({
         target: this,
         action: 'clickedMenuItem'
       }
-      // TODO: Put back in menu item after figuring out how submenus work in SproutCore.
-      //       There is some unique behavior when working menu panes and trying to click
-      //       a menu item in a sub menu pane
-      // ,
-      // { 
-      //   title: 'Menu item 4', 
-      //   isEnabled: true,
-      //   subMenu: subMenu,
-      //   branchItem: true  
-      // }
     ];
     
     var anchor = TestApp.getPath('mainPage.menuPaneButton');
@@ -77,8 +47,34 @@ TestApp.menuPanesController = SC.ObjectController.create({
     this.set('status', 'Opened SC.MenuPane');
   },
   
-  clickedMenuItem: function(menuItem, pane) {
-    this.set('status', 'Clicked %@'.fmt(menuItem.getPath('content.title')));
+  showLongMenuPane: function(view) {
+    var controller = this;
+    
+    var items = [];
+    
+    for (var i = 0; i < 100; i += 1) {
+      items.push({ 
+        title: 'Menu item ' + i, 
+        isEnabled: true, 
+        target: this,
+        action: 'clickedMenuItem'
+      });
+    }
+    
+    var anchor = TestApp.getPath('mainPage.menuPaneButton');
+    SC.MenuPane.create({
+      layout: { width: 200 },
+      items: items,
+      itemTitleKey: 'title',
+      itemValueKey: 'title',
+      itemActionKey: 'action'
+    }).popup(view);
+    this.set('status', 'Opened SC.MenuPane');
+  },
+  
+  
+  clickedMenuItem: function(pane) {
+    this.set('status', 'Clicked %@'.fmt(pane.getPath('selectedItem.title')));
   }
   
 });

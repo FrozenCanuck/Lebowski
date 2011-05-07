@@ -232,23 +232,26 @@ module Lebowski
           @driver.sc_disable_all_autoscrolling
           
           mouse_down_at mouse_offset_x, mouse_offset_y
+          
+          # Need to incoporate an intentional sleep so sproutcore
+          # has enough time to do its thing
+          sleep 0.2
+          
           mouse_move_at mouse_offset_x, mouse_offset_y
-                    
+     
           # Make sure the element we are dragging relative to is visible
           relative_to.scroll_to_visible if relative_to.kind_of? PositionedElement
           
           rel_pos = relative_position(x, y, relative_to)
           mouse_move_at rel_pos.x, rel_pos.y
-          
+
           rel_pos = relative_position(x, y, relative_to)
           mouse_up_at rel_pos.x, rel_pos.y
-          
+
           # Enable autoscrolling and mouse move events since we have completed the 
           # drag and drop operation
           @driver.sc_enable_all_autoscrolling
           @driver.sc_enable_mouse_move_event
-          
-          stall :drag 
         end
         
         def drag_to(source, offset_x=nil, offset_y=nil, *params)

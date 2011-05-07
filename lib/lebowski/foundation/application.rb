@@ -57,6 +57,10 @@ module Lebowski
         return self['$SC.RootResponder.responder.keyPane', expected_type]
       end
       
+      def menu_pane(expected_type=nil)
+        return self['$SC.RootResponder.responder.menuPane', expected_type]
+      end
+      
       def responding_panes()
         if @responding_panes.nil?
           @responding_panes = ObjectArray.new self, '$SC.RootResponder.responder.panes'

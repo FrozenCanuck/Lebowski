@@ -290,8 +290,10 @@ ScExt.PathParser = {
           current_obj = this._getObjectFromArray(array, parts[i]);
         }
       } else {
-        if ($SC.typeOf(current_obj.getPath) === $SC.T_FUNCTION) {
-          // Object is a SC object. Use the get method
+        if ($SC.typeOf(current_obj.getPath) === $SC.T_FUNCTION && current_obj !== $SC) {
+          // Object is a SC object. Use the get method. Need to be mindful of the SC
+          // root object since it also has getPath but doesn't behave the same way as
+          // getPath on regular SC objects.
           current_obj = current_obj.getPath(parts[i]);
         } else if ($SC.typeOf(current_obj.get) === $SC.T_FUNCTION) {
           current_obj = current_obj.get(parts[i]);
@@ -353,7 +355,7 @@ ScExt.MouseEventSimulation = {
   
   simulateEvent: function(mouseEvent, locator, x, y, button) {
     var element = selenium.browserbot.findElement(locator),
-        coord = element ? $SC.viewportOffset(element) : { x: 0, y: 0 },
+        coord = element ? $SC.offset(element) : { x: 0, y: 0 },
         width = element ? element.clientWidth : 0,
         height = element ? element.clientHeight : 0,
         which = 1;
@@ -377,7 +379,7 @@ ScExt.MouseEventSimulation = {
       }
     } 
     
-    var coords = element ? $SC.viewportOffset(element) : { x: 0, y: 0 },
+    var coords = element ? $SC.offset(element) : { x: 0, y: 0 },
         clientX = coords.x + x,
         clientY = coords.y + y;
         
@@ -1689,7 +1691,7 @@ Selenium.prototype.getScViewFrame = function(path) {
 Selenium.prototype.getScElementWindowPosition = function(path) {
   var element = this.browserbot.findElement(path);
   if (!element) return null;
-  var coords = $SC.viewportOffset(element);
+  var coords = $SC.offset(element);
   if (!coords) return null;
   return [coords.x, coords.y];
 };

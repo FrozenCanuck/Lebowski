@@ -16,19 +16,19 @@ module Lebowski
         representing_sc_class 'SC.SelectButtonView'
         
         def display_menu
-          self.mouse_down if !menu_displayed?
+          click if !has_menu_displayed?
         end
         
         def hide_menu
-          menu.click_off if menu_displayed?
+          menu.click_off if has_menu_displayed?
         end
 
-        def menu_displayed?
+        def has_menu_displayed?
           return (not menu.nil?)
         end
 
         def menu
-          @menu = get_root_application_object.responding_panes.find_first(MenuPane)
+          @menu = self['pane.rootResponder.menuPane']
           if not @menu.nil?
             @menu = @menu.represent_as(SelectButtonMenu) 
             @menu.select_button = self

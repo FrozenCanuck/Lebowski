@@ -40,22 +40,17 @@ module Lebowski
           include Lebowski::Foundation
           include Lebowski::Foundation::Views
           
-          def initialize(parent, item_selector, value_rel_path=nil, items_rel_path=nil, item_title_key=nil, item_value_key=nil)
+          def initialize(parent)
             if not parent.kind_of? View
               raise ArgumentInvalidTypeError.new "parent", parent, View
-            end
-    
-            if not item_selector.kind_of? String
-              raise ArgumentInvalidTypeError.new "item_selector", item_selector, String
             end
             
             @parent = parent
             @driver = parent.driver
-            @item_selector = item_selector
-            @value_rel_path = value_rel_path.nil? ? 'value' : value_rel_path
-            @items_rel_path = items_rel_path.nil? ? 'items' : items_rel_path
-            @item_title_key = item_title_key.nil? ? parent['itemTitleKey'] : parent[item_title_key]
-            @item_value_key = item_value_key.nil? ? parent['itemValueKey'] : parent[item_value_key]
+            @value_rel_path = 'value'
+            @items_rel_path = 'items'
+            @item_title_key = parent['itemTitleKey']
+            @item_value_key = parent['itemValueKey']
           end
           
           def selected?(value)
@@ -170,15 +165,9 @@ module Lebowski
             end
           end
           
+          # Must be implemented by a subclass
           def click_with_index(value)
-            cq = @parent.core_query(@item_selector)
-            cq[value].mouse_down
-            cq[value].basic_click # Required for slightly older versions of SC (pre 1.0)
-            cq.done
-            
-            cq = @parent.core_query(@item_selector)
-            cq[value].mouse_up
-            cq.done
+            # NO-OP
           end
             
           def click_with_title(value)

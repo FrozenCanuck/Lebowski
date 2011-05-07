@@ -6,6 +6,20 @@
 
 TestApp.alertPanesPage = SC.Page.design({
 
+  alertWarnButton: SC.outlet('mainView.alertPanes.alertWarn'),
+  
+  alertErrorButton: SC.outlet('mainView.alertPanes.alertError'),
+  
+  alertInfoButton: SC.outlet('mainView.alertPanes.alertInfo'),
+  
+  alertPlainButton: SC.outlet('mainView.alertPanes.alertPlain'),
+  
+  alertExtraButton: SC.outlet('mainView.alertPanes.alertExtraButton'),
+  
+  alertOneButton: SC.outlet('mainView.alertPanes.alertOneButton'),
+  
+  statusLabel: SC.outlet('mainView.statusLabel'),
+
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
     childViews: 'statusLabel alertPanes'.w(),
@@ -14,7 +28,7 @@ TestApp.alertPanesPage = SC.Page.design({
       layerId: 'alert-panes-status-label',
       layout: {left: 0, top: 0, right: 0, height: 25 },
       textAlign: SC.ALIGN_LEFT,
-      valueBinding: 'TestApp.alertPanesController.status'
+      valueBinding: SC.Binding.oneWay('TestApp.alertPanesController.status')
     }),
     
     alertPanes: SC.View.design({

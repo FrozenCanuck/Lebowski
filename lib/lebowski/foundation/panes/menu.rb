@@ -19,6 +19,10 @@ module Lebowski
           return @menu_items
         end
         
+        def click_item(title)
+          menu_items.click title
+        end
+        
       protected
       
         def create_menu_item_array()
@@ -33,15 +37,16 @@ module Lebowski
           include Lebowski
           
           def initialize(parent, *params)
-            super(parent, 'menuItemViews', 'length', *params)
+            super(parent, 'items', 'length', *params)
+            @itemTitleKey = @parent['itemTitleKey']
           end
           
           def click(title)
             menu_item = nil
             if title.kind_of? String
-              menu_item = find_first({ :title => /^#{title}$/i })
+              menu_item = find_first({ @itemTitleKey => /^#{title}$/i })
             elsif title.kind_of? Regexp
-              menu_item = find_first({ :title => title })
+              menu_item = find_first({ @itemTitleKey => title })
             else
               raise ArgumentInvalidTypeError.new "title", title, String, Regexp
             end
@@ -50,45 +55,9 @@ module Lebowski
           
         protected
         
-          def find_indexes_process_filter(filter)
-            processed_filter = {}
-
-            @title_flag = :no_flag
-
-            filter.each do |key, value|
-              case key
-              when :title
-                @title_flag = value
-              else
-                processed_filter[key] = value
-              end
-            end
-
-            return processed_filter
-          end
-
-          def find_indexes_process_indexes(indexes)
-            processed_indexes = []
-
-            indexes.each do |index|
-              if @title_flag != :no_flag
-                next if (not menu_item_has_title?(index, @title_flag))
-              end
-
-              processed_indexes << index
-            end
-
-            return processed_indexes
-          end
-          
-        private
-        
-          def menu_item_has_title?(index, title)
-            menu_item = self[index]
-            @valueKey = @parent['itemTitleKey']  if @valueKey.nil?
-            value = menu_item["content.#{@valueKey}"]
-            return (value =~ title).kind_of?(Integer) if title.kind_of?(Regexp)
-            return (value == title)
+          def create_object(index, expected_type=nil)
+            rel_path = "_menuView.childViews.#{index}"
+            return @parent[rel_path, expected_type]
           end
           
         end

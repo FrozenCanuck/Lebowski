@@ -4,13 +4,12 @@
 // ==========================================================================
 /*globals TestApp Core */
 
-TestApp.radioControlsController = SC.Object.create({
+TestApp.selectButtonControlsController = SC.Object.create({
   
   reset: function() {
-    var page = TestApp.get('radioViewsPage');
-    page.setPath('horizontalRadioView.value', null);
-    page.setPath('verticalRadioView.value', 'cat');
-    page.setPath('mixedStateRadioView.value', [1]);
+    var page = TestApp.get('selectButtonViewsPage'), view;
+    page.setPath('basicSelectButtonView.value', 'One');
+    page.setPath('advancedSelectButtonView.value', 1);
   }
   
 });

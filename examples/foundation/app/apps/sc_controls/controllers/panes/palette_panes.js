@@ -25,12 +25,8 @@ TestApp.palettePanesController = SC.ObjectController.create({
       close: SC.ButtonView.design({
         layout: { height: 25, left: 0, right: 0, bottom: 0 },
         title: 'Close Pane',
-        action: function() {
-          var pane = this.get('pane');
-          var paneType = SC._object_className(pane.constructor);
-          TestApp.palettePanesController.set('status', 'Closed %@ - ID = %@'.fmt(paneType, pane.id));
-          pane.remove();
-        }
+        target: 'TestApp.palettePanesController',
+        action: 'removePalettePane'
       })
     })
   }),
@@ -50,6 +46,13 @@ TestApp.palettePanesController = SC.ObjectController.create({
     pane.setPath('contentView.group.label.value', 'ID = %@'.fmt(this.nextPalettePaneId));
     pane.append();
     this.set('status', 'Created a SC.PalettePane - ID = %@'.fmt(this.nextPalettePaneId));
+  },
+  
+  removePalettePane: function(view) {
+    var pane = view.get('pane');
+    var paneType = SC._object_className(pane.constructor);
+    TestApp.palettePanesController.set('status', 'Closed %@ - ID = %@'.fmt(paneType, pane.id));
+    pane.remove();
   },
   
   resetPalettePaneIdCounter: function() {

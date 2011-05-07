@@ -6,9 +6,26 @@
 
 TestApp.radioViewsPage = SC.Page.design({
   
+  horizontalRadioView: SC.outlet('mainView.horizontalRadioView.radio'),
+  
+  verticalRadioView: SC.outlet('mainView.verticalRadioView.radio'),
+  
+  mixedStateRadioView: SC.outlet('mainView.mixedStateRadioView.radio'),
+  
+  disabledRadioView: SC.outlet('mainView.disabledRadioView.radio'),
+  
+  resetButton: SC.outlet('mainView.resetButton'),
+  
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
-    childViews: 'horizontalRadioView verticalRadioView mixedStateRadioView disabledRadioView'.w(),
+    childViews: 'horizontalRadioView verticalRadioView mixedStateRadioView disabledRadioView resetButton'.w(),
+    
+    resetButton: SC.ButtonView.design({
+      layout: { top: 0, left: 400, height: 23, width: 80 },
+      title: 'Reset',
+      target: 'TestApp.radioControlsController',
+      action: 'reset'
+    }),
     
     horizontalRadioView: SC.View.design({
       layout: { top: 0, left: 0, right: 0, height: 25 },
@@ -21,7 +38,7 @@ TestApp.radioViewsPage = SC.Page.design({
       
       radio: SC.RadioView.design({
         layerId: 'horizontal-radio',
-        layout: { left: 160, centerY: 0, width: 200, height: 23 },
+        layout: { left: 160, centerY: 0, width: 300, height: 23 },
         items: 'square circle triangle'.w(),
         layoutDirection: SC.LAYOUT_HORIZONTAL
       })
@@ -47,7 +64,7 @@ TestApp.radioViewsPage = SC.Page.design({
     
     mixedStateRadioView: SC.View.design({
       layout: { top: 100, left: 0, right: 0, height: 25 },
-      childViews: 'label radio resetButton'.w(),
+      childViews: 'label radio'.w(),
       
       label: SC.LabelView.design({
         layout: { left: 0, centerY: 0, width: 150, height: 20 },
@@ -66,14 +83,6 @@ TestApp.radioViewsPage = SC.Page.design({
         ],
         layoutDirection: SC.LAYOUT_HORIZONTAL,
         value: [1]
-      }),
-      
-      resetButton: SC.ButtonView.design({
-        layerId: 'reset-mixed-state-radio-button',
-        layout: { left: 320, centerY: 0, width: 100, height: 23 },
-        title: 'Reset',
-        target: TestApp.radioControlsController,
-        action: 'resetMixedRadioView'
       })
     }),
     
@@ -88,7 +97,7 @@ TestApp.radioViewsPage = SC.Page.design({
       
       radio: SC.RadioView.design({
         layerId: 'disabled-radio',
-        layout: { left: 160, centerY: 0, width: 200, height: 23 },
+        layout: { left: 160, centerY: 0, width: 300, height: 23 },
         items: 'square circle triangle'.w(),
         layoutDirection: SC.LAYOUT_HORIZONTAL,
         value: 'circle',

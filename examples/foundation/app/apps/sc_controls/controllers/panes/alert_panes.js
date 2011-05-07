@@ -9,39 +9,97 @@ TestApp.alertPanesController = SC.ObjectController.create({
   status: '--',
   
   showAlertWarn: function() {
-    this.alertTitle = "Warn";
-    SC.AlertPane.warn(this.alertTitle, "A warning alert", "", "OK", "Cancel", null, this);
-    this.set('status', 'opened alert pane - %@'.fmt(this.alertTitle));
+    var alertTitle = "Warn";
+    SC.AlertPane.warn({
+      message: alertTitle,
+      description: "A warning alert",
+      buttons: [
+        { title: "OK" },
+        { title: "Cancel" }
+      ],
+      delegate: this
+    });
+    this.set('status', 'opened alert pane - %@'.fmt(alertTitle));
   },
   
   showAlertError: function() {
-    this.alertTitle = "Error";
-    SC.AlertPane.error(this.alertTitle, "An error alert", "", "OK", "Cancel", null, this);
-    this.set('status', 'opened alert pane - %@'.fmt(this.alertTitle));
+    var alertTitle = "Error";
+    
+    SC.AlertPane.error({
+      message: alertTitle,
+      description: "A error alert",
+      buttons: [
+        { title: "OK" },
+        { title: "Cancel" }
+      ],
+      delegate: this
+    });
+    
+    this.set('status', 'opened alert pane - %@'.fmt(alertTitle));
   },
   
   showAlertInfo: function() {
-    this.alertTitle = "Info";
-    SC.AlertPane.info(this.alertTitle, "An info alert", "", "OK", "Cancel", null, this);
-    this.set('status', 'opened alert pane - %@'.fmt(this.alertTitle));
+    var alertTitle = "Info";
+    
+    SC.AlertPane.info({
+      message: alertTitle,
+      description: "A info alert",
+      buttons: [
+        { title: "OK" },
+        { title: "Cancel" }
+      ],
+      delegate: this
+    });
+    
+    this.set('status', 'opened alert pane - %@'.fmt(alertTitle));
   },
   
   showAlertPlain: function() {
-    this.alertTitle = "Plain";
-    SC.AlertPane.plain(this.alertTitle, "A plain alert", "", "Yes", "No", null, this);
-    this.set('status', 'opened alert pane - %@'.fmt(this.alertTitle));
+    var alertTitle = "Plain";
+    
+    SC.AlertPane.plain({
+      message: alertTitle,
+      description: "A plain alert",
+      buttons: [
+        { title: "Yes" },
+        { title: "No" }
+      ],
+      delegate: this
+    });
+    
+    this.set('status', 'opened alert pane - %@'.fmt(alertTitle));
   },
   
   showAlertExtraButton: function() {
-    this.alertTitle = "Extra Button";
-    SC.AlertPane.plain(this.alertTitle, "An alert with an extra button", "", "Foo", "Bar", "Extra", this);
-    this.set('status', 'opened alert pane - %@'.fmt(this.alertTitle));
+    var alertTitle = "Extra Button";
+    
+    SC.AlertPane.plain({
+      message: alertTitle,
+      description: "An alert with an extra button",
+      buttons: [
+        { title: "Yes" },
+        { title: "No" },
+        { title: "Extra" }
+      ],
+      delegate: this
+    });
+    
+    this.set('status', 'opened alert pane - %@'.fmt(alertTitle));
   },
   
   showAlertOneButton: function() {
-    this.alertTitle = "One Button";
-    SC.AlertPane.plain(this.alertTitle, "An alert with one button", "", "OK", null, null, this);
-    this.set('status', 'opened alert pane - %@'.fmt(this.alertTitle));
+    var alertTitle = "One Button";
+    
+    SC.AlertPane.plain({
+      message: alertTitle,
+      description: "An alert with one button",
+      buttons: [
+        { title: "OK" }
+      ],
+      delegate: this
+    });
+    
+    this.set('status', 'opened alert pane - %@'.fmt(alertTitle));
   },
   
   alertPaneDidDismiss: function(pane, status) {
@@ -49,15 +107,15 @@ TestApp.alertPanesController = SC.ObjectController.create({
     
     switch(status) {
       case SC.BUTTON1_STATUS:
-        buttonTitle = pane.buttonOne.get('title');
+        buttonTitle = pane.get('button1').get('title');
         break;
         
       case SC.BUTTON2_STATUS:
-        buttonTitle = pane.buttonTwo.get('title');
+        buttonTitle = pane.get('button2').get('title');
         break;
         
       case SC.BUTTON3_STATUS:
-        buttonTitle = pane.buttonThree.get('title');
+        buttonTitle = pane.get('button3').get('title');
         break;
     }
     
