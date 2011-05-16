@@ -6,16 +6,30 @@
 
 TestApp.checkboxViewsPage = SC.Page.design({
   
+  basicCheckboxView: SC.outlet('mainView.basicCheckbox.checkbox'),
+  
+  disabledCheckboxView: SC.outlet('mainView.disabledCheckbox.checkbox'),
+  
+  mixedStateCheckboxView: SC.outlet('mainView.mixedStateCheckbox.checkbox'),
+  
+  resetButton: SC.outlet('mainView.resetButton'),
+  
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
-    childViews: 'checkbox disabledCheckbox mixedStateCheckbox'.w(),
+    childViews: 'basicCheckbox disabledCheckbox mixedStateCheckbox resetButton'.w(),
+          
+    resetButton: SC.ButtonView.design({
+      layout: { top: 0, left: 110, width: 100, height: 23 },
+      title: 'Reset',
+      target: TestApp.checkboxControlsController,
+      action: 'reset'
+    }),
     
-    checkbox: SC.View.design({
+    basicCheckbox: SC.View.design({
       layout: { top: 0, left: 0, right: 0, height: 25 },
       childViews: 'checkbox'.w(),
       
       checkbox: SC.CheckboxView.design({
-        layerId: 'basic-checkbox',
         layout: { left: 0, centerY: 0, width: 100, height: 23 },
         title: 'Checkbox'
       })
@@ -26,7 +40,6 @@ TestApp.checkboxViewsPage = SC.Page.design({
       childViews: 'checkbox'.w(),
     
       checkbox: SC.CheckboxView.design({
-        layerId: 'disabled-checkbox',
         layout: { left: 0, centerY: 0, width: 100, height: 23 },
         title: 'Disabled',
         value: YES,
@@ -36,22 +49,12 @@ TestApp.checkboxViewsPage = SC.Page.design({
     
     mixedStateCheckbox: SC.View.design({
       layout: { top: 60, left: 0, right: 0, height: 25 },
-      childViews: 'checkbox resetButton'.w(),
+      childViews: 'checkbox'.w(),
     
       checkbox: SC.CheckboxView.design({
-        layerId: 'mixed-state-checkbox',
         layout: { left: 0, centerY: 0, width: 100, height: 23 },
         title: 'Mixed State',
-        value: [YES, NO],
-        valueBinding: 'TestApp.checkboxControlsController.checkbox3'
-      }),
-      
-      resetButton: SC.ButtonView.design({
-        layerId: 'reset-mixed-state-checkbox-button',
-        layout: { left: 110, centerY: 0, width: 100, height: 23 },
-        title: 'Reset',
-        target: TestApp.checkboxControlsController,
-        action: 'resetMixedStateCheckbox'
+        value: [YES, NO]
       })
     })
   })

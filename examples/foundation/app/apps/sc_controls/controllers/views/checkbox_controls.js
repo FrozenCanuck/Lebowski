@@ -6,8 +6,10 @@
 
 TestApp.checkboxControlsController = SC.Object.create({
   
-  resetMixedStateCheckbox: function() {
-    TestApp.setPath('checkboxViewsPage.mainView.mixedStateCheckbox.checkbox.value', [YES, NO]);
+  reset: function() {
+    var page = TestApp.checkboxViewsPage;
+    page.setPath('basicCheckboxView.value', NO);
+    page.setPath('mixedStateCheckboxView.value', [YES, NO]);
   }
   
 });

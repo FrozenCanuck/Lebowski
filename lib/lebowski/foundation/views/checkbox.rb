@@ -16,19 +16,7 @@ module Lebowski
         
         # A value the view's isSelected property can return other than a boolean value
         MIXED_STATE = '__MIXED__'
-        
-        #
-        # @override
-        #
-        # Need to perform a basic click so that the view will respond correctly
-        #
-        def click()
-          mouse_down
-          mouse_up
-          basic_click
-          stall :click
-        end
-        
+                
         def deselect()
           if in_mixed_state?
             click
