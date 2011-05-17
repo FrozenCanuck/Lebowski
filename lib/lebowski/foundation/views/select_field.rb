@@ -99,7 +99,8 @@ module Lebowski
         # @see #select
         #
         def select_with_value(val)
-          option_locator = "value=regexi:^(nu|st|sc)#{val}$"
+          guid = @driver.get_sc_guid(val)
+          option_locator = "value=regexi:^#{guid}$"
           @driver.sc_select(:view, option_locator, self.abs_path)
           stall :select
         end

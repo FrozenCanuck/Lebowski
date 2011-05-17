@@ -1607,9 +1607,13 @@ Selenium.prototype.getScTypeOfArrayContent = function(path) {
 /**
   Returns a SproutCore object's GUID
 */
-Selenium.prototype.getScGuid = function(path) {
-  var value = $ScPath.getPath(path, 'SC.Object');
-  var guid = $SC.guidFor(value);
+Selenium.prototype.getScGuid = function(params) {
+  params = ScExt.ObjectDecoder.decodeHash(params);
+  var value = params.val;
+  if ($SC.typeOf(value) === $SC.T_STRING) {
+    value = $ScPath.getPath(value, 'SC.Object');
+  }
+  var guid = $SC.guidFor(!!value ? value : params.val);
   return guid;
 };
 

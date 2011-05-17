@@ -5,10 +5,39 @@
 /*globals TestApp */
 
 TestApp.selectFieldViewsPage = SC.Page.design({
+
+  basicSelectField1: SC.outlet('mainView.basicSelectField1.selectField'),
+  
+  basicSelectField2: SC.outlet('mainView.basicSelectField2.selectField'),
+  
+  emptyOptionSelectField: SC.outlet('mainView.emptyOptionSelectField.selectField'),
+  
+  sortedSelectField: SC.outlet('mainView.sortedSelectField.selectField'),
+  
+  disabledSelectField: SC.outlet('mainView.disabledSelectField.selectField'),
+  
+  largeSelectField: SC.outlet('mainView.largeSelectField.selectField'),
+  
+  resetButton: SC.outlet('mainView.resetButton'),
   
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
-    childViews: 'basicSelectField1 basicSelectField2 emptyOptionSelectField sortedSelectField disabledSelectField'.w(),
+    childViews: [
+      'basicSelectField1',
+      'basicSelectField2',
+      'emptyOptionSelectField',
+      'sortedSelectField',
+      'disabledSelectField',
+      'largeSelectField',
+      'resetButton'
+    ],
+    
+    resetButton: SC.ButtonView.design({
+      layout: { top: 0, left: 250, width: 80, height: 25 },
+      title: 'Reset',
+      action: 'reset',
+      target: TestApp.selectFieldControlsController
+    }),
     
     basicSelectField1: SC.View.design({
       layout: { top: 0, left: 0, right: 0, height: 25 },
@@ -20,10 +49,9 @@ TestApp.selectFieldViewsPage = SC.Page.design({
       }),
       
       selectField: SC.SelectFieldView.design({
-        layerId: 'first-basic-select-field',
         layout: { left: 130, centerY: 0, width: 100, height: 23 },
         objects: ['square', 'circle', 'triangle'],
-        value: 'square'
+        value: 'triangle'
       })
     }),
     
@@ -37,7 +65,6 @@ TestApp.selectFieldViewsPage = SC.Page.design({
       }),
       
       selectField: SC.SelectFieldView.design({
-        layerId: 'second-basic-select-field',
         layout: { left: 130, centerY: 0, width: 100, height: 23 },
         objects: [
           { name: 'square', value: 1000 },
@@ -60,7 +87,6 @@ TestApp.selectFieldViewsPage = SC.Page.design({
       }),
       
       selectField: SC.SelectFieldView.design({
-        layerId: 'empty-option-select-field',
         layout: { left: 130, centerY: 0, width: 100, height: 23 },
         objects: ['square', 'circle', 'triangle'],
         emptyName: 'empty',
@@ -78,7 +104,6 @@ TestApp.selectFieldViewsPage = SC.Page.design({
       }),
       
       selectField: SC.SelectFieldView.design({
-        layerId: 'sorted-select-field',
         layout: { left: 130, centerY: 0, width: 100, height: 23 },
         objects: [
           { item: 'zebra' },
@@ -93,8 +118,23 @@ TestApp.selectFieldViewsPage = SC.Page.design({
       })
     }),
     
-    disabledSelectField: SC.View.design({
+    largeSelectField: SC.View.design({
       layout: { top: 120, left: 0, right: 0, height: 25 },
+      childViews: 'label selectField'.w(),
+      
+      label: SC.LabelView.design({
+        layout: { left: 0, centerY: 0, width: 150, height: 20 },
+        value: 'Large Select Field:'
+      }),
+      
+      selectField: SC.SelectFieldView.design({
+        layout: { left: 130, centerY: 0, width: 100, height: 23 },
+        objectsBinding: SC.Binding.oneWay('TestApp.selectFieldControlsController.largeItemsList')
+      })
+    }),
+    
+    disabledSelectField: SC.View.design({
+      layout: { top: 150, left: 0, right: 0, height: 25 },
       childViews: 'label selectField'.w(),
       
       label: SC.LabelView.design({

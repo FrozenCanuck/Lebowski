@@ -33,8 +33,9 @@ module Lebowski
       
       # SC Object Foundation Selenium Calls
       
-      def get_sc_guid(scpath)
-        return __string_command("getScGuid", [scpath])
+      def get_sc_guid(val)
+        encoded_params = ObjectEncoder.encode_hash({ :val => val })
+        return __string_command("getScGuid", [encoded_params])
       end
       
       def get_sc_object_class_name(scpath)
