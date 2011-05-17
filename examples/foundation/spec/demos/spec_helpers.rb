@@ -85,6 +85,7 @@ add_view_spec :radio_view, 'SC.RadioView', 'radio_view'
 add_view_spec :select_button_view, 'SC.SelectButtonView', 'select_button_view'
 add_view_spec :checkbox_view, 'SC.CheckboxView', 'checkbox_view'
 add_view_spec :select_field_view, 'SC.SelectFieldView', 'select_field_view'
+add_view_spec :text_field_view, 'SC.TextFieldView', 'text_field_view'
 
 add_pane_spec :alert_pane, 'SC.AlertPane', 'alert_pane'
 add_pane_spec :palette_pane, 'SC.PalettePane', 'palette_pane'

@@ -247,13 +247,13 @@ module Lebowski
       end
       
       def sc_key_down(type, key, *params)
-        if key == :meta_key
+        if key == :meta_key or key == :meta
           meta_key_down
-        elsif key == :alt_key
+        elsif key == :alt_key or key == :alt
           alt_key_down
-        elsif key == :ctrl_key
+        elsif key == :ctrl_key or key == :ctrl
           control_key_down
-        elsif key == :shift_key
+        elsif key == :shift_key or key == :shift
           shift_key_down
         elsif key.kind_of? Symbol
           __remote_control_command("scFunctionKeyDown", [__locator(type, *params), key.to_s])
@@ -264,13 +264,13 @@ module Lebowski
       end
       
       def sc_key_up(type, key, *params)
-        if key == :meta_key
+        if key == :meta_key or key == :meta
           meta_key_up
-        elsif key == :alt_key
+        elsif key == :alt_key or key == :alt
           alt_key_up
-        elsif key == :ctrl_key
+        elsif key == :ctrl_key or key == :ctrl
           control_key_up
-        elsif key == :shift_key
+        elsif key == :shift_key or key == :shift
           shift_key_up
         elsif key.kind_of? Symbol
           __remote_control_command("scFunctionKeyUp", [__locator(type, *params), key.to_s])

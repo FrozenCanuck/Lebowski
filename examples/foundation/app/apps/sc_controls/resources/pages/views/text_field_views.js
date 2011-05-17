@@ -6,9 +6,39 @@
 
 TestApp.textFieldViewsPage = SC.Page.design({
   
+  basicTextField: SC.outlet('mainView.basicTextField.textField'),
+  
+  hintedTextField: SC.outlet('mainView.hintedTextField.textField'),
+  
+  passwordTextField: SC.outlet('mainView.passwordTextField.textField'),
+  
+  textAreaTextField: SC.outlet('mainView.textAreaTextField.textField'),
+  
+  disabledTextField: SC.outlet('mainView.disabledTextField.textField'),
+  
+  typeKeyEvents: SC.outlet('mainView.typeKeyEvents.customTextField'),
+  
+  resetButton: SC.outlet('mainView.resetButton'),
+  
   mainView: SC.View.design({
     layout: { top: 20, bottom: 0, left: 20, right: 20 },
-    childViews: 'basicTextField hintedTextField passwordTextField textAreaTextField disabledTextField typeKeyEvents'.w(),
+    
+    childViews: [
+      'basicTextField',
+      'hintedTextField',
+      'passwordTextField',
+      'textAreaTextField',
+      'disabledTextField',
+      'typeKeyEvents',
+      'resetButton'
+    ],
+    
+    resetButton: SC.ButtonView.design({
+      layout: { top: 0, left: 270, height: 23, width: 80 },
+      title: 'Reset',
+      target: 'TestApp.textFieldControlsController',
+      action: 'reset'
+    }),
     
     basicTextField: SC.View.design({
       layout: { top: 0, left: 0, right: 0, height: 25 },
