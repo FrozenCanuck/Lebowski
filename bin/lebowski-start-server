@@ -5,20 +5,194 @@
 # the required extension file
 #
 
+# TODO: Put this together quickly. Needs to be refactored at some point.
+
+require 'open-uri'
+require 'optparse'
+
+SELENIUM_NAME = 'Selenium'
+SELENIUM_JAR = 'selenium-server-standalone-2.2.0.jar'
+SELENIUM_DOMAIN = 'http://selenium.googlecode.com'
+SELENIUM_JAR_URL = SELENIUM_DOMAIN + '/files/' + SELENIUM_JAR
+LEBOWSKI_PATH = File.join(Dir.home, ".lebowski")
+SELENIUM_JAR_PATH = File.join(LEBOWSKI_PATH, SELENIUM_JAR)
+ERROR_MSG_PREFIX = "Unable to run lebowski-server. "
 DEFAULT_SELENIUM_SERVER_PORT = 4444
+USER_EXTENTIONS_FILE = 'user-extensions.js'
+RESOURCES_DIR_PATH = File.expand_path(File.join(File.dirname(__FILE__), %w[.. resources]))
+USER_EXTENTIONS_PATH = File.join(RESOURCES_DIR_PATH, USER_EXTENTIONS_FILE)
 
-port = DEFAULT_SELENIUM_SERVER_PORT
+$selenium_args = []
+$verbose = false
+$help = false
+$selenium_server_help = false
+$selenium_jar = nil
+$port = DEFAULT_SELENIUM_SERVER_PORT
 
-ARGV.each_with_index do |arg, index|
-  port = ARGV[index + 1] if arg == '-port' and (index + 1) < ARGV.count 
+$optparser = OptionParser.new do |o|
+  o.banner = <<BANNER
+Usage: lebowski-start-server [options]
+
+  To pass options on to the selenium server, prefix each option with --S. If an
+  option requires an argument then use = to specify the argument.
+  Example: lebowski-start-server --Sinteractive --Stimeout=1000 
+
+BANNER
+
+  o.on('-p ARG', '--port=ARG', "Specify the server port. Default is #{DEFAULT_SELENIUM_SERVER_PORT}", Integer) do |val|
+    $port = val
+  end
+    
+  o.on('-s ARG', '--selenium-jar=ARG', "Specify a path to the Selenium JAR") do |val| 
+    $selenium_jar = File.expand_path val
+  end
+    
+  o.on('-v', '--verbose', "Turn on verbose mode") do |val|
+    $verbose = true
+  end
+  
+  o.on(nil, '--selenium-help', "Show Selenium server help") do |val|
+    $selenium_server_help = true
+  end
+    
+  o.on('-h', '--help', "Show help") do |val| 
+    $help = true
+  end
+
 end
 
-puts "Running Selenium Server for Lebowski"
-puts "Starting server on http://localhost:#{port}"
-puts "To quit server, press Control-C"
+def verbose(msg, newline=true)
+  return if not $verbose
+  
+  if newline
+    puts msg
+  else
+    print msg
+  end   
+end
 
-resources_dir = File.expand_path(File.join(File.dirname(__FILE__), %w[.. resources]))
-selenium_server =  File.join(resources_dir, 'selenium-server.jar')
-user_extensions =  File.join(resources_dir, 'user-extensions.js')
+def error(msg)
+  puts "#{ERROR_MSG_PREFIX} #{msg}"
+end
 
-exec 'java', '-jar', selenium_server, '-userExtensions', user_extensions, *ARGV
+def setup_selenium
+  
+  if not $selenium_jar.nil? 
+    if File.directory? $selenium_jar
+      error "-s requires path to file"
+      return false
+    elsif File.file? $selenium_jar
+      verbose "Detected Selenium at #{$selenium_jar}"
+      return true
+    else
+      error "Could not detect Selenium at #{$selenium_jar}"
+      return false
+    end
+  end
+  
+  if File.file? SELENIUM_JAR_PATH
+    verbose "Detected Selenium."
+    $selenium_jar = SELENIUM_JAR_PATH
+    return true
+  end
+  
+  puts "Could not detect Selenium. Required to by Lebowski to function."
+  puts "Continue by downloading Selenium? Enter 'yes' to download."
+  print "> "
+  result = STDIN.gets
+
+  if result.chomp != 'yes'
+    puts "Selenium can be download from #{SELENIUM_DOMAIN}" 
+    return false
+  end
+  
+  verbose "Checking if #{LEBOWSKI_PATH} exists... ", false
+  if not Dir.exists? LEBOWSKI_PATH
+    verbose "Does not exist. Creating."
+    Dir.mkdir LEBOWSKI_PATH
+  else 
+    verbose "Exists."
+  end
+  
+  puts "Downloading Selenium from #{SELENIUM_DOMAIN}..."
+
+  stream = nil
+  begin
+    stream = open(SELENIUM_JAR_URL)
+    puts "Selenium download successfully."
+  rescue Exception
+    error "Error trying to download Selenium"
+    return false
+  end
+  
+  begin
+    selenium = File.new(SELENIUM_JAR_PATH, 'wb')
+    selenium.write stream.read
+    selenium.flush
+    selenium.close
+  rescue Exception
+    error "Error trying to create Selenium"
+    return false
+  end
+  
+  puts "done"
+  $selenium_jar = SELENIUM_JAR_PATH
+  
+  return true
+  
+end
+
+def process_options
+  
+  args = []
+  
+  # Pre-process command arguments
+  ARGV.each do |arg|
+    matches = arg.match(/--S(\w+)($|=(.+))/)
+    if not matches.nil?
+      $selenium_args << "-" + matches[1]
+      if not matches[3].nil? 
+        $selenium_args << matches[3]
+      end
+    else
+      args << arg
+    end
+  end
+
+  begin
+    $optparser.parse args
+  rescue Exception => e
+    error e.to_s
+    return false
+  end
+  
+  return true
+  
+end
+
+def run_selenium_server
+  $selenium_args << '-port'
+  $selenium_args << $port.to_s
+  $selenium_args << '-help' if $selenium_server_help
+
+  puts "Running Selenium Server for Lebowski"
+  puts "Starting server on http://localhost:#{$port}"
+  puts "To quit server, press Control-C"
+
+  exec 'java', '-jar', $selenium_jar, '-userExtensions', USER_EXTENTIONS_PATH, *$selenium_args
+end
+
+def main
+
+  return if not process_options
+  
+  if $help
+    puts $optparser.to_s
+    return
+  end
+
+  run_selenium_server if setup_selenium
+  
+end
+
+main
