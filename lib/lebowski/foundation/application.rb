@@ -240,6 +240,7 @@ module Lebowski
       SAFARI = '*safari'
       FIREFOX = '*firefox'
       CHROME = '*chrome'
+      IEXPLORER = '*iexplore'
       
       DEFAULT_BROWSER = FIREFOX
       DEFAULT_SELENIUM_SERVER_HOST = 'localhost'
@@ -428,7 +429,9 @@ module Lebowski
       def get_application_base_url(params)
         client = get_selenium_client(params) 
         return client.browser_url if (not client.nil?)
-        return "http://#{get_app_server_host(params)}:#{get_app_server_port(params)}"
+        host = get_app_server_host(params)
+        host = "http://#{host}" if not host =~ /^http(|s):\/\//
+        return "#{host}:#{get_app_server_port(params)}"
       end
       
       def get_session_id(params)
@@ -452,6 +455,8 @@ module Lebowski
           return SAFARI
         when :chrome
           return CHROME
+        when :iexplorer
+          return IEXPLORER
         else
           return DEFAULT_BROWSER
         end
