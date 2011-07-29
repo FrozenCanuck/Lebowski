@@ -135,7 +135,6 @@ def setup_selenium
     return false
   end
   
-  puts "done"
   $selenium_jar = SELENIUM_JAR_PATH
   
   return true
