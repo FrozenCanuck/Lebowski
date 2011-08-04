@@ -4,6 +4,10 @@
 # Executable to start the selenium server that will automically include
 # the required extension file
 #
+# To get help use the -h or --help option:
+#
+#   lebowski-start-server -h
+#
 
 # TODO: Put this together quickly. Needs to be refactored at some point.
 
@@ -11,9 +15,10 @@ require 'open-uri'
 require 'optparse'
 
 SELENIUM_NAME = 'Selenium'
-SELENIUM_JAR = 'selenium-server-standalone-2.2.0.jar'
+SELENIUM_VERSION = '2.3.0'
+SELENIUM_JAR = "selenium-server-standalone-#{SELENIUM_VERSION}.jar"
 SELENIUM_DOMAIN = 'http://selenium.googlecode.com'
-SELENIUM_JAR_URL = SELENIUM_DOMAIN + '/files/' + SELENIUM_JAR
+SELENIUM_JAR_URL = "#{SELENIUM_DOMAIN}/files/#{SELENIUM_JAR}"
 LEBOWSKI_PATH = File.join(Dir.home, ".lebowski")
 SELENIUM_JAR_PATH = File.join(LEBOWSKI_PATH, SELENIUM_JAR)
 ERROR_MSG_PREFIX = "Unable to run lebowski-server. "
@@ -82,10 +87,10 @@ def setup_selenium
       error "-s requires path to file"
       return false
     elsif File.file? $selenium_jar
-      verbose "Detected Selenium at #{$selenium_jar}"
+      verbose "Detected Selenium server at #{$selenium_jar}"
       return true
     else
-      error "Could not detect Selenium at #{$selenium_jar}"
+      error "Could not detect Selenium server at #{$selenium_jar}"
       return false
     end
   end
@@ -96,13 +101,13 @@ def setup_selenium
     return true
   end
   
-  puts "Could not detect Selenium. Required to by Lebowski to function."
-  puts "Continue by downloading Selenium? Enter 'yes' to download."
+  puts "Could not detect Selenium server. Required by Lebowski to function."
+  puts "Continue by downloading Selenium server? Enter 'yes' to download."
   print "> "
   result = STDIN.gets
 
   if result.chomp != 'yes'
-    puts "Selenium can be download from #{SELENIUM_DOMAIN}" 
+    puts "Selenium server can be download from #{SELENIUM_DOMAIN}" 
     return false
   end
   
@@ -114,14 +119,14 @@ def setup_selenium
     verbose "Exists."
   end
   
-  puts "Downloading Selenium from #{SELENIUM_DOMAIN}..."
+  puts "Downloading Selenium server v#{SELENIUM_VERSION} from #{SELENIUM_DOMAIN}..."
 
   stream = nil
   begin
     stream = open(SELENIUM_JAR_URL)
-    puts "Selenium download successfully."
+    puts "Selenium server download successfully."
   rescue Exception
-    error "Error trying to download Selenium"
+    error "Error trying to download Selenium server"
     return false
   end
   
@@ -131,7 +136,7 @@ def setup_selenium
     selenium.flush
     selenium.close
   rescue Exception
-    error "Error trying to create Selenium"
+    error "Error trying to create Selenium server"
     return false
   end
   
@@ -174,7 +179,7 @@ def run_selenium_server
   $selenium_args << $port.to_s
   $selenium_args << '-help' if $selenium_server_help
 
-  puts "Running Selenium Server for Lebowski"
+  puts "Running Selenium Server v#{SELENIUM_VERSION} for Lebowski"
   puts "Starting server on http://localhost:#{$port}"
   puts "To quit server, press Control-C"
 
