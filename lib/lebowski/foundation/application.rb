@@ -241,6 +241,8 @@ module Lebowski
       FIREFOX = '*firefox'
       CHROME = '*chrome'
       IEXPLORER = '*iexplore'
+      IEHTA = '*iehta'
+      GOOGLECHROME = '*googlechrome'
       
       DEFAULT_BROWSER = FIREFOX
       DEFAULT_SELENIUM_SERVER_HOST = 'localhost'
@@ -457,6 +459,10 @@ module Lebowski
           return CHROME
         when :iexplorer
           return IEXPLORER
+        when :iehta
+          return IEHTA
+        when :googlechrome
+          return GOOGLECHROME
         else
           return DEFAULT_BROWSER
         end
