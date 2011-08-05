@@ -152,7 +152,7 @@ def process_options
   
   # Pre-process command arguments
   ARGV.each do |arg|
-    matches = arg.match(/--S(\w+)($|=(.+))/)
+    matches = arg.match(/--S(.+)($|=(.+))/)
     if not matches.nil?
       $selenium_args << "-" + matches[1]
       if not matches[3].nil? 
