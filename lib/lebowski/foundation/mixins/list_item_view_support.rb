@@ -35,7 +35,7 @@ module Lebowski
             :mouse_offset_x => :center, 
             :mouse_offset_y => :center
           }
-          source.drag_to self, (self.width / 2).floor, row_height - 2, params
+          source.drag_to self, (self.width / 2).floor, row_height, params
         end
         
         def row_height()
