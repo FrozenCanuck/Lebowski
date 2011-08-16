@@ -39,17 +39,40 @@ var $App = null;
 var ScExt = {};
 
 /**
+  Use this method instead of SC's typeOf method to check a value's type.
+  
+  This method handles both SC 1.6 and 1.5. Unfortunately SC.typeOf for 
+  SC 1.5 can return an incorrect result that will end up prevent the
+  rest of Lebowski from working. This method will correct the result.
+*/
+ScExt.typeOf = function(value) {
+  var type = $SC.typeOf(value);
+
+  if (type === $SC.T_ERROR && $SC.VERSION.match(/^1.5/)) {
+    if ($SC.Error && value instanceof $SC.Error) {
+      type = $SC.T_ERROR;
+    } else if (value instanceof $SC.Object) {
+      type = $SC.T_OBJECT;
+    } else {
+      type = $SC.T_HASH;
+    }
+  }
+  
+  return type;
+};
+
+/**
   Checks if the given value is indeed an SC.Object
 */
 ScExt.isScObject = function(obj) {
-  return $SC.typeOf(obj) === $SC.T_OBJECT;
+  return ScExt.typeOf(obj) === $SC.T_OBJECT;
 };
 
 /**
   Checks if the given value is either an instance of SC.Object or a JS hash object
 */
 ScExt.isObject = function(obj) {
-  var type = $SC.typeOf(obj);
+  var type = ScExt.typeOf(obj);
   return type === $SC.T_OBJECT || type === $SC.T_HASH;
 };
 
@@ -279,7 +302,7 @@ ScExt.PathParser = {
     
     for (var i = 1; i < parts.length; i++) {
       if (this._isArrayIndex(parts[i])) {
-        if ($SC.typeOf(objPathChain[i - 1]) === $SC.T_FUNCTION) {
+        if (ScExt.typeOf(objPathChain[i - 1]) === $SC.T_FUNCTION) {
           // Last part is a function, therefore invoke the function with the index
           var target = objPathChain[i - 2];
           var func = objPathChain[i - 1];
@@ -290,12 +313,12 @@ ScExt.PathParser = {
           current_obj = this._getObjectFromArray(array, parts[i]);
         }
       } else {
-        if ($SC.typeOf(current_obj.getPath) === $SC.T_FUNCTION && current_obj !== $SC) {
+        if (ScExt.typeOf(current_obj.getPath) === $SC.T_FUNCTION && current_obj !== $SC) {
           // Object is a SC object. Use the get method. Need to be mindful of the SC
           // root object since it also has getPath but doesn't behave the same way as
           // getPath on regular SC objects.
           current_obj = current_obj.getPath(parts[i]);
-        } else if ($SC.typeOf(current_obj.get) === $SC.T_FUNCTION) {
+        } else if (ScExt.typeOf(current_obj.get) === $SC.T_FUNCTION) {
           current_obj = current_obj.get(parts[i]);
         } else {
           // Object is just a plain old JS object
@@ -1589,7 +1612,7 @@ Selenium.prototype.doScEnableMouseMoveEvent = function() {
 */
 Selenium.prototype.getScTypeOf = function(path) {
   var value = $ScPath.getPath(path);
-  return $SC.typeOf(value);
+  return ScExt.typeOf(value); 
 };
 
 /**
