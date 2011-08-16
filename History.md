@@ -1,3 +1,11 @@
+# lebowski 0.4.0 August 16, 2011
+
+* Updated all foundation SC proxies to work with SC 1.5 and 1.6
+* Changed the gem build process. Now using the lebowski.gemspec file. No longer use Jeweler
+* Removed Selenium 1 dependency. Now uses Selenium 2
+* Fixed the user-extensions.js file to allow Lebowski to work with SC 1.5 and SC 1.6
+* Updated various spec files in the examples folder
+
 # lebowski 0.3.3.pre.0 March 13, 2011
 
 * Initial Fixes to allow Lebowski to work with IE 7/8. Updates made to user-extensions.js file
