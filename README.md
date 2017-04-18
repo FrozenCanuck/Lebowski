@@ -2,7 +2,7 @@
   
     -- the SproutCore feature and integration test automation framework
 
-#Overview
+# Overview
 
 The Lebowski framework is a test automation framework for applications built on the 
 [SproutCore](http://www.sproutcore.com/) framework. 
@@ -35,7 +35,7 @@ dependent on your system having the latest Java runtime installed).
 The framework also comes with extensions to [RSpec](http://relishapp.com/rspec) that you can optionally use to 
 write your scripts, but RSpec is not required to use the Lebowski framework. 
 
-#Installing Lebowski
+# Installing Lebowski
 
 Installing the Lebowski framework is simple. First, make sure that you have the latest Ruby installed 
 on your machine (versions >= 1.9.2). Once you have Ruby installed, you can get the Lebowski framework
@@ -74,7 +74,7 @@ In addition to SproutCore, it is also advised that you, at minimum, have [Firefo
 installed on your system since that is the default browser used to run your SproutCore application using
 Lebowski.
 
-#Getting Started With Lebowski
+# Getting Started With Lebowski
 
 If you're new to the Lebowski framework then the best place to get started is to try
 and run the Hello World example that you can find in the `examples/hello_world` directory when
@@ -135,7 +135,7 @@ how to make a custom type proxy by going to the `custom_view` example app.
 If you like to know what proxies the Lebowski framework comes with and know how to use them, 
 be sure to check out the `sc_controls` example app.
 
-#Why the name "Lebowski"?
+# Why the name "Lebowski"?
 
 > sometimes there's a man... I won't say a hero, 'cause, what's a hero? But sometimes, 
 > there's a man. And I'm talkin' about the [Dude](http://www.imdb.com/title/tt0118715/) here. 
@@ -144,7 +144,7 @@ be sure to check out the `sc_controls` example app.
 > that. Quite possibly the laziest in Los Angeles County, which would place him high in the runnin' 
 > for laziest worldwide. But sometimes there's a man, sometimes, there's a man.
 
-#Contributors
+# Contributors
 
 Special thanks to the following individuals:
 
